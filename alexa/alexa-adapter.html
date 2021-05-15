@@ -1,0 +1,246 @@
+<script type="text/javascript">
+    RED.nodes.registerType('alexa-adapter', {
+        category: 'config',
+        color: '#3FADB5',
+        defaults: {
+            name: { value: "Alexa", required: true },
+            http_path: { value: "alexa", required: false },
+            login_with_amazon: { value: true, required: false },
+            event_endpoint: { value: "", requred: true },
+            scope: { value: "smart_home", requred: true },
+            emails: { value: [], required: false },
+            msg_check: { value: false, required: false },
+            verbose: { value: false, required: false },
+            port: {
+                value: '', required: false, validate: function (v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return v.trim().length == 0 || (!isNaN(v) && Number.isInteger(f) && n > 0);
+                }
+            },
+        },
+        credentials: {
+            username: { type: "text" },
+            password: { type: "password" },
+            your_client_id: { type: "text" },
+            your_secret: { type: "password" },
+            oa2_client_id: { type: "text" },
+            oa2_secret: { type: "password" },
+            skill_client_id: { type: "text" },
+            skill_secret: { type: "password" },
+        },
+        icon: "alexa-home.png",
+        label: function () {
+            return this.name.trim().length > 0 ? this.name : this._('alexa-adapter.name');
+        },
+        paletteLabel: function() {
+            return this._("alexa-adapter.name");
+        },
+        oneditprepare: function () {
+
+            // emails
+            $('#node-input-alexa-adapter-emails-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                addItem: function (container, i, opt) {
+                    var email = opt;
+                    if (!email.hasOwnProperty('name')) {
+                        email = { name: "" };
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    let fragment = document.createDocumentFragment();
+                    var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                    var propertyName = $('<input/>', { class: "node-input-alexa-adapter-emails-property-name", type: "text" })
+                        .appendTo(row1);
+                    propertyName.val(email.name);
+
+                    container[0].appendChild(fragment);
+                },
+                removable: true,
+                sortable: true
+            });
+            if (!this.emails) {
+                this.emails = [];
+            }
+            for (var i = 0; i < this.emails.length; i++) {
+                var email = this.emails[i];
+                $("#node-input-alexa-adapter-emails-container").editableList('addItem', { name: email });
+            }
+
+            // Login with Amazon
+            var loginWithAmazon = function () {
+                var loginWithAmazon = $("#node-config-input-login_with_amazon").prop('checked');
+                if (loginWithAmazon == false) {
+                    $("#login-with-amazon").hide();
+                    $("#local-login").show();
+                } else {
+                    $("#login-with-amazon").show();
+                    $("#local-login").hide();
+                }
+            }
+            loginWithAmazon();
+            $("#node-config-input-login_with_amazon").change(loginWithAmazon);
+        },
+        oneditsave: function () {
+            var node = this;
+            // emails
+            var emails = $("#node-input-alexa-adapter-emails-container").editableList('items');
+            node.emails= [];
+            emails.each(function(i) {
+                var email = $(this);
+                var name = email.find(".node-input-alexa-adapter-emails-property-name").val();
+                node.emails.push(name);
+            });
+            var trimFields = [
+                "username",
+                "password",
+                "your_client_id",
+                "your_secret",
+                "oa2_client_id",
+                "oa2_secret",
+                "skill_client_id",
+                "skill_secret",
+                "http_path",
+                "port",
+                "event_endpoints",
+                "scope"
+            ];
+            // Just in case any whitespace has crept in with the copy-paste of the fields
+            trimFields.forEach(function (field) {
+                var v = $("#node-config-input-" + field).val();
+                v = v.trim();
+                $("#node-config-input-" + field).val(v);
+
+            });
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="alexa-adapter">
+    <style>
+        ol#node-input-alexa-adapter-emails .red-ui-typedInput-container {
+            flex:1;
+        }
+    </style>
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.name"></span></label>
+        <input type="text" id="node-config-input-name" data-i18n="[placeholder]alexa-adapter.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <input type="checkbox" id="node-config-input-login_with_amazon" style="display:inline-block; width:20px; vertical-align:baseline;">
+        <span data-i18n="alexa-adapter.label.login_with_amazon">
+    </div>
+
+    <div class="form-row red-ui-editableList-border" id="local-login" style="background: #fbfbfb; padding: 5px;">
+
+        <div class="form-row">
+            <span data-i18n="alexa-adapter.label.local_credentials"></span>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="alexa-adapter.label.username"></span></label>
+            <input type="text" id="node-config-input-username" data-i18n="[placeholder]alexa-adapter.placeholder.username">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.password"></span></label>
+            <input type="password" id="node-config-input-password" data-i18n="[placeholder]alexa-adapter.placeholder.password">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border" id="login-with-amazon" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <span data-i18n="alexa-adapter.label.secirity_profile_web_settings"></span>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/docs/login-with-amazon/register-web.html"><i class="fa fa-external-link"></i></a>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-oa2_client_id"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.oa2_client_id"></span></label>
+            <input type="text" id="node-config-input-oa2_client_id" data-i18n="[placeholder]alexa-adapter.placeholder.oa2_client_id">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-oa2_secret"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.oa2_secret"></span></label>
+            <input type="password" id="node-config-input-oa2_secret" data-i18n="[placeholder]alexa-adapter.placeholder.oa2_secret">
+        </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-adapter.label.emails"></span>
+        </div>
+        <div class="form-row node-input-alexa-adapter-emails-container-row">
+            <ol id="node-input-alexa-adapter-emails-container"></ol>
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <span data-i18n="alexa-adapter.label.skill_info"></span>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/alexa/console/ask"><i class="fa fa-external-link"></i></a>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-skill_client_id"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.skill_client_id"></span></label>
+            <input type="text" id="node-config-input-skill_client_id" data-i18n="[placeholder]alexa-adapter.placeholder.skill_client_id">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-skill_secret"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.skill_secret"></span></label>
+            <input type="password" id="node-config-input-skill_secret" data-i18n="[placeholder]alexa-adapter.placeholder.skill_secret">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-your_client_id"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.your_client_id"></span></label>
+            <input type="text" id="node-config-input-your_client_id" data-i18n="[placeholder]alexa-adapter.placeholder.your_client_id">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-your_secret"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.your_secret"></span></label>
+            <input type="password" id="node-config-input-your_secret" data-i18n="[placeholder]alexa-adapter.placeholder.your_secret">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-scope"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.scope"></span></label>
+            <input type="text" id="node-config-input-scope" data-i18n="[placeholder]alexa-adapter.placeholder.scope">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-event_endpoint"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.event_endpoint"></span></label>
+            <input type="text" id="node-config-input-event_endpoint" data-i18n="[placeholder]alexa-adapter.placeholder.event_endpoint">
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <span data-i18n="alexa-adapter.label.http_server"></span>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-port"><i class="fa fa-globe"></i> <span data-i18n="alexa-adapter.label.port"></span></label>
+            <input type="text" id="node-config-input-port" data-i18n="[placeholder]alexa-adapter.placeholder.port">
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-http_path"><i class="fa fa-globe"></i> <span data-i18n="alexa-adapter.label.http_path"></span></label>
+            <input type="text" id="node-config-input-http_path" data-i18n="[placeholder]alexa-adapter.placeholder.http_path">
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-config-input-msg_check" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-adapter.label.msg_check">
+        </div>
+    </div>
+
+    <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-config-input-verbose" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-adapter.label.verbose">
+        </div>
+    </div>
+
+</script>

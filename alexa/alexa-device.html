@@ -1,0 +1,524 @@
+<script type="text/javascript">
+    RED.nodes.registerType('alexa-device', {
+        category: 'alexa-home',
+        color: '#3FADB5',
+        defaults: {
+            alexa: { value: "", type: "alexa-adapter" },
+            name: { value: "", required: true },
+            display_categories: { value: [], required: true },
+            topic: { value: "", required: false },
+            a_inputs: { value: ['AUX_1', 'AUX_2', 'AUX_3', 'AUX_4', 'AUX_5', 'AUX_6', 'AUX_7', 'BLURAY', 'CABLE', 'CD', 'COAX_1', 'COAX_2', 'COMPOSITE_1', 'DVD', 'GAME', 'HD_RADIO', 'HDMI_1', 'HDMI_2', 'HDMI_3', 'HDMI_4', 'HDMI_5', 'HDMI_6', 'HDMI_7', 'HDMI_8', 'HDMI_9', 'HDMI_10', 'HDMI_ARC', 'INPUT_1', 'INPUT_2', 'INPUT_3', 'INPUT_4', 'INPUT_5', 'INPUT_6', 'INPUT_7', 'INPUT_8', 'INPUT_9', 'INPUT_10', 'IPOD', 'LINE_1', 'LINE_2', 'LINE_3', 'LINE_4', 'LINE_5', 'LINE_6', 'LINE_7', 'MEDIA_PLAYER', 'OPTICAL_1', 'OPTICAL_2', 'PHONO', 'PLAYSTATION', 'PLAYSTATION_3', 'PLAYSTATION_4', 'SATELLITE', 'SMARTCAST', 'TUNER', 'TV', 'USB_DAC', 'VIDEO_1', 'VIDEO_2', 'VIDEO_3', 'XBOX'], required: false },
+            i_automation_management: { value: "", required: false },
+            i_brightness_controller: { value: "", required: false },
+            i_camera_stream_controller: { value: "", required: false },
+            i_channel_controller: { value: "", required: false },
+            i_color_controller: { value: "", required: false },
+            i_color_temperature_controller: { value: "", required: false },
+            i_contact_sensor: { value: "", required: false },
+            i_doorbell_event_source: { value: "", required: false },
+            i_endpoint_health: { value: "", required: false },
+            i_equalizer_controller: { value: "", required: false },
+            i_estimation: { value: "", required: false },
+            i_event_detection_sensor: { value: "", required: false },
+            i_input_controller: { value: "", required: false },
+            i_inventory_level_sensor: { value: "", required: false },
+            i_inventory_usage_sensor: { value: "", required: false },
+            i_keypad_controller: { value: "", required: false },
+            a_kc_keys: { value: [], required: false },
+            i_lock_controller: { value: "", required: false },
+            i_media_metadata: { value: "", required: false },
+            i_meter: { value: "", required: false },
+            i_mode_controller: { value: "", required: false },
+            i_motion_sensor: { value: "", required: false },
+            i_percentage_controller: { value: "", required: false },
+            i_playback_controller: { value: "", required: false },
+            a_playback_modes: { value: [], required: false },
+            i_power_controller: { value: "", required: false },
+            i_power_level_controller: { value: "", required: false },
+            i_range_controller: { value: "", required: false },
+            i_rtc_session_controller: { value: "", required: false },
+            i_scene_controller: { value: "", required: false },
+            i_security_panel_controller: { value: "", required: false },
+            i_speaker: { value: "", required: false },
+            i_step_speaker: { value: "", required: false },
+            i_temperature_sensor: { value: "", required: false },
+            i_thermostat_controller: { value: "", required: false },
+            a_target_setpoint: { value: false, required: false },
+            a_lower_setpoint: { value: false, required: false },
+            a_upper_setpoint: { value: false, required: false },
+            a_modes: { value: [], required: false },
+            a_supports_scheduling: { value: false, required: false },
+            i_thermostat_controller_hvac_components: { value: "", required: false },
+            i_toggle_controller: { value: "", required: false },
+            i_wake_on_lan_controller: { value: "", required: false },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "alexa-home.png",
+        label: function () {
+            return this.name || this._("alexa-device.name");
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : ""
+        },
+        paletteLabel: function () {
+            return this._("alexa-device.name");
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="alexa-device">
+    <div class="form-row">
+        <label for="node-input-alexa"><i class="fa fa-globe"></i> <span data-i18n="alexa-device.label.alexa"></span></label>
+        <input type="text" id="node-input-alexa">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.name"></label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.topic"></label>
+        <input type="text" id="node-input-topic" placeholder="topic">
+    </div>
+
+    <div class="form-row" id="display_categories">
+        <label for="node-input-display_categories"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.display_categories"></span></label>
+        <select multiple id="node-input-display_categories" >
+            <option value='ACTIVITY_TRIGGER' data-i18n='alexa-device.display_category.ACTIVITY_TRIGGER'></option>
+            <option value='AIR_FRESHENER' data-i18n='alexa-device.display_category.AIR_FRESHENER'></option>
+            <option value='AIR_PURIFIER' data-i18n='alexa-device.display_category.AIR_PURIFIER'></option>
+            <option value='AUTO_ACCESSORY' data-i18n='alexa-device.display_category.AUTO_ACCESSORY'></option>
+            <option value='CAMERA' data-i18n='alexa-device.display_category.CAMERA'></option>
+            <option value='CHRISTMAS_TREE' data-i18n='alexa-device.display_category.CHRISTMAS_TREE'></option>
+            <option value='COFFEE_MAKER' data-i18n='alexa-device.display_category.COFFEE_MAKER'></option>
+            <option value='COMPUTER' data-i18n='alexa-device.display_category.COMPUTER'></option>
+            <option value='CONTACT_SENSOR' data-i18n='alexa-device.display_category.CONTACT_SENSOR'></option>
+            <option value='DOOR' data-i18n='alexa-device.display_category.DOOR'></option>
+            <option value='DOORBELL' data-i18n='alexa-device.display_category.DOORBELL'></option>
+            <option value='EXTERIOR_BLIND' data-i18n='alexa-device.display_category.EXTERIOR_BLIND'></option>
+            <option value='FAN' data-i18n='alexa-device.display_category.FAN'></option>
+            <option value='GAME_CONSOLE' data-i18n='alexa-device.display_category.GAME_CONSOLE'></option>
+            <option value='GARAGE_DOOR' data-i18n='alexa-device.display_category.GARAGE_DOOR'></option>
+            <option value='HEADPHONES' data-i18n='alexa-device.display_category.HEADPHONES'></option>
+            <option value='HUB' data-i18n='alexa-device.display_category.HUB'></option>
+            <option value='INTERIOR_BLIND' data-i18n='alexa-device.display_category.INTERIOR_BLIND'></option>
+            <option value='LAPTOP' data-i18n='alexa-device.display_category.LAPTOP'></option>
+            <option value='LIGHT' data-i18n='alexa-device.display_category.LIGHT'></option>
+            <option value='MICROWAVE' data-i18n='alexa-device.display_category.MICROWAVE'></option>
+            <option value='MOBILE_PHONE' data-i18n='alexa-device.display_category.MOBILE_PHONE'></option>
+            <option value='MOTION_SENSOR' data-i18n='alexa-device.display_category.MOTION_SENSOR'></option>
+            <option value='MUSIC_SYSTEM' data-i18n='alexa-device.display_category.MUSIC_SYSTEM'></option>
+            <option value='NETWORK_HARDWARE' data-i18n='alexa-device.display_category.NETWORK_HARDWARE'></option>
+            <option value='OTHER' data-i18n='alexa-device.display_category.OTHER'></option>
+            <option value='OVEN' data-i18n='alexa-device.display_category.OVEN'></option>
+            <option value='PHONE' data-i18n='alexa-device.display_category.PHONE'></option>
+            <option value='PRINTER' data-i18n='alexa-device.display_category.PRINTER'></option>
+            <option value='ROUTER' data-i18n='alexa-device.display_category.ROUTER'></option>
+            <option value='SCENE_TRIGGER' data-i18n='alexa-device.display_category.SCENE_TRIGGER'></option>
+            <option value='SCREEN' data-i18n='alexa-device.display_category.SCREEN'></option>
+            <option value='SECURITY_PANEL' data-i18n='alexa-device.display_category.SECURITY_PANEL'></option>
+            <option value='SECURITY_SYSTEM' data-i18n='alexa-device.display_category.SECURITY_SYSTEM'></option>
+            <option value='SLOW_COOKER' data-i18n='alexa-device.display_category.SLOW_COOKER'></option>
+            <option value='SMARTLOCK' data-i18n='alexa-device.display_category.SMARTLOCK'></option>
+            <option value='SMARTPLUG' data-i18n='alexa-device.display_category.SMARTPLUG'></option>
+            <option value='SPEAKER' data-i18n='alexa-device.display_category.SPEAKER'></option>
+            <option value='STREAMING_DEVICE' data-i18n='alexa-device.display_category.STREAMING_DEVICE'></option>
+            <option value='SWITCH' data-i18n='alexa-device.display_category.SWITCH'></option>
+            <option value='TABLET' data-i18n='alexa-device.display_category.TABLET'></option>
+            <option value='TEMPERATURE_SENSOR' data-i18n='alexa-device.display_category.TEMPERATURE_SENSOR'></option>
+            <option value='THERMOSTAT' data-i18n='alexa-device.display_category.THERMOSTAT'></option>
+            <option value='TV' data-i18n='alexa-device.display_category.TV'></option>
+            <option value='VACUUM_CLEANER' data-i18n='alexa-device.display_category.VACUUM_CLEANER'></option>
+            <option value='VEHICLE' data-i18n='alexa-device.display_category.VEHICLE'></option>
+            <option value='WATER_HEATER' data-i18n='alexa-device.display_category.WATER_HEATER'></option>
+            <option value='WEARABLE' data-i18n='alexa-device.display_category.WEARABLE'></option>            
+        </select>
+    </div>
+
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_automation_management" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_automation_management" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.automation_management">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_brightness_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_brightness_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.brightness_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_camera_stream_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_camera_stream_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.camera_stream_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_channel_controller" style="background: #fbfbfb; padding: 5px;">    
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_channel_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.channel_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_color_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_color_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.color_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_color_temperature_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_color_temperature_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.color_temperature_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_contact_sensor" style="background: #fbfbfb; padding: 5px;">    
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_contact_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.contact_sensor">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_doorbell_event_source" style="background: #fbfbfb; padding: 5px;">    
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_doorbell_event_source" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.doorbell_event_source">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_endpoint_health" style="background: #fbfbfb; padding: 5px;">    
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_endpoint_health" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.endpoint_health">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_equalizer_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_equalizer_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.equalizer_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_estimation" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_estimation" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.estimation">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_event_detection_sensor" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_event_detection_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.event_detection_sensor">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_input_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_input_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.input_controller">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-a_inputs"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.inputs"></span></label>
+            <select multiple id="node-input-a_inputs" >
+                <option value='AUX 1' data-i18n='alexa-device.label.AUX_1'></option>
+                <option value='AUX 2' data-i18n='alexa-device.label.AUX_2'></option>
+                <option value='AUX 3' data-i18n='alexa-device.label.AUX_3'></option>
+                <option value='AUX 4' data-i18n='alexa-device.label.AUX_4'></option>
+                <option value='AUX 5' data-i18n='alexa-device.label.AUX_5'></option>
+                <option value='AUX 6' data-i18n='alexa-device.label.AUX_6'></option>
+                <option value='AUX 7' data-i18n='alexa-device.label.AUX_7'></option>
+                <option value='BLURAY' data-i18n='alexa-device.label.BLURAY'></option>
+                <option value='CABLE' data-i18n='alexa-device.label.CABLE'></option>
+                <option value='CD' data-i18n='alexa-device.label.CD'></option>
+                <option value='COAX 1' data-i18n='alexa-device.label.COAX_1'></option>
+                <option value='COAX 2' data-i18n='alexa-device.label.COAX_2'></option>
+                <option value='COMPOSITE 1' data-i18n='alexa-device.label.COMPOSITE_1'></option>
+                <option value='DVD' data-i18n='alexa-device.label.DVD'></option>
+                <option value='GAME' data-i18n='alexa-device.label.GAME'></option>
+                <option value='HD RADIO' data-i18n='alexa-device.label.HD_RADIO'></option>
+                <option value='HDMI 1' data-i18n='alexa-device.label.HDMI_1'></option>
+                <option value='HDMI 2' data-i18n='alexa-device.label.HDMI_2'></option>
+                <option value='HDMI 3' data-i18n='alexa-device.label.HDMI_3'></option>
+                <option value='HDMI 4' data-i18n='alexa-device.label.HDMI_4'></option>
+                <option value='HDMI 5' data-i18n='alexa-device.label.HDMI_5'></option>
+                <option value='HDMI 6' data-i18n='alexa-device.label.HDMI_6'></option>
+                <option value='HDMI 7' data-i18n='alexa-device.label.HDMI_7'></option>
+                <option value='HDMI 8' data-i18n='alexa-device.label.HDMI_8'></option>
+                <option value='HDMI 9' data-i18n='alexa-device.label.HDMI_9'></option>
+                <option value='HDMI 10' data-i18n='alexa-device.label.HDMI_10'></option>
+                <option value='HDMI ARC' data-i18n='alexa-device.label.HDMI_ARC'></option>
+                <option value='INPUT 1' data-i18n='alexa-device.label.INPUT_1'></option>
+                <option value='INPUT 2' data-i18n='alexa-device.label.INPUT_2'></option>
+                <option value='INPUT 3' data-i18n='alexa-device.label.INPUT_3'></option>
+                <option value='INPUT 4' data-i18n='alexa-device.label.INPUT_4'></option>
+                <option value='INPUT 5' data-i18n='alexa-device.label.INPUT_5'></option>
+                <option value='INPUT 6' data-i18n='alexa-device.label.INPUT_6'></option>
+                <option value='INPUT 7' data-i18n='alexa-device.label.INPUT_7'></option>
+                <option value='INPUT 8' data-i18n='alexa-device.label.INPUT_8'></option>
+                <option value='INPUT 9' data-i18n='alexa-device.label.INPUT_9'></option>
+                <option value='INPUT 10' data-i18n='alexa-device.label.INPUT_10'></option>
+                <option value='IPOD' data-i18n='alexa-device.label.IPOD'></option>
+                <option value='LINE 1' data-i18n='alexa-device.label.LINE_1'></option>
+                <option value='LINE 2' data-i18n='alexa-device.label.LINE_2'></option>
+                <option value='LINE 3' data-i18n='alexa-device.label.LINE_3'></option>
+                <option value='LINE 4' data-i18n='alexa-device.label.LINE_4'></option>
+                <option value='LINE 5' data-i18n='alexa-device.label.LINE_5'></option>
+                <option value='LINE 6' data-i18n='alexa-device.label.LINE_6'></option>
+                <option value='LINE 7' data-i18n='alexa-device.label.LINE_7'></option>
+                <option value='MEDIA PLAYER' data-i18n='alexa-device.label.MEDIA_PLAYER'></option>
+                <option value='OPTICAL 1' data-i18n='alexa-device.label.OPTICAL_1'></option>
+                <option value='OPTICAL 2' data-i18n='alexa-device.label.OPTICAL_2'></option>
+                <option value='PHONO' data-i18n='alexa-device.label.PHONO'></option>
+                <option value='PLAYSTATION' data-i18n='alexa-device.label.PLAYSTATION'></option>
+                <option value='PLAYSTATION 3' data-i18n='alexa-device.label.PLAYSTATION_3'></option>
+                <option value='PLAYSTATION 4' data-i18n='alexa-device.label.PLAYSTATION_4'></option>
+                <option value='SATELLITE' data-i18n='alexa-device.label.SATELLITE'></option>
+                <option value='SMARTCAST' data-i18n='alexa-device.label.SMARTCAST'></option>
+                <option value='TUNER' data-i18n='alexa-device.label.TUNER'></option>
+                <option value='TV' data-i18n='alexa-device.label.TV'></option>
+                <option value='USB DAC' data-i18n='alexa-device.label.USB_DAC'></option>
+                <option value='VIDEO 1' data-i18n='alexa-device.label.VIDEO_1'></option>
+                <option value='VIDEO 2' data-i18n='alexa-device.label.VIDEO_2'></option>
+                <option value='VIDEO 3' data-i18n='alexa-device.label.VIDEO_3'></option>
+                <option value='XBOX' data-i18n='alexa-device.label.XBOX'></option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_inventory_level_sensor" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_inventory_level_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.inventory_level_sensor">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_inventory_usage_sensor" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_inventory_usage_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.inventory_usage_sensor">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_keypad_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_keypad_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.keypad_controller">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-a_kc_keys"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.keys"></span></label>
+            <select multiple id="node-input-a_kc_keys" >
+                <option value='UP' data-i18n='alexa-device.label.UP'></option>
+                <option value='DOWN' data-i18n='alexa-device.label.DOWN'></option>
+                <option value='LEFT' data-i18n='alexa-device.label.LEFT'></option>
+                <option value='RIGHT' data-i18n='alexa-device.label.RIGHT'></option>
+                <option value='SELECT' data-i18n='alexa-device.label.SELECT'></option>
+                <option value='PAGE_UP' data-i18n='alexa-device.label.PAGE_UP'></option>
+                <option value='PAGE_DOWN' data-i18n='alexa-device.label.PAGE_DOWN'></option>
+                <option value='PAGE_LEFT' data-i18n='alexa-device.label.PAGE_LEFT'></option>
+                <option value='PAGE_RIGHT' data-i18n='alexa-device.label.PAGE_RIGHT'></option>
+                <option value='INFO' data-i18n='alexa-device.label.INFO'></option>
+                <option value='MORE' data-i18n='alexa-device.label.MORE'></option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <span data-i18n="alexa-device.label.interfaces"></span>
+    </div>
+
+    <div class="form-row red-ui-editableList-border div_trait" id="i_lock_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_lock_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.lock_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_media_metadata" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_media_metadata" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.media_metadata">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_meter" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_meter" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.meter">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_mode_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_mode_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.mode_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_motion_sensor" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_motion_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.motion_sensor">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_percentage_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_percentage_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.percentage_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_playback_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_playback_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.playback_controller">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-a_playback_modes"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.modes"></span></label>
+            <select multiple id="node-input-a_playback_modes" >
+                <option value='Play' data-i18n='alexa-device.label.Play'></option>
+                <option value='Pause' data-i18n='alexa-device.label.Pause'></option>
+                <option value='Stop' data-i18n='alexa-device.label.Stop'></option>
+                <option value='StartOver' data-i18n='alexa-device.label.StartOver'></option>
+                <option value='Previous' data-i18n='alexa-device.label.Previous'></option>
+                <option value='Next' data-i18n='alexa-device.label.Next'></option>
+                <option value='Rewind' data-i18n='alexa-device.label.Rewind'></option>
+                <option value='FastForward' data-i18n='alexa-device.label.FastForward'></option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_power_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_power_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.power_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_power_level_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_power_level_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.power_level_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_range_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_range_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.range_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_rtc_session_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_rtc_session_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.i_rtc_session_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_scene_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_scene_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.scene_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_security_panel_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_security_panel_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.security_panel_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_speaker" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_speaker" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.speaker">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_step_speaker" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_step_speaker" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.step_speaker">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_temperature_sensor" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_temperature_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.temperature_sensor">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_thermostat_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_thermostat_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.thermostat_controller">
+        </div>
+    
+        <div class="form-row">
+            <label for="node-input-a_modes"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.modes"></span></label>
+            <select multiple id="node-input-a_modes" >
+                <option value='AUTO' data-i18n='alexa-device.label.AUTO'></option>
+                <option value='COOL' data-i18n='alexa-device.label.COOL'></option>
+                <option value='HEAT' data-i18n='alexa-device.label.HEAT'></option>
+                <option value='ECO' data-i18n='alexa-device.label.ECO'></option>
+                <option value='OFF' data-i18n='alexa-device.label.OFF'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <input type="checkbox" id="node-input-a_target_setpoint" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.label.target_setpoint">
+        </div>
+
+        <div class="form-row">
+            <input type="checkbox" id="node-input-a_lower_setpoint" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.label.lower_setpoint">
+        </div>
+
+        <div class="form-row">
+            <input type="checkbox" id="node-input-a_upper_setpoint" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.label.upper_setpoint">
+        </div>
+
+        <div class="form-row">
+            <input type="checkbox" id="node-input-a_supports_scheduling" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.label.supports_scheduling">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_thermostat_controller_hvac_components" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_thermostat_controller_hvac_components" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.thermostat_controller_hvac_components">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_toggle_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_toggle_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.toggle_controller">
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_wake_on_lan_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_wake_on_lan_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.wake_on_lan_controller">
+        </div>
+        </div>
+</script>

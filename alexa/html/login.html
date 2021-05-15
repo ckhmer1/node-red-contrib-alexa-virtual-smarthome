@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Alexa Node-RED interface module">
+  <meta name="author" content="Claudio Chimera">
+  <link rel="shortcut icon" href="https://nodered.org/favicon.ico">
+
+  <title>Smart Home Login</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <!--script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script-->
+
+  <script>
+    const verbose = VERBOSE;
+    function getUrlParameters() {
+      let query = window.location.search.substr(1);
+      let keyValues = query.split('&');
+      let parameterMap = {};
+      for (let i in keyValues) {
+        let param = keyValues[i];
+        let splitParam = param.split('=');
+        parameterMap[splitParam[0]] = splitParam[1];
+      }
+      return parameterMap;
+    }
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+      let url = window.location.href.split('?')[0];
+      document.getElementById("login-form").action = url;
+
+      let params = getUrlParameters();
+      Object.keys(params).forEach(function (key) {
+        if (verbose) console.log('CCHI ' + key + " = " + params[key]);
+        if (verbose) console.log('CCHI ' + key + " => " + decodeURIComponent(params[key]));
+        let elm = document.querySelector('[name="' + key + '"]');
+        if (elm) {
+          elm.value = decodeURIComponent(params[key]);
+        }
+      });
+
+      if (LOGIN_WITH_AMAZON) {
+        document.getElementById('login-amazon').style.display = 'block';
+      } else {
+        document.getElementById('login-form').style.display = 'block';
+      }
+
+      if (params['error']) {
+        document.getElementById('error-message').style.display = 'block';
+      }
+    });
+  </script>
+</head>
+
+<body class="text-center">
+  <div id="amazon-root"></div>
+  <script type="text/javascript">
+    window.onAmazonLoginReady = function () {
+      amazon.Login.setClientId('CLIENT_ID');
+    };
+    (function (d) {
+      var a = d.createElement('script'); a.type = 'text/javascript';
+      a.async = true; a.id = 'amazon-login-sdk';
+      a.src = 'https://assets.loginwithamazon.com/sdk/na/login1.js';
+      d.getElementById('amazon-root').appendChild(a);
+    })(document);
+  </script>
+  <div class="container">
+    <div class="p-3 m-5">
+
+      <div id="error-message" class="alert alert-danger shadow p-3 mb-5 bg-body rounded" role="alert"
+        style="display:none;">
+        ERROR_MESSAGE
+      </div>
+      <img class="mb-4"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_Alexa_logo.svg/320px-Amazon_Alexa_logo.svg.png"
+        alt="Alexa">
+      <img class="mb-4" src="https://nodered.org/about/resources/media/node-red-icon-2.svg" alt="Node-RED" width="72"
+        height="72">
+      <h1 class="h3 mb-3 font-weight-normal">Please login in</h1>
+
+      <div id='login-amazon' style="display:none;">
+        <a href id="LoginWithAmazon">
+          <img border="0" alt="Login with Amazon"
+            src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156"
+            height="32" />
+        </a>
+        <br><a href id="Logout">Logout</a>
+        <script type="text/javascript">
+          let url = window.location.href.split('?')[0];
+          // url = url.substring(0, url.length - 5) + 'token';
+          if (verbose) console.log("CCHI url = " + url);
+          document.getElementById('LoginWithAmazon').onclick = function () {
+            if (verbose) console.log("CCHI GO url = " + url);
+            options = { popup: false }
+            options.scope = 'profile';
+            options.response_type='code';
+            options.scope_data = {
+              'profile': { 'essential': false }
+            };
+            amazon.Login.authorize(options, url);
+            return false;
+          };
+
+          document.getElementById('Logout').onclick = function () {
+            amazon.Login.logout();
+          };
+        </script>
+      </div>
+
+      <form action="" method="post" id='login-form' style="display:none;">
+        <label for="username" class="sr-only">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        <input type="hidden" name="client_id">
+        <input type="hidden" name="redirect_uri">
+        <input type="hidden" name="state" />
+        <input type="hidden" name="response_type" />
+        <input type="hidden" name="scope" />
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>
