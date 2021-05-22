@@ -948,7 +948,7 @@ module.exports = function (RED) {
         //
         //
         //
-        send_doorbell_press(cause) {
+        send_doorbell_press(endpointId, cause) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             var node = this;
             if (node.config.verbose) node._debug('send_doorbell_press' + cause);
@@ -969,7 +969,7 @@ module.exports = function (RED) {
                                     type: "BearerToken",
                                     token: access_token
                                 },
-                                endpointId: "appliance-001"
+                                endpointId: endpointId
                             },
                             payload: {
                                 cause: {

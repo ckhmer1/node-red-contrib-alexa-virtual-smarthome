@@ -117,7 +117,7 @@ module.exports = function (RED) {
                 // timestamp
                 if (node.isVerbose()) node._debug("CCHI " + node.id + "  " + topicArr[topicArr.length - 1] + " " + msg.payload || '');
                 process.nextTick(() => {
-                    node.alexa.send_doorbell_press(msg.payload || '');
+                    node.alexa.send_doorbell_press(node.id, msg.payload || '');
                 });
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
@@ -201,7 +201,8 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             if (node.config.i_doorbell_event_source) {
                 if (node.isVerbose()) node._debug("Alexa.DoorbellEventSource");
-                node.addCapability("Alexa.DoorbellEventSource");
+                let capability = node.addCapability("Alexa.DoorbellEventSource");
+                capability['proactivelyReported'] = true;
             }
 
             // EndpointHealth
@@ -232,7 +233,7 @@ module.exports = function (RED) {
                         name: input
                     })
                 })
-                let capability = node.addCapability("Alexa.InputController",
+                node.addCapability("Alexa.InputController",
                     {
                         input: ''
                     },
