@@ -112,8 +112,13 @@ module.exports = function (RED) {
                 node.alexa.send_change_report(node.id);
             } else if (topic === 'DOORBELLPRESS') {
                 // TODO https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
-                // cause APP_INTERACTION PERIODIC_POLL PHYSICAL_INTERACTION RULE_TRIGGER VOICE_INTERACTION https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html#cause-object
+                // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html#cause-object
+                // cause APP_INTERACTION PERIODIC_POLL PHYSICAL_INTERACTION RULE_TRIGGER VOICE_INTERACTION 
                 // timestamp
+                if (node.isVerbose()) node._debug("CCHI " + node.id + "  " + topicArr[topicArr.length - 1] + " " + msg.payload || '');
+                process.nextTick(() => {
+                    node.alexa.send_doorbell_press(msg.payload || '');
+                });
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 const modified = node.setValues(msg.payload, node.state);
@@ -732,6 +737,16 @@ module.exports = function (RED) {
                     namespace: "Alexa.EndpointHealth",
                     name: "connectivity",
                     value: node.state['connectivity'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // MotionSensor
+            if (node.config.i_motion_sensor) {
+                properties.push({
+                    namespace: "Alexa.MotionSensor",
+                    name: "detectionState",
+                    value: node.state['detectionState'],
                     timeOfSample: time_of_sample,
                     uncertaintyInMilliseconds: uncertainty,
                 });

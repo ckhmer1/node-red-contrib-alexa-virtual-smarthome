@@ -7,6 +7,7 @@
 - [Setup Instructions](#setup-instructions)
 - [The Config node](#the-config-node)
 - [The Device node](#the-device-node)
+- [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [Copyright and license](#copyright-and-license)
 
@@ -267,6 +268,53 @@ This is the "real" device node, configure the following info:
 * "Out topic": the topic used when a voice command is received.
 * "Display categories": the display categories. See [Display categories](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#display-categories) for more info.
 * "Interfaces": the interfaces supported by the device. See [Interfaces](https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html) for more info.
+
+## Troubleshooting
+
+This is a checklist for the config:
+
+### Check the forward rule
+
+* Open your browser at "https://YOUR_DOMAIN.COM/alexa/oauth", You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy config.
+
+### Check the lambda function
+
+* Enable the debug log in the Node-Red Alexa node configuration.
+* Open your browser at [AWS lambda](https://eu-west-1.console.aws.amazon.com/lambda/home)
+* Click on the "SmartHome" function
+* Click on the "Execute Test" tab
+* Paste the following message on the editor:
+
+```
+{
+  "directive": {
+    "header": {
+      "namespace": "Test",
+      "name": "Test",
+      "messageId": "<message id>",
+      "payloadVersion": "3"
+    },
+    "payload": {
+      "grant": {
+        "type": "OAuth2.AuthorizationCode",
+        "code": "Test"
+      },
+      "grantee": {
+        "type": "BearerToken",
+        "token": "Test"
+      }
+    }
+  }
+}
+```
+* Click on "Execute test" button
+* Click on detail, You should see the following response:
+```
+{
+  "ok": "ok"
+}
+```
+
 
 
 ## Credits
