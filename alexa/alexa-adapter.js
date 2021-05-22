@@ -199,6 +199,10 @@ module.exports = function (RED) {
             node.app.get(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
             node.app.post(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
             node.app.post(path.join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
+            if (node.config.verbose) {
+                node.app.get(path.join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
+                node.app.get(path.join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
+            }
             if (node.config.msg_check) {
                 node.app.post(path.join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post_verify(req, res); });
             } else {
@@ -382,6 +386,17 @@ module.exports = function (RED) {
         //
         //
         //
+        token_get(req, res) {
+            var node = this;
+            if (node.config.verbose) node._debug('token_get');
+            const uri = 'https://' + path.join(req.get('Host'), node.http_root, TOKEN_PATH);
+            res.status(200).send(uri);
+        }
+
+        //
+        //
+        //
+        //
         token_post(req, res) {
             var node = this;
             if (node.config.verbose) node._debug('token_post');
@@ -461,6 +476,17 @@ module.exports = function (RED) {
             node.auth_code = {};
             if (client_secret !== node.credentials.your_secret) node.error("Unauthorized client_secret");
             return res.status(401).send('Unauthorized');
+        }
+
+        //
+        //
+        //
+        //
+        smarthome_get(req, res) {
+            var node = this;
+            if (node.config.verbose) node._debug('smarthome_get');
+            const uri = 'https://' + path.join(req.get('Host'), node.http_root, SMART_HOME_PATH);
+            res.status(200).send(uri);
         }
 
         //

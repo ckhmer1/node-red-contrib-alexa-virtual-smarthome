@@ -273,9 +273,21 @@ This is the "real" device node, configure the following info:
 
 This is a checklist for the config:
 
-### Check the forward rule
+### Check the forward rule for /alexa/oauth
 
-* Open your browser at "https://YOUR_DOMAIN.COM/alexa/oauth", You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy config.
+* Open your browser at "https://YOUR_DOMAIN.COM/alexa/oauth"
+* You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy config.
+
+
+### Check the forward rule for /alexa/token
+* Enable the debug log in the Node-Red Alexa node configuration.
+* Open your browser at "https://YOUR_DOMAIN.COM/alexa/token"
+* You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding the reverse proxy config.
+
+### Check the forward rule for /alexa/smarhome
+* Enable the debug log in the Node-Red Alexa node configuration.
+* Open your browser at "https://YOUR_DOMAIN.COM/alexa/smarhome"
+* You should get the message "https://YOUR_DOMAIN.COM/alexa/smarhome". If not, check your port forwarding the reverse proxy config.
 
 ### Check the lambda function
 
@@ -315,7 +327,41 @@ This is a checklist for the config:
 }
 ```
 
+### Check the Alexa account linking
 
+* Enable the debug log in the Node-Red Alexa node configuration.
+* Follow the - [Link your account with your Smart Home skill](#Link-your-account-with-your-Smart-Home-skill)
+* Open the Node-RED gui, and check the debug window, You should see the following info:
+
+```
+node: Alexa
+msg : string[15]
+"oauth_get login"
+```
+
+```
+node: Alexa
+msg : string[17]
+"oauth_get profile"
+```
+
+```
+node: Alexa
+msg : string[37]
+"Username xxxxxxx@gmail.com authorized"
+```
+
+```
+node: Alexa
+msg : string[29]
+"token_post authorization_code"
+```
+
+```
+node: Alexa
+msg : string[37]
+"smarthome_post: oauth_get AcceptGrant"
+```
 
 ## Credits
 Parts of this README and large parts of the code comes from Amazon guide.
