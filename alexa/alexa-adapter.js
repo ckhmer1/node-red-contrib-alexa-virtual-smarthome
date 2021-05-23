@@ -943,6 +943,36 @@ module.exports = function (RED) {
         //
         //
         //
+        get_all_states() {
+            var node = this;
+            let states = {};
+            Object.keys(node.devices).forEach(function (key) {
+                const device = node.devices[key];
+                if (Object.keys(device.state).length > 0) {
+                    states[device.id] = device.state;
+                }
+            });
+            return states;
+        }
+
+        //
+        //
+        //
+        //
+        get_all_names() {
+            var node = this;
+            let names = {};
+            Object.keys(node.devices).forEach(function (key) {
+                const device = node.devices[key];
+                names[device.id] = device.config.name;
+            });
+            return names;
+        }
+
+        //
+        //
+        //
+        //
         // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-response.html
         get_report_state(endpointId, correlationToken, access_token, messageId) {

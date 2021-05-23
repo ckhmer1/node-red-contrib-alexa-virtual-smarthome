@@ -22,10 +22,11 @@ This module does NOT directly interface with devices made by Amazon.
 ## Prerequisites
 
 1. A 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org).
-2. Forward TCP traffic coming in from the Internet to your Node-RED server.
-3. An updated NodeJS version.
-4. An Amazon developer account (use the same username used in the Amazon Alexa App or devices).
-5. An Amazon Web Service (AWS) account (use the same username used in the Amazon Alexa App or devices).
+2. A reverse proxy, like nginx, forwarding the right request to the Node-RED server.
+3. Forward TCP traffic coming in from the Internet to your reverse proxy server.
+4. An updated NodeJS version.
+5. An Amazon developer account (use the same username used in the Amazon Alexa App or devices).
+6. An Amazon Web Service (AWS) account (use the same username used in the Amazon Alexa App or devices).
 
 ---
 ## Setup Instructions
@@ -276,18 +277,18 @@ This is a checklist for the config:
 ### Check the forward rule for /alexa/oauth
 
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/oauth"
-* You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy config.
+* You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy config or reverse proxy config.
 
 
 ### Check the forward rule for /alexa/token
 * Enable the debug log in the Node-Red Alexa node configuration.
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/token"
-* You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding the reverse proxy config.
+* You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding the reverse proxy config or reverse proxy config.
 
 ### Check the forward rule for /alexa/smarhome
 * Enable the debug log in the Node-Red Alexa node configuration.
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/smarhome"
-* You should get the message "https://YOUR_DOMAIN.COM/alexa/smarhome". If not, check your port forwarding the reverse proxy config.
+* You should get the message "https://YOUR_DOMAIN.COM/alexa/smarhome". If not, check your port forwarding the reverse proxy config or reverse proxy config.
 
 ### Check the lambda function
 
@@ -362,6 +363,21 @@ node: Alexa
 msg : string[37]
 "smarthome_post: oauth_get AcceptGrant"
 ```
+
+### Nginx reverse proxy configuration
+
+Following is a sample forwarding config for Nginx
+
+```
+        location ~ ^/alexa/(oauth|token|smarthome) {
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_pass http://192.168.0.3:3001;
+        }
+```
+
 
 ## Credits
 Parts of this README and large parts of the code comes from Amazon guide.

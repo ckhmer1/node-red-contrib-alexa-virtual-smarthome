@@ -110,6 +110,24 @@ module.exports = function (RED) {
             if (node.isVerbose()) node._debug("onInput " + topic);
             if (topic === 'REPORTSTATE') {
                 node.alexa.send_change_report(node.id);
+            } else if (topic === 'GETSTATE') {
+                node.send({
+                    topic: "getState",
+                    payload: node.state
+                })
+                // node.sendState([], {}, undefined, "getState");
+            } else if (topic === 'GETALLSTATES') {
+                let states = node.alexa.get_all_states();
+                node.send({
+                    topic: "getAllStates",
+                    payload: states
+                })
+            } else if (topic === 'GETNAMES') {
+                let names = node.alexa.get_all_names();
+                node.send({
+                    topic: "getNames",
+                    payload: names
+                })
             } else if (topic === 'DOORBELLPRESS') {
                 // TODO https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
                 // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html#cause-object
@@ -392,11 +410,11 @@ module.exports = function (RED) {
                         }
                     }
                 );
-                delete node.state.thermostat_mode;
+                /*delete node.state.thermostat_mode;
                 node.state['schedule'] = {
                     start: "",
                     duration: ""
-                };
+                };*/
             }
             // ThermostatController.HVAC.Components	
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
@@ -616,6 +634,7 @@ module.exports = function (RED) {
                 case "Alexa.ThermostatController": // ThermostatController
                     if (name === 'SetTargetTemperature') {
                         modified = node.setValues(payload, node.state);
+                        /*
                         if (payload.targetSetpoint === undefined) {
                             delete node.state.targetSetpoint;
                         }
@@ -625,19 +644,23 @@ module.exports = function (RED) {
                         if (payload.upperSetpoint === undefined) {
                             delete node.state.upperSetpoint;
                         }
+                        */
                     }
                     else if (name === 'AdjustTargetTemperature') {
                         modified = []
-                        if (typeof payload.targetSetpoint === 'number' && typeof node.state.targetSetpoint === 'number') {
-                            node.state.targetSetpoint += payload.targetSetpoint;
+                        if (typeof payload.targetSetpoint.value === 'number' && typeof node.state.targetSetpoint.value === 'number') {
+                            // TODO check scale
+                            node.state.targetSetpoint.value += payload.targetSetpoint.value;
                             modified.push('targetSetpoint');
                         }
-                        if (typeof payload.lowerSetpoint === 'number' && typeof node.state.lowerSetpoint === 'number') {
-                            node.state.lowerSetpoint += payload.lowerSetpoint;
+                        if (typeof payload.lowerSetpoint.value === 'number' && typeof node.state.lowerSetpoint.value === 'number') {
+                            // TODO check scale
+                            node.state.lowerSetpoint.value += payload.lowerSetpoint.value;
                             modified.push('lowerSetpoint');
                         }
-                        if (typeof payload.upperSetpoint === 'number' && typeof node.state.upperSetpoint === 'number') {
-                            node.state.upperSetpoint += payload.upperSetpoint;
+                        if (typeof payload.upperSetpoint.value === 'number' && typeof node.state.upperSetpoint.value === 'number') {
+                            // TODO check scale
+                            node.state.upperSetpoint.value += payload.upperSetpoint.value;
                             modified.push('upperSetpoint');
                         }
                     }
@@ -671,6 +694,12 @@ module.exports = function (RED) {
         //
         sendState(modified, inputs, namespace, name) {
             var node = this;
+            if (modified === undefined) {
+                modified = [];
+            }
+            if (inputs === undefined) {
+                inputs = {};
+            }
             let msg = {
                 inputs: inputs,
                 payload: node.state,
@@ -813,6 +842,65 @@ module.exports = function (RED) {
             }
             return properties;
         }
+
+        //
+        //
+        //
+        //
+        /*setState(from_object, to_object) {
+            var node = this;
+            let new_value;
+            let modified;
+            // Thermostat
+            if (node.config.i_thermostat_controller) {
+                new_value = {
+                    targetSetpoint: {
+                        value: -274.1,
+                        scale: "CELSIUS"
+                    },
+                    lowerSetpoint: {
+                        value: -274.1,
+                        scale: "CELSIUS"
+                    },
+                    upperSetpoint: {
+                        value: -274.1,
+                        scale: "CELSIUS"
+                    },
+                };
+                modified = node.setValues(from_object, new_value);
+                if (modified.includes('targetSetpoint')) {
+                    delete to_object.lowerSetpoint;
+                    delete to_object.upperSetpoint;
+                    if (typeof to_object.targetSetpoint === 'undefined') {
+                        to_object.targetSetpoint = {
+                            value: -274.1,
+                            scale: "CELSIUS"
+                        };
+                    }
+                } else {
+                    if (modified.includes('lowerSetpoint')) {
+                        delete to_object.targetSetpoint;
+                        if (typeof to_object.lowerSetpoint === 'undefined') {
+                            to_object.lowerSetpoint = {
+                                value: -274.1,
+                                scale: "CELSIUS"
+                            };
+                        }
+                    }   
+                    if (modified.includes('upperSetpoint')) {
+                        delete to_object.targetSetpoint;
+                        if (typeof to_object.upperSetpoint === 'undefined') {
+                            to_object.upperSetpoint = {
+                                value: -274.1,
+                                scale: "CELSIUS"
+                            };
+                        }
+                    }   
+                }
+            }
+            let differs = node.setValues(from_object, to_object);
+            return differs;
+        }*/
 
         //
         //
