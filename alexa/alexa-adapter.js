@@ -199,6 +199,10 @@ module.exports = function (RED) {
             node.app.get(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
             node.app.post(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
             node.app.post(path.join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
+            if (node.config.verbose) {
+                node.app.get(path.join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
+                node.app.get(path.join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
+            }
             if (node.config.msg_check) {
                 node.app.post(path.join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post_verify(req, res); });
             } else {
@@ -382,6 +386,17 @@ module.exports = function (RED) {
         //
         //
         //
+        token_get(req, res) {
+            var node = this;
+            if (node.config.verbose) node._debug('token_get');
+            const uri = 'https://' + path.join(req.get('Host'), node.http_root, TOKEN_PATH);
+            res.status(200).send(uri);
+        }
+
+        //
+        //
+        //
+        //
         token_post(req, res) {
             var node = this;
             if (node.config.verbose) node._debug('token_post');
@@ -461,6 +476,17 @@ module.exports = function (RED) {
             node.auth_code = {};
             if (client_secret !== node.credentials.your_secret) node.error("Unauthorized client_secret");
             return res.status(401).send('Unauthorized');
+        }
+
+        //
+        //
+        //
+        //
+        smarthome_get(req, res) {
+            var node = this;
+            if (node.config.verbose) node._debug('smarthome_get');
+            const uri = 'https://' + path.join(req.get('Host'), node.http_root, SMART_HOME_PATH);
+            res.status(200).send(uri);
         }
 
         //
@@ -854,7 +880,10 @@ module.exports = function (RED) {
                             .then(pres => {
                                 if (node.config.verbose) node._debug("get_user_profile CCHI res " + JSON.stringify(pres));
                                 if (node.config.emails.includes(pres.email)) {
-                                    if (node.config.verbose) node._debug(pres.email + ' OK');
+                                    if (node.config.verbose) {
+                                        node._debug(pres.email + ' OK');
+                                        node.error("Username " + pres.email + " authorized");
+                                    }
                                     node.auth_code = {
                                         code: node.tokgen.generate(),
                                         expire_at: Date.now() + 60 * 2 * 1000
@@ -863,6 +892,7 @@ module.exports = function (RED) {
                                     node.redirect_to_amazon(ores, node.auth_code.code);
                                 } else {
                                     if (node.config.verbose) node._debug(pres.email + ' NOK');
+                                    node.error("Username " + pres.email + " not authorized");
                                     node.redirect_to_login_page(ores, true);
                                 }
                             })
@@ -913,6 +943,36 @@ module.exports = function (RED) {
         //
         //
         //
+        get_all_states() {
+            var node = this;
+            let states = {};
+            Object.keys(node.devices).forEach(function (key) {
+                const device = node.devices[key];
+                if (Object.keys(device.state).length > 0) {
+                    states[device.id] = device.state;
+                }
+            });
+            return states;
+        }
+
+        //
+        //
+        //
+        //
+        get_all_names() {
+            var node = this;
+            let names = {};
+            Object.keys(node.devices).forEach(function (key) {
+                const device = node.devices[key];
+                names[device.id] = device.config.name;
+            });
+            return names;
+        }
+
+        //
+        //
+        //
+        //
         // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-response.html
         get_report_state(endpointId, correlationToken, access_token, messageId) {
@@ -944,13 +1004,54 @@ module.exports = function (RED) {
         //
         //
         //
-        report_state(endpointId) {
-            // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
-            // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
+        send_doorbell_press(endpointId, cause) {
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             var node = this;
-            if (node.config.verbose) node._debug('report_state ' + endpointId);
-            const state = node.get_change_report(endpointId);
-            if (node.config.verbose) node._debug('report_state ' + JSON.stringify(state));
+            if (node.config.verbose) node._debug('send_doorbell_press' + cause);
+
+            node.get_access_token('evn')
+                .then(access_token => {
+                    const state = {
+                        context: {},
+                        event: {
+                            header: {
+                                namespace: "Alexa.DoorbellEventSource",
+                                name: "DoorbellPress",
+                                messageId: node.tokgen.generate(),
+                                payloadVersion: "3"
+                            },
+                            endpoint: {
+                                scope: {
+                                    type: "BearerToken",
+                                    token: access_token
+                                },
+                                endpointId: endpointId
+                            },
+                            payload: {
+                                cause: {
+                                    type: cause || "PHYSICAL_INTERACTION"
+                                },
+                                timestamp: new Date().toISOString()
+                            }
+                        },
+                    };
+                    if (node.config.verbose) node._debug('send_doorbell_press ' + JSON.stringify(state));
+                    superagent
+                        .post(node.config.event_endpoint)
+                        .set('Authorization', 'Bearer ' + access_token)
+                        .send(state)
+                        .end((err, res) => {
+                            if (err) {
+                                node.error('send_doorbell_press err ' + JSON.stringify(err));
+                            } else {
+                                if (node.config.verbose) node._debug('send_doorbell_press res ' + JSON.stringify(res));
+                            }
+                        });
+                    if (node.config.verbose) node._debug('send_doorbell_press sent');
+                })
+                .catch(err => {
+                    node.error('send_doorbell_press get_access_token err ' + JSON.stringify(err));
+                })
         }
 
         //
@@ -985,11 +1086,11 @@ module.exports = function (RED) {
                                 if (node.config.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
                             }
                         });
+                    if (node.config.verbose) node._debug('send_change_report sent');
                 })
                 .catch(err => {
                     node.error('send_change_report get_access_token err ' + JSON.stringify(err));
                 })
-            if (node.config.verbose) node._debug('send_change_report sent');
         }
 
         //
@@ -1107,6 +1208,7 @@ module.exports = function (RED) {
             }
             const oauth2_bearer_token = node.tokens.evn.access_token;
             const properties = node.devices[endpointId].getProperties();
+            if (node.config.verbose) node._debug('endpointId ' + endpointId +' properties ' + JSON.stringify(properties));
             if (changed_propertie_names && changed_propertie_names.length > 0) {
                 properties.forEach(property => {
                     if (changed_propertie_names && changed_propertie_names.includes(property.name)) {
@@ -1186,7 +1288,7 @@ module.exports = function (RED) {
                     if (node.config.verbose) node._debug("CCHI state " + JSON.stringify(state));
                 }
             } else {
-                // TODO all states
+                // TODO all states??
             }
         }
 
