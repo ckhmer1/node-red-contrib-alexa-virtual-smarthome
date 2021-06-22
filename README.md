@@ -277,18 +277,27 @@ This is a checklist for the config:
 ### Check the forward rule for /alexa/oauth
 
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/oauth"
-* You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy config or reverse proxy config.
+* You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy or reverse proxy config.
 
 
 ### Check the forward rule for /alexa/token
 * Enable the debug log in the Node-Red Alexa node configuration.
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/token"
-* You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding the reverse proxy config or reverse proxy config.
+* You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding to the reverse proxy  or reverse proxy config.
 
 ### Check the forward rule for /alexa/smarhome
 * Enable the debug log in the Node-Red Alexa node configuration.
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/smarhome"
-* You should get the message "https://YOUR_DOMAIN.COM/alexa/smarhome". If not, check your port forwarding the reverse proxy config or reverse proxy config.
+* You should get the following message:
+
+```
+Alexa SmartHome test page
+
+Url: https://YOUR_DOMAIN.COM/alexa/smarhome
+Post: {"ok":"ok"}
+```
+
+If not, check your port forwarding to the reverse proxy or reverse proxy config.
 
 ### Check the lambda function
 

@@ -24,6 +24,7 @@
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/get-started-with-device-templates.html
+// https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-property-schemas.html
 
 module.exports = function (RED) {
     /******************************************************************************************************************
@@ -146,8 +147,8 @@ module.exports = function (RED) {
                     process.nextTick(() => {
                         node.alexa.send_change_report(node.id, modified);
                     });
-                    node.sendState(modified, msg.payload);
                 }
+                // node.sendState(modified, msg.payload);
             }
         }
 
@@ -240,6 +241,27 @@ module.exports = function (RED) {
 
             // EventDetectionSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
+
+            if (node.config.i_event_detection_sensor) {
+                if (node.isVerbose()) node._debug("Alexa.EventDetectionSensor");
+                node.addCapability("Alexa.EventDetectionSensor", {
+                    humanPresenceDetectionState: 'NOT_DETECTED' // DETECTED
+                },  
+                {
+                    configuration: {
+                        detectionMethods: [
+                            "AUDIO",
+                            "VIDEO"
+                        ],
+                        detectionModes: {
+                            humanPresence: {
+                                featureAvailability: "ENABLED",
+                                supportsNotDetected: true
+                            }
+                        }
+                    }
+                });
+            }
 
             // InputController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html
@@ -418,8 +440,10 @@ module.exports = function (RED) {
             }
             // ThermostatController.HVAC.Components	
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
+            
             // ToggleController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
+
             // WakeOnLANController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
 
@@ -432,7 +456,7 @@ module.exports = function (RED) {
             let endpoint = {
                 "endpointId": node.config.id,
                 "manufacturerName": "Node-RED",
-                "description": node.device_desc + " by Node-RED",
+                "description": node.device_desc + " " + node.config.name + " by Node-RED",
                 "friendlyName": node.config.name,
                 "displayCategories": node.config.display_categories,
                 "additionalAttributes": {
@@ -608,6 +632,15 @@ module.exports = function (RED) {
                 case "Alexa.PowerLevelController": // PowerLevelController
                     if (name === 'AdjustPowerLevel') {
                         modified = []
+                    }
+                    break;
+
+                case "Alexa.SceneController": // SceneController
+                    if (name === 'Activate') {
+                        modified = [];
+                    }
+                    else if (name === 'Deactivate') {
+                        modified = [];
                     }
                     break;
 

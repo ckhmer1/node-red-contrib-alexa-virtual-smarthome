@@ -486,7 +486,8 @@ module.exports = function (RED) {
             var node = this;
             if (node.config.verbose) node._debug('smarthome_get');
             const uri = 'https://' + path.join(req.get('Host'), node.http_root, SMART_HOME_PATH);
-            res.status(200).send(uri);
+            // res.status(200).send(uri);
+            node.show_test_page(res, uri);
         }
 
         //
@@ -604,7 +605,25 @@ module.exports = function (RED) {
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
-                                        let response = node.get_response_report(endpointId, header.correlationToken, access_token);
+                                        let r_namespace = undefined;
+                                        let r_name = undefined;
+                                        if (namespace === 'Alexa.SceneController') {
+                                            r_namespace = namespace;
+                                            if (name === 'Activate') {
+                                                r_name = 'ActivationStarted';
+                                            } else {
+                                                r_name = 'DeactivationStarted';
+                                            }
+                                        }
+                                        let response = node.get_response_report(endpointId, header.correlationToken, access_token, r_namespace, r_name);
+                                        if (namespace === 'Alexa.SceneController') {
+                                            response.payload = {
+                                                cause: {
+                                                    type: "VOICE_INTERACTION"
+                                                },
+                                                timestamp: new Date().toISOString()
+                                            };
+                                        }
                                         if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
                                         res.end();
@@ -726,6 +745,24 @@ module.exports = function (RED) {
                             .replace(/VERBOSE/g, node.config.verbose)
                             .replace(/LOGIN_WITH_AMAZON/g, '' + node.config.login_with_amazon)
                             .replace(/ERROR_MESSAGE/g, error_message));
+                }
+            });
+        }
+
+        //
+        //
+        //
+        //
+        show_test_page(res, url) {
+            var node = this;
+            // Show login page
+            fs.readFile(path.join(__dirname, 'html/test.html'), 'utf8', function (err, data) {
+                if (err) {
+                    res.status(500).send('No page available');
+                    node.error("Load error " + err);
+                } else {
+                    res
+                        .send(data.replace(/alexa_smarthome_url/g, url));
                 }
             });
         }
@@ -897,7 +934,8 @@ module.exports = function (RED) {
                                 }
                             })
                             .catch(err => {
-                                node.error("get_user_profile error " + err);
+                                node.error("mlwaat get_user_profile error " + err);
+                                node.redirect_to_login_page(ores, true);
                                 /*
                                 error	An ASCII error code with an error code value.
                                 error_description	A human-readable ASCII string with information about the error, useful for client developers.
@@ -908,6 +946,7 @@ module.exports = function (RED) {
                     })
                     .catch(err => {
                         node.error("mlwaat get_access_token error " + err);
+                        node.redirect_to_login_page(ores, true);
                     });
             } else {
                 if (node.config.verbose) node._debug("manage_login_with_amazon_access_token ERROR");
@@ -1058,7 +1097,7 @@ module.exports = function (RED) {
         //
         //
         //
-        send_change_report(endpointId, changed_propertie_names, reason) {
+        send_change_report(endpointId, changed_propertie_names, reason, namespace, name) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
@@ -1070,7 +1109,7 @@ module.exports = function (RED) {
             else if (typeof changed_propertie_names === 'string') {
                 changed_propertie_names = [changed_propertie_names];
             }
-            const state = node.get_change_report(endpointId, "ChangeReport", undefined, changed_propertie_names, reason);
+            const state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
             if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
             if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
             node.get_access_token('evn')
@@ -1097,14 +1136,14 @@ module.exports = function (RED) {
         //
         //
         //
-        get_response_report(endpointId, correlationToken, access_token) {
+        get_response_report(endpointId, correlationToken, access_token, namespace, name) {
             var node = this;
             const properties = node.devices[endpointId].getProperties();
             let response = {
                 event: {
                     header: {
-                        namespace: "Alexa",
-                        name: "Response",
+                        namespace: namespace || "Alexa",
+                        name: name || "Response",
                         messageId: node.tokgen.generate(),
                         correlationToken: correlationToken,
                         payloadVersion: "3"
@@ -1195,20 +1234,14 @@ module.exports = function (RED) {
         //
         //
         //
-        get_change_report(endpointId, name, messageId, changed_propertie_names, reason) {
+        get_change_report(endpointId, namespace, name, messageId, changed_propertie_names, reason) {
             var node = this;
             let changed_properties = [];
             let unchanged_properties = [];
             let payload = {};
-            if (!messageId) {
-                messageId = node.tokgen.generate();
-            }
-            if (changed_propertie_names === undefined) {
-                changed_propertie_names = [];
-            }
             const oauth2_bearer_token = node.tokens.evn.access_token;
             const properties = node.devices[endpointId].getProperties();
-            if (node.config.verbose) node._debug('endpointId ' + endpointId +' properties ' + JSON.stringify(properties));
+            if (node.config.verbose) node._debug('endpointId ' + endpointId + ' properties ' + JSON.stringify(properties));
             if (changed_propertie_names && changed_propertie_names.length > 0) {
                 properties.forEach(property => {
                     if (changed_propertie_names && changed_propertie_names.includes(property.name)) {
@@ -1233,9 +1266,9 @@ module.exports = function (RED) {
             const state = {
                 event: {
                     header: {
-                        namespace: "Alexa",
+                        namespace: namespace || "Alexa",
                         name: name || "ChangeReport",
-                        messageId: messageId,
+                        messageId: messageId || node.tokgen.generate(),
                         payloadVersion: "3"
                     },
                     endpoint: {
