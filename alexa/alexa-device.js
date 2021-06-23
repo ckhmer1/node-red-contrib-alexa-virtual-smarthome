@@ -26,6 +26,13 @@
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/get-started-with-device-templates.html
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-property-schemas.html
 
+const float_values = {
+    color: {
+        saturation: true,
+        brightness: true
+    }
+};
+
 module.exports = function (RED) {
     /******************************************************************************************************************
      *
@@ -944,7 +951,7 @@ module.exports = function (RED) {
             let differs = [];
             Object.keys(to_object).forEach(function (key) {
                 if (from_object.hasOwnProperty(key)) {
-                    if (node.setValue(key, from_object[key], to_object)) {
+                    if (node.setValue(key, from_object[key], to_object, float_values[key] || {})) {
                         differs.push(key);
                     }
                 }
@@ -956,20 +963,20 @@ module.exports = function (RED) {
         //
         //
         //
-        setValue(key, value, to_object) {
+        setValue(key, value, to_object, float_values) {
             var node = this;
             let differs = false;
             const old_value = to_object[key];
             const val_type = typeof old_value;
             let new_value = undefined;
             if (val_type === 'number') {
-                if (old_value % 1 === 0) {
-                    new_value = parseInt(String(value));
+                if (float_values) {
+                    new_value = parseFloat(String(value));
                     if (isNaN(new_value)) {
                         throw new Error('Unable to convert "' + value + '" to a float');
                     }
                 } else {
-                    new_value = parseFloat(String(value));
+                    new_value = parseInt(String(value));
                     if (isNaN(new_value)) {
                         throw new Error('Unable to convert "' + value + '" to a float');
                     }
@@ -1012,7 +1019,7 @@ module.exports = function (RED) {
                         }
                         Object.keys(old_value).forEach(function (key) {
                             if (typeof value[key] !== 'undefined') {
-                                if (node.setValue(key, value[key], old_value)) {
+                                if (node.setValue(key, value[key], old_value, float_values[key] || {})) {
                                     differs = true;
                                 }
                             }
