@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Alexa Node-RED interface module">
+    <meta name="author" content="Claudio Chimera">
+    <link rel="shortcut icon" href="https://nodered.org/favicon.ico">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <title>Test</title>
+
+    <script>
+        const url = "alexa_smarthome_url";
+        const data = {
+            "directive": {
+                "header": {
+                    "namespace": "Test",
+                    "name": "Test",
+                    "messageId": "1234567890",
+                    "payloadVersion": "3"
+                },
+                "payload": {
+                    "grant": {
+                        "type": "OAuth2.AuthorizationCode",
+                        "code": "Test"
+                    },
+                    "grantee": {
+                        "type": "BearerToken",
+                        "token": "Test"
+                    }
+                }
+            }
+        };
+        function test_success(data) {
+            if (typeof data !== "string") {
+                data = JSON.stringify(data);
+            }
+            document.getElementById('test_res').innerHTML = data;
+        }
+        function test_smarthome_post(url) {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: JSON.stringify(data),
+                success: test_success,
+                error: function (xhr, status) {
+                    test_success("ERROR");
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        }
+        test_smarthome_post(url);
+    </script>
+</head>
+
+<body>
+    <div class="content">
+        <div>
+            <h2>Alexa SmartHome test page</h2>
+        </div>
+        <div>
+            <b>Url: </b><span id="url_res">alexa_smarthome_url</span>
+        </div>
+        <b>Post: </b><span id="test_res">Waiting</span><BR />
+    </div>
+</body>
+
+</html>

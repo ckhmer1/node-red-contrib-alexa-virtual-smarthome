@@ -24,6 +24,14 @@
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/get-started-with-device-templates.html
+// https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-property-schemas.html
+
+const float_values = {
+    color: {
+        saturation: true,
+        brightness: true
+    }
+};
 
 module.exports = function (RED) {
     /******************************************************************************************************************
@@ -146,8 +154,8 @@ module.exports = function (RED) {
                     process.nextTick(() => {
                         node.alexa.send_change_report(node.id, modified);
                     });
-                    node.sendState(modified, msg.payload);
                 }
+                // node.sendState(modified, msg.payload);
             }
         }
 
@@ -240,6 +248,27 @@ module.exports = function (RED) {
 
             // EventDetectionSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
+
+            if (node.config.i_event_detection_sensor) {
+                if (node.isVerbose()) node._debug("Alexa.EventDetectionSensor");
+                node.addCapability("Alexa.EventDetectionSensor", {
+                    humanPresenceDetectionState: 'NOT_DETECTED' // DETECTED
+                },  
+                {
+                    configuration: {
+                        detectionMethods: [
+                            "AUDIO",
+                            "VIDEO"
+                        ],
+                        detectionModes: {
+                            humanPresence: {
+                                featureAvailability: "ENABLED",
+                                supportsNotDetected: true
+                            }
+                        }
+                    }
+                });
+            }
 
             // InputController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html
@@ -418,8 +447,10 @@ module.exports = function (RED) {
             }
             // ThermostatController.HVAC.Components	
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
+            
             // ToggleController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
+
             // WakeOnLANController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
 
@@ -432,7 +463,7 @@ module.exports = function (RED) {
             let endpoint = {
                 "endpointId": node.config.id,
                 "manufacturerName": "Node-RED",
-                "description": node.device_desc + " by Node-RED",
+                "description": node.device_desc + " " + node.config.name + " by Node-RED",
                 "friendlyName": node.config.name,
                 "displayCategories": node.config.display_categories,
                 "additionalAttributes": {
@@ -608,6 +639,15 @@ module.exports = function (RED) {
                 case "Alexa.PowerLevelController": // PowerLevelController
                     if (name === 'AdjustPowerLevel') {
                         modified = []
+                    }
+                    break;
+
+                case "Alexa.SceneController": // SceneController
+                    if (name === 'Activate') {
+                        modified = [];
+                    }
+                    else if (name === 'Deactivate') {
+                        modified = [];
                     }
                     break;
 
@@ -911,7 +951,7 @@ module.exports = function (RED) {
             let differs = [];
             Object.keys(to_object).forEach(function (key) {
                 if (from_object.hasOwnProperty(key)) {
-                    if (node.setValue(key, from_object[key], to_object)) {
+                    if (node.setValue(key, from_object[key], to_object, float_values[key] || {})) {
                         differs.push(key);
                     }
                 }
@@ -923,20 +963,20 @@ module.exports = function (RED) {
         //
         //
         //
-        setValue(key, value, to_object) {
+        setValue(key, value, to_object, float_values) {
             var node = this;
             let differs = false;
             const old_value = to_object[key];
             const val_type = typeof old_value;
             let new_value = undefined;
             if (val_type === 'number') {
-                if (old_value % 1 === 0) {
-                    new_value = parseInt(String(value));
+                if (float_values) {
+                    new_value = parseFloat(String(value));
                     if (isNaN(new_value)) {
                         throw new Error('Unable to convert "' + value + '" to a float');
                     }
                 } else {
-                    new_value = parseFloat(String(value));
+                    new_value = parseInt(String(value));
                     if (isNaN(new_value)) {
                         throw new Error('Unable to convert "' + value + '" to a float');
                     }
@@ -979,7 +1019,7 @@ module.exports = function (RED) {
                         }
                         Object.keys(old_value).forEach(function (key) {
                             if (typeof value[key] !== 'undefined') {
-                                if (node.setValue(key, value[key], old_value)) {
+                                if (node.setValue(key, value[key], old_value, float_values[key] || {})) {
                                     differs = true;
                                 }
                             }

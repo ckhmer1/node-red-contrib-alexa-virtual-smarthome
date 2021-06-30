@@ -21,6 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [publish-npm]
     steps:
-      - uses: Hacksore/node-red-flow@v2
+      - uses: hacksore/node-red-flow@v2
         with:
           repo: node-red-contrib-alexa-virtual-smarthome
