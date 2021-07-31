@@ -762,6 +762,11 @@ module.exports = function (RED) {
                     node.error("Load error " + err);
                 } else {
                     res
+                        .set("Content-Security-Policy",
+                            "default-src 'self' 'unsafe-inline' ; " +
+                            "img-src https://nodered.org ; " +
+                            "script-src 'self' https://code.jquery.com 'unsafe-inline' ; "
+                        )
                         .send(data.replace(/alexa_smarthome_url/g, url));
                 }
             });
