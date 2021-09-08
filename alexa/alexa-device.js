@@ -821,6 +821,26 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // PercentageController
+            if (node.config.i_percentage_controller) {
+                properties.push({
+                    namespace: "Alexa.PercentageController",
+                    name: "percentage",
+                    value: node.state['percentage'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // PowerController
+            if (node.config.i_power_controller) {
+                properties.push({
+                    namespace: "Alexa.PowerController",
+                    name: "powerState",
+                    value: node.state['powerState'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
             // TemperatureSensor
             if (node.config.i_temperature_sensor) {
                 properties.push({
@@ -869,16 +889,6 @@ module.exports = function (RED) {
                         uncertaintyInMilliseconds: uncertainty,
                     });
                 }
-            }
-            // PowerController
-            if (node.config.i_power_controller) {
-                properties.push({
-                    namespace: "Alexa.PowerController",
-                    name: "powerState",
-                    value: node.state['powerState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
             }
             return properties;
         }
