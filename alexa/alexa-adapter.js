@@ -601,7 +601,8 @@ module.exports = function (RED) {
                     } else {
                         if (node.config.verbose) node._debug(" CCHI command " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
-                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload);
+                            let more_data = {};
+                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload, more_data);
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
@@ -624,6 +625,9 @@ module.exports = function (RED) {
                                                 timestamp: new Date().toISOString()
                                             };
                                         }
+                                        Object.keys(more_data).forEach(key => {
+                                            response.payload[key] = more_data[key];
+                                        });
                                         if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
                                         res.end();

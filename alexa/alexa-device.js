@@ -145,6 +145,9 @@ module.exports = function (RED) {
                 process.nextTick(() => {
                     node.alexa.send_doorbell_press(node.id, msg.payload || '');
                 });
+            } else if (topic === 'CAMERASTREAMS') {
+                node.cameraStreams = msg.payload;
+                if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 const modified = node.setValues(msg.payload, node.state);
@@ -179,6 +182,31 @@ module.exports = function (RED) {
             }
             // CameraStreamController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html
+            if (node.config.i_camera_stream_controller) {
+                if (node.isVerbose()) node._debug("Alexa.CameraStreamController");
+                node.cameraStreams = [];
+                let camera_stream_configurations = [];
+                node.config.camera_stream_configurations.forEach(c => {
+                    let r = [];
+                    c.r.forEach(wh => {
+                        r.push({
+                            width: wh[0],
+                            height: wh[1]
+                        });
+                    });
+                    camera_stream_configurations.push({
+                        protocols: c.p,
+                        resolutions: r,
+                        authorizationTypes: c.t,
+                        videoCodecs: c.v,
+                        audioCodecs: c.a
+                    });
+                });
+                node.addCapability("Alexa.CameraStreamController", undefined,
+                    {
+                        cameraStreamConfigurations: camera_stream_configurations
+                    });
+            }
 
             // ChannelController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-channelcontroller.html
@@ -253,21 +281,21 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.EventDetectionSensor");
                 node.addCapability("Alexa.EventDetectionSensor", {
                     humanPresenceDetectionState: 'NOT_DETECTED' // DETECTED
-                },  
-                {
-                    configuration: {
-                        detectionMethods: [
-                            "AUDIO",
-                            "VIDEO"
-                        ],
-                        detectionModes: {
-                            humanPresence: {
-                                featureAvailability: "ENABLED",
-                                supportsNotDetected: true
+                },
+                    {
+                        configuration: {
+                            detectionMethods: [
+                                "AUDIO",
+                                "VIDEO"
+                            ],
+                            detectionModes: {
+                                humanPresence: {
+                                    featureAvailability: "ENABLED",
+                                    supportsNotDetected: true
+                                }
                             }
                         }
-                    }
-                });
+                    });
             }
 
             // InputController
@@ -447,7 +475,7 @@ module.exports = function (RED) {
             }
             // ThermostatController.HVAC.Components	
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
-            
+
             // ToggleController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
 
@@ -525,7 +553,7 @@ module.exports = function (RED) {
         //
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
-        execCommand(namespace, name, payload) {
+        execCommand(namespace, name, payload, more_data) { // Directive
             var node = this;
             let modified = undefined;
             if (node.isVerbose()) node._debug("execCommand state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
@@ -541,6 +569,77 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.CameraStreamController": // CameraStreamController
+                    if (name === 'InitializeCameraStreams') {
+                        const cameraStreams = payload.cameraStreams;
+                        let css = [];
+                        node.cameraStreams.forEach(acs => {
+                            payload.cameraStreams.forEach(rcs => {
+                                if (acs.protocol === rcs.protocol &&
+                                    acs.resolution.width === rcs.resolution.width &&
+                                    acs.resolution.height === rcs.resolution.height &&
+                                    acs.resolution.authorizationType === rcs.resolution.authorizationType &&
+                                    acs.resolution.videoCodec === rcs.resolution.videoCodec &&
+                                    acs.resolution.audioCodec === rcs.resolution.audioCodec
+                                ) {
+                                    css.push(acs);
+                                }
+                            });
+                        });
+                        if (css.length > 0) {
+                            more_data.cameraStreams = [];
+                            {
+                                css.forEach(cs => {
+                                    more_data.cameraStreams.push({
+                                        uri: css.uri,
+                                        expirationTime: css.expirationTime,
+                                        idleTimeoutSeconds: css.idleTimeoutSeconds,
+                                        protocol: css.protocol,
+                                        resolution: css.resolution,
+                                        authorizationType: css.authorizationType,
+                                        videoCodec: css.videoCodec,
+                                        audioCodec: css.audioCodec
+                                    });
+                                    more_data.imageUri = css.imageUri;
+                                });
+                            }
+                        }
+                        /*
+                            returns cameraStreams array and imageUri
+                        */
+                        /*
+                        [
+                            {
+                            "protocol": "RTSP",
+                            "resolution": {"width": 1920, "height": 1080},
+                            "authorizationType": "BASIC",
+                            "videoCodec": "H264",
+                            "audioCodec": "AAC"
+                            },
+                            {
+                            "protocol": "RTSP",
+                            "resolution": {"width": 1280, "height": 720},
+                            "authorizationType": "NONE",
+                            "videoCodec": "MPEG2",
+                            "audioCodec": "G711"
+                            }
+                        ]
+                        */
+                        // TODO returns
+                        /*more_data.cameraStreams = [
+                            {
+                                "uri": "rtsp://username:password@link.to.video:443/feed1.mp4",
+                                "expirationTime": "2017-02-03T16:20:50.52Z",
+                                "idleTimeoutSeconds": 30,
+                                "protocol": "RTSP",
+                                "resolution": { "width": 1920, "height": 1080 },
+                                "authorizationType": "BASIC",
+                                "videoCodec": "H264",
+                                "audioCodec": "AAC"
+                            }
+                        ];
+                        more_data.imageUri = "https://username:password@link.to.image/image.jpg";*/
+                    }
                 case "Alexa.ChannelController": // ChannelController
                     if (name === 'ChangeChannel') {
                         modified = node.setValues(payload, node.state);
