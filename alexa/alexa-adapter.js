@@ -645,18 +645,20 @@ module.exports = function (RED) {
                             } else {
                                 error = 'INVALID_DIRECTIVE';
                                 node.error("smarthome_post: execCommand unknown directive " + namespace + " " + name);
-                                // TODO error_message
+                                node.senderror_response(res, messageId, endpointId);
                             }
                         } catch (err) {
                             node.error("smarthome_post: execCommand error " + err.stack);
                             error = 'INVALID_DIRECTIVE';
                             node.error("CCHI execCommand error");
+                            node.senderror_response(res, messageId, endpointId);
                         }
                     }
                 } else {
                     error = 'NO_SUCH_ENDPOINT';
                     node.error("smarthome_post: no such endpoint");
-                    // TODO error_message
+                    node.send_delete_report(endpointId);
+                    node.senderror_response(res, messageId, endpointId);
                 }
             } else {
                 if (namespace === "Alexa.Discovery" && name === 'Discover') {
@@ -1052,6 +1054,46 @@ module.exports = function (RED) {
         //
         //
         //
+        // 
+        // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
+        get_delete_report(endpointIds, access_token) {
+            var node = this;
+            let endpoints = [];
+            if (typeof endpointIds === 'string') {
+                endpoints.push({
+                    endpointId: endpointIds
+                });
+            } else {
+                endpointIds.forEach(endpointId => {
+                    endpoints.push({
+                        endpointId: endpointId
+                    });
+                });
+            }
+            const msg = {
+                event: {
+                    header: {
+                        namespace: "Alexa",
+                        name: "DeleteReport",
+                        messageId: node.tokgen.generate(),
+                        payloadVersion: "3",
+                    },
+                    payload: {
+                        endpoints: endpoints
+                    },
+                    scope: {
+                        "type": "BearerToken",
+                        "token": access_token
+                    }
+                }
+            }
+            return msg;
+        }
+
+        //
+        //
+        //
+        //
         send_doorbell_press(endpointId, cause) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             var node = this;
@@ -1138,6 +1180,36 @@ module.exports = function (RED) {
                 })
                 .catch(err => {
                     node.error('send_change_report get_access_token err ' + JSON.stringify(err));
+                })
+        }
+
+        //
+        //
+        //
+        //
+        send_delete_report(endpointIds) {
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
+            var node = this;
+            if (node.config.verbose) node._debug('send_delete_report ' + JSON.stringify(endpointIds));
+            const report = node.get_delete_report(endpointIds, access_token);
+            node.get_access_token('evn')
+                .then(access_token => {
+                    if (node.config.verbose) node._debug('send_delete_report report ' + JSON.stringify(report));
+                    superagent
+                        .post(node.config.event_endpoint)
+                        .set('Authorization', 'Bearer ' + access_token)
+                        .send(report)
+                        .end((err, res) => {
+                            if (err) {
+                                node.error('send_delete_report err ' + JSON.stringify(err));
+                            } else {
+                                if (node.config.verbose) node._debug('send_delete_report res ' + JSON.stringify(res));
+                            }
+                        });
+                    if (node.config.verbose) node._debug('send_delete_report sent');
+                })
+                .catch(err => {
+                    node.error('send_delete_report get_access_token err ' + JSON.stringify(err));
                 })
         }
 
