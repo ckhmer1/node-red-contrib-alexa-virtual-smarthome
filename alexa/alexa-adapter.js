@@ -644,21 +644,26 @@ module.exports = function (RED) {
                                 return;
                             } else {
                                 error = 'INVALID_DIRECTIVE';
+                                error_message = RED._("alexa-adapter.error.invalid-directive")
                                 node.error("smarthome_post: execCommand unknown directive " + namespace + " " + name);
-                                node.senderror_response(res, messageId, endpointId);
+                                node.senderror_response(res, messageId, endpointId, error, error_message);
                             }
                         } catch (err) {
                             node.error("smarthome_post: execCommand error " + err.stack);
                             error = 'INVALID_DIRECTIVE';
+                            error_message = RED._("alexa-adapter.error.invalid-directive")
                             node.error("CCHI execCommand error");
-                            node.senderror_response(res, messageId, endpointId);
+                            node.senderror_response(res, messageId, endpointId, error, error_message);
                         }
                     }
                 } else {
                     error = 'NO_SUCH_ENDPOINT';
+                    error_message = RED._("alexa-adapter.error.invalid-directive")
                     node.error("smarthome_post: no such endpoint");
-                    node.send_delete_report(endpointId);
-                    node.senderror_response(res, messageId, endpointId);
+                    node.senderror_response(res, messageId, endpointId, error, error_message);
+                    process.nextTick(() => {
+                        node.send_delete_report(endpointId, header.correlationToken);
+                    });
                 }
             } else {
                 if (namespace === "Alexa.Discovery" && name === 'Discover') {
@@ -686,10 +691,8 @@ module.exports = function (RED) {
                 } else {
                     error = 'INVALID_DIRECTIVE';
                     error_message = RED._("alexa-adapter.error.invalid-directive")
+                    node.senderror_response(res, messageId, endpointId, error, error_message);
                 }
-            }
-            if (error) {
-                node.senderror_response(res, messageId, endpointId, error, error_message);
             }
         }
 
@@ -1056,7 +1059,7 @@ module.exports = function (RED) {
         //
         // 
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
-        get_delete_report(endpointIds, access_token) {
+        get_delete_report(endpointIds, correlationToken, access_token) {
             var node = this;
             let endpoints = [];
             if (typeof endpointIds === 'string') {
@@ -1069,14 +1072,23 @@ module.exports = function (RED) {
                         endpointId: endpointId
                     });
                 });
+                endpointIds = endpointIds[0];
             }
             const msg = {
                 event: {
                     header: {
                         namespace: "Alexa",
                         name: "DeleteReport",
+                        correlationToken: correlationToken,
                         messageId: node.tokgen.generate(),
                         payloadVersion: "3",
+                    },
+                    endpoint: {
+                        scope: {
+                            type: "BearerToken",
+                            token: access_token
+                        },
+                        endpointId: endpointIds
                     },
                     payload: {
                         endpoints: endpoints
@@ -1187,13 +1199,13 @@ module.exports = function (RED) {
         //
         //
         //
-        send_delete_report(endpointIds) {
+        send_delete_report(endpointIds, correlationToken) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
             var node = this;
             if (node.config.verbose) node._debug('send_delete_report ' + JSON.stringify(endpointIds));
-            const report = node.get_delete_report(endpointIds, access_token);
             node.get_access_token('evn')
                 .then(access_token => {
+                    const report = node.get_delete_report(endpointIds, correlationToken, access_token);
                     if (node.config.verbose) node._debug('send_delete_report report ' + JSON.stringify(report));
                     superagent
                         .post(node.config.event_endpoint)
