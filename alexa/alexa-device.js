@@ -573,35 +573,33 @@ module.exports = function (RED) {
                     if (name === 'InitializeCameraStreams') {
                         const cameraStreams = payload.cameraStreams;
                         let css = [];
-                        node.cameraStreams.forEach(acs => {
-                            payload.cameraStreams.forEach(rcs => {
-                                if (acs.protocol === rcs.protocol &&
-                                    acs.resolution.width === rcs.resolution.width &&
-                                    acs.resolution.height === rcs.resolution.height &&
-                                    acs.resolution.authorizationType === rcs.resolution.authorizationType &&
-                                    acs.resolution.videoCodec === rcs.resolution.videoCodec &&
-                                    acs.resolution.audioCodec === rcs.resolution.audioCodec
-                                ) {
-                                    css.push(acs);
-                                }
-                            });
-                        });
-                        if (css.length > 0) {
-                            more_data.cameraStreams = [];
-                            {
-                                css.forEach(cs => {
-                                    more_data.cameraStreams.push({
-                                        uri: css.uri,
-                                        expirationTime: css.expirationTime,
-                                        idleTimeoutSeconds: css.idleTimeoutSeconds,
-                                        protocol: css.protocol,
-                                        resolution: css.resolution,
-                                        authorizationType: css.authorizationType,
-                                        videoCodec: css.videoCodec,
-                                        audioCodec: css.audioCodec
-                                    });
-                                    more_data.imageUri = css.imageUri;
+                        if (node.cameraStreams && node.cameraStreams.cameraStreams.length > 0) {
+                            node.cameraStreams.cameraStreams.forEach(acs => {
+                                payload.cameraStreams.forEach(rcs => {
+                                    if (acs.protocol === rcs.protocol &&
+                                        acs.resolution.width === rcs.resolution.width &&
+                                        acs.resolution.height === rcs.resolution.height &&
+                                        acs.resolution.authorizationType === rcs.resolution.authorizationType &&
+                                        acs.resolution.videoCodec === rcs.resolution.videoCodec &&
+                                        acs.resolution.audioCodec === rcs.resolution.audioCodec
+                                    ) {
+                                        css.push({
+                                            uri: acs.uri,
+                                            expirationTime: acs.expirationTime,
+                                            idleTimeoutSeconds: acs.idleTimeoutSeconds,
+                                            protocol: acs.protocol,
+                                            resolution: acs.resolution,
+                                            authorizationType: acs.authorizationType,
+                                            videoCodec: acs.videoCodec,
+                                            audioCodec: acs.audioCodec
+                                        });
+                                    }
                                 });
+                            });
+                            if (css.length > 0) {
+                                modified = [];
+                                more_data.cameraStreams = css;
+                                more_data.imageUri = node.cameraStreams.imageUri;
                             }
                         }
                         /*

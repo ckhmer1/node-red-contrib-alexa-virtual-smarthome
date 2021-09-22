@@ -221,6 +221,25 @@ module.exports = function (RED) {
             if (node.app != node.http_server) {
                 if (node.config.verbose) node._debug("Stopping server");
                 node.http_server.stop();
+            } else {
+                if (RED.settings.httpNodeRoot !== false) {
+                    var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                    var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                    var options_urls = [];
+                    var all_urls = [];
+    
+                    REDapp._router.stack.forEach(function (route, i, routes) {
+                        if (route.route && (
+                            (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
+                            (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
+                            (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
+                            (all_urls.includes(route.route.path))
+                        )) {
+                            node._debug('removing url: ' + route.route.path);
+                            routes.splice(i, 1);
+                        }
+                    });
+                }
             }
             if (removed) {
                 // this node has been deleted
