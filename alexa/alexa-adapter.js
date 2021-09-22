@@ -116,15 +116,13 @@ module.exports = function (RED) {
 
             if (node.config.verbose) node._debug("New " + node.config.name);
 
-            node.on('close', function (removed, done) {
-                node.shutdown(me, removed, done);
-            });
+            node.on('close', node.shutdown);
 
             node.setup();
             if (node.config.verbose) node._debug("init completed");
         }
 
-        //
+        // Register a new device, called bu the alexa-device
         //
         //
         //
@@ -137,21 +135,26 @@ module.exports = function (RED) {
             });
         }
 
-        //
+        // Unregister a device, called bu the alexa-device
         //
         //
         //
         deregister(device, removed) {
             var node = this;
-            if (node.config.verbose) node._debug("deregister device id " + device.id + " removed " + true);
+            if (node.config.verbose) node._debug("deregister device id " + device.id + " removed " + removed);
             if (node.device[device.id]) {
                 delete node.device[device.id];
             }
-            if (node.app != node.http_server) {
+            /*if (removed) {
+                process.nextTick(() => {
+                    node.send_delete_report(device.id, header.correlationToken);
+                });
+            }*/
+            /*if (node.app != node.http_server) {
                 if (node.config.verbose) node._debug("Stopping server");
                 node.http_server.stop();
                 node.http_server = RED.httpNode || RED.httpAdmin;
-            }
+            }*/
         };
 
         //
@@ -215,7 +218,7 @@ module.exports = function (RED) {
         //
         //
         //
-        shutdown(me, removed, done) {
+        shutdown(removed, done) {
             var node = this;
             if (node.config.verbose) node._debug("(on-close)");
             if (node.app != node.http_server) {
@@ -223,19 +226,25 @@ module.exports = function (RED) {
                 node.http_server.stop();
             } else {
                 if (RED.settings.httpNodeRoot !== false) {
+                    if (node.config.verbose) node._debug("Removing url");
                     var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
                     var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
                     var options_urls = [];
                     var all_urls = [];
-    
-                    REDapp._router.stack.forEach(function (route, i, routes) {
+
+                    if (node.config.verbose) {
+                        node._debug("get_urls " + JSON.stringify(get_urls));
+                        node._debug("post_urls " + JSON.stringify(post_urls));
+                    }
+                    node.app._router.stack.forEach(function (route, i, routes) {
+                        if (node.config.verbose && route.route) node._debug("url " + route.route.path);
                         if (route.route && (
                             (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
                             (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
                             (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
                             (all_urls.includes(route.route.path))
                         )) {
-                            node._debug('removing url: ' + route.route.path);
+                            node._debug('shutdown: removing url: ' + route.route.path);
                             routes.splice(i, 1);
                         }
                     });
@@ -246,7 +255,7 @@ module.exports = function (RED) {
                 if (node.config.verbose) node._debug("shutdown: removed");
             } else {
                 // this node is being restarted
-                if (node.config.verbose) node._debug("shutdown: restarting");
+                if (node.config.verbose) node._debug("shutdown: stopped");
             }
             if (typeof done === 'function') {
                 done();
