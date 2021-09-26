@@ -195,6 +195,7 @@ module.exports = function (RED) {
                 node.http_server = stoppable(http.createServer(node.app), GRACE_MILLISECONDS);
             } else {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
+                node.UnregisterUrl();
             }
             let urlencodedParser = bodyParser.urlencoded({ extended: false })
             let jsonParser = bodyParser.json()
@@ -218,6 +219,57 @@ module.exports = function (RED) {
         //
         //
         //
+        GetRouteType(route) {
+            if (route) {
+                if (route.route.methods['get'] && route.route.methods['post']) return "all";
+                if (route.route.methods['get']) return "get";
+                if (route.route.methods['post']) return "post";
+                if (route.route.methods['options']) return "options";
+            }
+            return 'unknown';
+        }
+
+        //
+        //
+        //
+        //
+        UnregisterUrl() {
+            var node = this;
+            if (node._httpNodeRoot !== false) {
+                if (node.config.verbose) node._debug("Removing url");
+                var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                var options_urls = [];
+                var all_urls = [];
+
+                if (node.config.verbose) {
+                    node._debug("get_urls " + JSON.stringify(get_urls));
+                    node._debug("post_urls " + JSON.stringify(post_urls));
+                }
+
+                let to_remove = [];
+                node.app._router.stack.forEach(function (route, i) {
+                    if (route.route && (
+                        (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
+                        (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
+                        (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
+                        (all_urls.includes(route.route.path))
+                    )) {
+                        node.debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                        to_remove.unshift(i);
+                    }
+                });
+                to_remove.forEach(i => node.app._router.stack.splice(i, 1));
+                node.app._router.stack.forEach(function (route) {
+                    if (route.route) node.debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                });
+            }
+        }
+
+        //
+        //
+        //
+        //
         shutdown(removed, done) {
             var node = this;
             if (node.config.verbose) node._debug("(on-close)");
@@ -225,30 +277,7 @@ module.exports = function (RED) {
                 if (node.config.verbose) node._debug("Stopping server");
                 node.http_server.stop();
             } else {
-                if (RED.settings.httpNodeRoot !== false) {
-                    if (node.config.verbose) node._debug("Removing url");
-                    var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
-                    var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
-                    var options_urls = [];
-                    var all_urls = [];
-
-                    if (node.config.verbose) {
-                        node._debug("get_urls " + JSON.stringify(get_urls));
-                        node._debug("post_urls " + JSON.stringify(post_urls));
-                    }
-                    node.app._router.stack.forEach(function (route, i, routes) {
-                        if (node.config.verbose && route.route) node._debug("url " + route.route.path);
-                        if (route.route && (
-                            (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
-                            (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
-                            (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
-                            (all_urls.includes(route.route.path))
-                        )) {
-                            node._debug('shutdown: removing url: ' + route.route.path);
-                            routes.splice(i, 1);
-                        }
-                    });
-                }
+                node.UnregisterUrl();
             }
             if (removed) {
                 // this node has been deleted
