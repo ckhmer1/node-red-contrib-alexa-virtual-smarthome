@@ -116,15 +116,13 @@ module.exports = function (RED) {
 
             if (node.config.verbose) node._debug("New " + node.config.name);
 
-            node.on('close', function (removed, done) {
-                node.shutdown(me, removed, done);
-            });
+            node.on('close', node.shutdown);
 
             node.setup();
             if (node.config.verbose) node._debug("init completed");
         }
 
-        //
+        // Register a new device, called bu the alexa-device
         //
         //
         //
@@ -137,21 +135,26 @@ module.exports = function (RED) {
             });
         }
 
-        //
+        // Unregister a device, called bu the alexa-device
         //
         //
         //
         deregister(device, removed) {
             var node = this;
-            if (node.config.verbose) node._debug("deregister device id " + device.id + " removed " + true);
+            if (node.config.verbose) node._debug("deregister device id " + device.id + " removed " + removed);
             if (node.device[device.id]) {
                 delete node.device[device.id];
             }
-            if (node.app != node.http_server) {
+            /*if (removed) {
+                process.nextTick(() => {
+                    node.send_delete_report(device.id, header.correlationToken);
+                });
+            }*/
+            /*if (node.app != node.http_server) {
                 if (node.config.verbose) node._debug("Stopping server");
                 node.http_server.stop();
                 node.http_server = RED.httpNode || RED.httpAdmin;
-            }
+            }*/
         };
 
         //
@@ -193,6 +196,7 @@ module.exports = function (RED) {
             } else {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
             }
+            node.UnregisterUrl();
             let urlencodedParser = bodyParser.urlencoded({ extended: false })
             let jsonParser = bodyParser.json()
 
@@ -215,19 +219,71 @@ module.exports = function (RED) {
         //
         //
         //
-        shutdown(me, removed, done) {
+        GetRouteType(route) {
+            if (route) {
+                if (route.route.methods['get'] && route.route.methods['post']) return "all";
+                if (route.route.methods['get']) return "get";
+                if (route.route.methods['post']) return "post";
+                if (route.route.methods['options']) return "options";
+            }
+            return 'unknown';
+        }
+
+        //
+        //
+        //
+        //
+        UnregisterUrl() {
+            var node = this;
+            if (node._httpNodeRoot !== false && node.app._router) {
+                if (node.config.verbose) node._debug("Removing url");
+                var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                var options_urls = [];
+                var all_urls = [];
+
+                if (node.config.verbose) {
+                    node._debug("get_urls " + JSON.stringify(get_urls));
+                    node._debug("post_urls " + JSON.stringify(post_urls));
+                }
+
+                let to_remove = [];
+                node.app._router.stack.forEach(function (route, i) {
+                    if (route.route && (
+                        (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
+                        (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
+                        (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
+                        (all_urls.includes(route.route.path))
+                    )) {
+                        node.debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                        to_remove.unshift(i);
+                    }
+                });
+                to_remove.forEach(i => node.app._router.stack.splice(i, 1));
+                node.app._router.stack.forEach(function (route) {
+                    if (route.route) node.debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                });
+            }
+        }
+
+        //
+        //
+        //
+        //
+        shutdown(removed, done) {
             var node = this;
             if (node.config.verbose) node._debug("(on-close)");
             if (node.app != node.http_server) {
                 if (node.config.verbose) node._debug("Stopping server");
                 node.http_server.stop();
             }
+            node.UnregisterUrl();
             if (removed) {
                 // this node has been deleted
                 if (node.config.verbose) node._debug("shutdown: removed");
             } else {
                 // this node is being restarted
-                if (node.config.verbose) node._debug("shutdown: restarting");
+                if (node.config.verbose) node._debug("shutdown: stopped");
             }
             if (typeof done === 'function') {
                 done();
@@ -601,7 +657,8 @@ module.exports = function (RED) {
                     } else {
                         if (node.config.verbose) node._debug(" CCHI command " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
-                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload);
+                            let more_data = {};
+                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload, more_data);
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
@@ -624,6 +681,9 @@ module.exports = function (RED) {
                                                 timestamp: new Date().toISOString()
                                             };
                                         }
+                                        Object.keys(more_data).forEach(key => {
+                                            response.payload[key] = more_data[key];
+                                        });
                                         if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
                                         res.end();
@@ -640,19 +700,26 @@ module.exports = function (RED) {
                                 return;
                             } else {
                                 error = 'INVALID_DIRECTIVE';
+                                error_message = RED._("alexa-adapter.error.invalid-directive")
                                 node.error("smarthome_post: execCommand unknown directive " + namespace + " " + name);
-                                // TODO error_message
+                                node.senderror_response(res, messageId, endpointId, error, error_message);
                             }
                         } catch (err) {
                             node.error("smarthome_post: execCommand error " + err.stack);
                             error = 'INVALID_DIRECTIVE';
+                            error_message = RED._("alexa-adapter.error.invalid-directive")
                             node.error("CCHI execCommand error");
+                            node.senderror_response(res, messageId, endpointId, error, error_message);
                         }
                     }
                 } else {
                     error = 'NO_SUCH_ENDPOINT';
+                    error_message = RED._("alexa-adapter.error.invalid-directive")
                     node.error("smarthome_post: no such endpoint");
-                    // TODO error_message
+                    node.senderror_response(res, messageId, endpointId, error, error_message);
+                    process.nextTick(() => {
+                        node.send_delete_report(endpointId, header.correlationToken);
+                    });
                 }
             } else {
                 if (namespace === "Alexa.Discovery" && name === 'Discover') {
@@ -680,10 +747,8 @@ module.exports = function (RED) {
                 } else {
                     error = 'INVALID_DIRECTIVE';
                     error_message = RED._("alexa-adapter.error.invalid-directive")
+                    node.senderror_response(res, messageId, endpointId, error, error_message);
                 }
-            }
-            if (error) {
-                node.senderror_response(res, messageId, endpointId, error, error_message);
             }
         }
 
@@ -762,6 +827,11 @@ module.exports = function (RED) {
                     node.error("Load error " + err);
                 } else {
                     res
+                        .set("Content-Security-Policy",
+                            "default-src 'self' 'unsafe-inline' ; " +
+                            "img-src https://nodered.org ; " +
+                            "script-src 'self' https://code.jquery.com 'unsafe-inline' ; "
+                        )
                         .send(data.replace(/alexa_smarthome_url/g, url));
                 }
             });
@@ -1043,6 +1113,55 @@ module.exports = function (RED) {
         //
         //
         //
+        // 
+        // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
+        get_delete_report(endpointIds, correlationToken, access_token) {
+            var node = this;
+            let endpoints = [];
+            if (typeof endpointIds === 'string') {
+                endpoints.push({
+                    endpointId: endpointIds
+                });
+            } else {
+                endpointIds.forEach(endpointId => {
+                    endpoints.push({
+                        endpointId: endpointId
+                    });
+                });
+                endpointIds = endpointIds[0];
+            }
+            const msg = {
+                event: {
+                    header: {
+                        namespace: "Alexa",
+                        name: "DeleteReport",
+                        correlationToken: correlationToken,
+                        messageId: node.tokgen.generate(),
+                        payloadVersion: "3",
+                    },
+                    endpoint: {
+                        scope: {
+                            type: "BearerToken",
+                            token: access_token
+                        },
+                        endpointId: endpointIds
+                    },
+                    payload: {
+                        endpoints: endpoints
+                    },
+                    scope: {
+                        "type": "BearerToken",
+                        "token": access_token
+                    }
+                }
+            }
+            return msg;
+        }
+
+        //
+        //
+        //
+        //
         send_doorbell_press(endpointId, cause) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             var node = this;
@@ -1129,6 +1248,36 @@ module.exports = function (RED) {
                 })
                 .catch(err => {
                     node.error('send_change_report get_access_token err ' + JSON.stringify(err));
+                })
+        }
+
+        //
+        //
+        //
+        //
+        send_delete_report(endpointIds, correlationToken) {
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
+            var node = this;
+            if (node.config.verbose) node._debug('send_delete_report ' + JSON.stringify(endpointIds));
+            node.get_access_token('evn')
+                .then(access_token => {
+                    const report = node.get_delete_report(endpointIds, correlationToken, access_token);
+                    if (node.config.verbose) node._debug('send_delete_report report ' + JSON.stringify(report));
+                    superagent
+                        .post(node.config.event_endpoint)
+                        .set('Authorization', 'Bearer ' + access_token)
+                        .send(report)
+                        .end((err, res) => {
+                            if (err) {
+                                node.error('send_delete_report err ' + JSON.stringify(err));
+                            } else {
+                                if (node.config.verbose) node._debug('send_delete_report res ' + JSON.stringify(res));
+                            }
+                        });
+                    if (node.config.verbose) node._debug('send_delete_report sent');
+                })
+                .catch(err => {
+                    node.error('send_delete_report get_access_token err ' + JSON.stringify(err));
                 })
         }
 

@@ -1,86 +1,385 @@
 <script type="text/javascript">
-    RED.nodes.registerType('alexa-device', {
-        category: 'alexa-home',
-        color: '#3FADB5',
-        defaults: {
-            alexa: { value: "", type: "alexa-adapter" },
-            name: { value: "", required: true },
-            display_categories: { value: [], required: true },
-            topic: { value: "", required: false },
-            a_inputs: { value: ['AUX_1', 'AUX_2', 'AUX_3', 'AUX_4', 'AUX_5', 'AUX_6', 'AUX_7', 'BLURAY', 'CABLE', 'CD', 'COAX_1', 'COAX_2', 'COMPOSITE_1', 'DVD', 'GAME', 'HD_RADIO', 'HDMI_1', 'HDMI_2', 'HDMI_3', 'HDMI_4', 'HDMI_5', 'HDMI_6', 'HDMI_7', 'HDMI_8', 'HDMI_9', 'HDMI_10', 'HDMI_ARC', 'INPUT_1', 'INPUT_2', 'INPUT_3', 'INPUT_4', 'INPUT_5', 'INPUT_6', 'INPUT_7', 'INPUT_8', 'INPUT_9', 'INPUT_10', 'IPOD', 'LINE_1', 'LINE_2', 'LINE_3', 'LINE_4', 'LINE_5', 'LINE_6', 'LINE_7', 'MEDIA_PLAYER', 'OPTICAL_1', 'OPTICAL_2', 'PHONO', 'PLAYSTATION', 'PLAYSTATION_3', 'PLAYSTATION_4', 'SATELLITE', 'SMARTCAST', 'TUNER', 'TV', 'USB_DAC', 'VIDEO_1', 'VIDEO_2', 'VIDEO_3', 'XBOX'], required: false },
-            i_automation_management: { value: "", required: false },
-            i_brightness_controller: { value: "", required: false },
-            i_camera_stream_controller: { value: "", required: false },
-            i_channel_controller: { value: "", required: false },
-            i_color_controller: { value: "", required: false },
-            i_color_temperature_controller: { value: "", required: false },
-            i_contact_sensor: { value: "", required: false },
-            i_doorbell_event_source: { value: "", required: false },
-            i_endpoint_health: { value: "", required: false },
-            i_equalizer_controller: { value: "", required: false },
-            i_estimation: { value: "", required: false },
-            i_event_detection_sensor: { value: "", required: false },
-            i_input_controller: { value: "", required: false },
-            i_inventory_level_sensor: { value: "", required: false },
-            i_inventory_usage_sensor: { value: "", required: false },
-            i_keypad_controller: { value: "", required: false },
-            a_kc_keys: { value: [], required: false },
-            i_lock_controller: { value: "", required: false },
-            i_media_metadata: { value: "", required: false },
-            i_meter: { value: "", required: false },
-            i_mode_controller: { value: "", required: false },
-            i_motion_sensor: { value: "", required: false },
-            i_percentage_controller: { value: "", required: false },
-            i_playback_controller: { value: "", required: false },
-            a_playback_modes: { value: [], required: false },
-            i_power_controller: { value: "", required: false },
-            i_power_level_controller: { value: "", required: false },
-            i_range_controller: { value: "", required: false },
-            i_rtc_session_controller: { value: "", required: false },
-            i_scene_controller: { value: "", required: false },
-            i_security_panel_controller: { value: "", required: false },
-            i_speaker: { value: "", required: false },
-            i_step_speaker: { value: "", required: false },
-            i_temperature_sensor: { value: "", required: false },
-            i_thermostat_controller: { value: "", required: false },
-            a_target_setpoint: { value: false, required: false },
-            a_lower_setpoint: { value: false, required: false },
-            a_upper_setpoint: { value: false, required: false },
-            a_modes: { value: [], required: false },
-            a_supports_scheduling: { value: false, required: false },
-            i_thermostat_controller_hvac_components: { value: "", required: false },
-            i_toggle_controller: { value: "", required: false },
-            i_wake_on_lan_controller: { value: "", required: false },
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "alexa-home.png",
-        label: function () {
-            return this.name || this._("alexa-device.name");
-        },
-        labelStyle: function () {
-            return this.name ? "node_label_italic" : ""
-        },
-        paletteLabel: function () {
-            return this._("alexa-device.name");
-        },
-    });
+    (function () {
+        function isNaturalNumber(v) {
+            const n = parseInt(v);
+            const f = parseFloat(v);
+            return !isNaN(v) && Number.isInteger(f) && n >= 0;
+        }
+        function isMandatoryIngeterNumber(v) {
+            const n = parseInt(v);
+            const f = parseFloat(v);
+            return !isNaN(v) && Number.isInteger(f);
+        }
+        function isIngeterNumber(v) {
+            if (v.trim().length === 0) {
+                return true;
+            }
+            return isMandatoryIngeterNumber(v);
+        }
+        RED.nodes.registerType('alexa-device', {
+            category: 'alexa-home',
+            color: '#3FADB5',
+            defaults: {
+                alexa: { value: "", type: "alexa-adapter" },
+                name: { value: "", required: true },
+                display_categories: { value: [], required: true },
+                topic: { value: "", required: false },
+                a_inputs: { value: ['AUX_1', 'AUX_2', 'AUX_3', 'AUX_4', 'AUX_5', 'AUX_6', 'AUX_7', 'BLURAY', 'CABLE', 'CD', 'COAX_1', 'COAX_2', 'COMPOSITE_1', 'DVD', 'GAME', 'HD_RADIO', 'HDMI_1', 'HDMI_2', 'HDMI_3', 'HDMI_4', 'HDMI_5', 'HDMI_6', 'HDMI_7', 'HDMI_8', 'HDMI_9', 'HDMI_10', 'HDMI_ARC', 'INPUT_1', 'INPUT_2', 'INPUT_3', 'INPUT_4', 'INPUT_5', 'INPUT_6', 'INPUT_7', 'INPUT_8', 'INPUT_9', 'INPUT_10', 'IPOD', 'LINE_1', 'LINE_2', 'LINE_3', 'LINE_4', 'LINE_5', 'LINE_6', 'LINE_7', 'MEDIA_PLAYER', 'OPTICAL_1', 'OPTICAL_2', 'PHONO', 'PLAYSTATION', 'PLAYSTATION_3', 'PLAYSTATION_4', 'SATELLITE', 'SMARTCAST', 'TUNER', 'TV', 'USB_DAC', 'VIDEO_1', 'VIDEO_2', 'VIDEO_3', 'XBOX'], required: false },
+                i_automation_management: { value: "", required: false },
+                i_brightness_controller: { value: "", required: false },
+                i_camera_stream_controller: { value: "", required: false },
+                i_channel_controller: { value: "", required: false },
+                i_color_controller: { value: "", required: false },
+                i_color_temperature_controller: { value: "", required: false },
+                i_contact_sensor: { value: "", required: false },
+                i_doorbell_event_source: { value: "", required: false },
+                i_endpoint_health: { value: "", required: false },
+                i_equalizer_controller: { value: "", required: false },
+                i_estimation: { value: "", required: false },
+                i_event_detection_sensor: { value: "", required: false },
+                i_input_controller: { value: "", required: false },
+                i_inventory_level_sensor: { value: "", required: false },
+                i_inventory_usage_sensor: { value: "", required: false },
+                i_keypad_controller: { value: "", required: false },
+                a_kc_keys: { value: [], required: false },
+                i_lock_controller: { value: "", required: false },
+                i_media_metadata: { value: "", required: false },
+                i_meter: { value: "", required: false },
+                i_mode_controller: { value: "", required: false },
+                i_motion_sensor: { value: "", required: false },
+                i_percentage_controller: { value: "", required: false },
+                i_playback_controller: { value: "", required: false },
+                a_playback_modes: { value: [], required: false },
+                i_power_controller: { value: "", required: false },
+                i_power_level_controller: { value: "", required: false },
+                i_range_controller: { value: "", required: false },
+                i_rtc_session_controller: { value: "", required: false },
+                i_scene_controller: { value: "", required: false },
+                i_security_panel_controller: { value: "", required: false },
+                i_speaker: { value: "", required: false },
+                i_step_speaker: { value: "", required: false },
+                i_temperature_sensor: { value: "", required: false },
+                i_thermostat_controller: { value: "", required: false },
+                a_target_setpoint: { value: false, required: false },
+                a_lower_setpoint: { value: false, required: false },
+                a_upper_setpoint: { value: false, required: false },
+                a_modes: { value: [], required: false },
+                a_supports_scheduling: { value: false, required: false },
+                i_thermostat_controller_hvac_components: { value: "", required: false },
+                i_toggle_controller: { value: "", required: false },
+                i_wake_on_lan_controller: { value: "", required: false },
+                camera_stream_configurations: {
+                    value: [{ p: [], t: [], v: [], a: [], r: [] }],
+                    validate: function (camera_stream_configurations) {
+                        if (!camera_stream_configurations || camera_stream_configurations.length === 0) { return true }
+                        for (var i = 0; i < camera_stream_configurations.length; i++) {
+                            var c = camera_stream_configurations[i];
+                            console.log("validate " + JSON.stringify(c));
+                            if (c.p.length === 0) {
+                                return false;
+                            }
+                            if (c.t.length === 0) {
+                                return false;
+                            }
+                            if (c.v.length === 0) {
+                                return false;
+                            }
+                            if (c.a.length === 0) {
+                                return false;
+                            }
+                            /*var r = c.r.split(";");
+                            if (r.length === 0) {
+                                return false;
+                            }
+                            var ris_ok = true;
+                            r.forEach(function (ri) {
+                                var wh = ri.split("*");
+                                if (wh.length !== 2 || !isNaturalNumber(wh[0]) || !isNaturalNumber(wh[1]) || wh[1] < 480 || wh[1] > 1080) {
+                                    ris_ok = false;
+                                }
+                                // TODO check width and height
+                            });*/
+                            var ris_ok = true;
+                            c.r.forEach(function (wh) {
+                                if (wh.length !== 2 || !isNaturalNumber(wh[0]) || !isNaturalNumber(wh[1]) || wh[1] < 480 || wh[1] > 1080) {
+                                    ris_ok = false;
+                                }
+                            });
+                            return ris_ok;
+                        }
+                        return true;
+                    }
+                },
+                bands: { value: [], required: false },
+                modes: { value: [], required: false },
+                band_range_min: { value: -6, required: false, validate: isIngeterNumber },
+                band_range_max: { value: 6, required: false, validate: isIngeterNumber },
+            },
+            inputs: 1,
+            outputs: 1,
+            icon: "alexa-home.png",
+            label: function () {
+                return this.name || this._("alexa-device.name");
+            },
+            labelStyle: function () {
+                return this.name ? "node_label_italic" : ""
+            },
+            paletteLabel: function () {
+                return this._("alexa-device.name");
+            },
+            oneditprepare: function () {
+                var protocols = this._("alexa-device.label.protocols");
+                var authorization_types = this._("alexa-device.label.authorization_types");
+                var video_codecs = this._("alexa-device.label.video_codecs");
+                var audio_codecs = this._("alexa-device.label.audio_codecs");
+                var resolutions = this._("alexa-device.label.resolutions");
+                var RTSP = this._("alexa-device.label.RTSP");
+                var HLS = this._("alexa-device.label.HLS");
+                var BASIC = this._("alexa-device.label.BASIC");
+                var DIGEST = this._("alexa-device.label.DIGEST");
+                var NONE = this._("alexa-device.label.NONE");
+                var H264 = this._("alexa-device.label.H264");
+                var MPEG2 = this._("alexa-device.label.MPEG2");
+                var MJPEG = this._("alexa-device.label.MJPEG");
+                var JPG = this._("alexa-device.label.JPG");
+                var G711 = this._("alexa-device.label.G711");
+                var AAC = this._("alexa-device.label.AAC");
+
+                $('#node-input-camera_stream_configuration-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var camera_stream_configuration = opt;
+                        if (!camera_stream_configuration.hasOwnProperty('p')) {
+                            camera_stream_configuration = {
+                                p: [],
+                                t: [],
+                                v: [],
+                                a: [],
+                                r: []
+                            };
+                        }
+                        console.log("addItem " + JSON.stringify(camera_stream_configuration));
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                        var row2 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
+                        var row3 = $('<div/>', { style: "margin-top:8px;" }).appendTo(fragment);
+                        var row4 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
+                        var row5 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
+
+                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
+                            .text(protocols)
+                            .appendTo(row1);
+
+                        var rstpBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-p-RTSP"/>').appendTo(row1);
+                        rstpBtn.toggleButton({
+                            enabledLabel: RTSP,
+                            disabledLabel: RTSP
+                        })
+                        rstpBtn.prop("checked", camera_stream_configuration.p.includes("RTSP")).trigger("change");
+
+                        var hlsBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-p-HLS"/>').appendTo(row1);
+                        hlsBtn.toggleButton({
+                            enabledLabel: HLS,
+                            disabledLabel: HLS
+                        })
+                        hlsBtn.prop("checked", camera_stream_configuration.p.includes("HLS")).trigger("change");
+
+
+                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
+                            .text(authorization_types)
+                            .appendTo(row2);
+
+                        var basicBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-t-BASIC"/>').appendTo(row2);
+                        basicBtn.toggleButton({
+                            enabledLabel: BASIC,
+                            disabledLabel: BASIC
+                        })
+                        basicBtn.prop("checked", camera_stream_configuration.t.includes("BASIC")).trigger("change");
+
+                        var digestBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-t-DIGEST"/>').appendTo(row2);
+                        digestBtn.toggleButton({
+                            enabledLabel: DIGEST,
+                            disabledLabel: DIGEST
+                        })
+                        digestBtn.prop("checked", camera_stream_configuration.t.includes("DIGEST")).trigger("change");
+
+                        var noneBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-t-NONE"/>').appendTo(row2);
+                        noneBtn.toggleButton({
+                            enabledLabel: NONE,
+                            disabledLabel: NONE
+                        })
+                        noneBtn.prop("checked", camera_stream_configuration.t.includes("NONE")).trigger("change");
+
+
+                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
+                            .text(video_codecs)
+                            .appendTo(row3);
+
+                        var h264Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-H264"/>').appendTo(row3);
+                        h264Btn.toggleButton({
+                            enabledLabel: H264,
+                            disabledLabel: H264
+                        })
+                        h264Btn.prop("checked", camera_stream_configuration.v.includes("H264")).trigger("change");
+
+                        var mpeg2Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-MPEG2"/>').appendTo(row3);
+                        mpeg2Btn.toggleButton({
+                            enabledLabel: MPEG2,
+                            disabledLabel: MPEG2
+                        })
+                        mpeg2Btn.prop("checked", camera_stream_configuration.v.includes("MPEG2")).trigger("change");
+
+                        var mjpegBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-MJPEG"/>').appendTo(row3);
+                        mjpegBtn.toggleButton({
+                            enabledLabel: MJPEG,
+                            disabledLabel: MJPEG
+                        })
+                        mjpegBtn.prop("checked", camera_stream_configuration.v.includes("MJPEG")).trigger("change");
+
+                        var jpgBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-JPG"/>').appendTo(row3);
+                        jpgBtn.toggleButton({
+                            enabledLabel: JPG,
+                            disabledLabel: JPG
+                        })
+                        jpgBtn.prop("checked", camera_stream_configuration.v.includes("JPG")).trigger("change");
+
+
+                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
+                            .text(audio_codecs)
+                            .appendTo(row4);
+
+                        var g711Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-a-G711"/>', { style: "margin-right:3px;" }).appendTo(row4);
+                        g711Btn.toggleButton({
+                            enabledLabel: G711,
+                            disabledLabel: G711
+                        })
+                        g711Btn.prop("checked", camera_stream_configuration.a.includes("G711")).trigger("change");
+
+                        var aacBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-a-AAC" style="margin-right:3px;"/>').appendTo(row4);
+                        aacBtn.toggleButton({
+                            enabledLabel: AAC,
+                            disabledLabel: AAC
+                        })
+                        aacBtn.prop("checked", camera_stream_configuration.a.includes("AAC")).trigger("change");
+
+                        var none1Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-a-NONE"/>').appendTo(row4);
+                        none1Btn.toggleButton({
+                            enabledLabel: NONE,
+                            disabledLabel: NONE
+                        })
+                        none1Btn.prop("checked", camera_stream_configuration.a.includes("NONE")).trigger("change");
+
+                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
+                            .text(resolutions)
+                            .appendTo(row5);
+
+                        var propertyResolutions = $('<input/>', { class: "node-input-camera_stream_configuration-r", type: "text" })
+                            .appendTo(row5);
+
+                        var r;
+                        if (typeof camera_stream_configuration.r === 'object') {
+                            r = "";
+                            camera_stream_configuration.r.forEach(res => {
+                                r += ";" + res[0] + "*" + res[1];
+                            });
+                            if (r.length > 0) {
+                                r = r.substring(1);
+                            }
+                        } else {
+                            r = camera_stream_configuration.r;
+                        }
+                        propertyResolutions.val(r);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                for (var i = 0; i < this.camera_stream_configurations.length; i++) {
+                    var c = this.camera_stream_configurations[i];
+                    $("#node-input-camera_stream_configuration-container").editableList('addItem', c);
+                }
+            },
+            oneditsave: function () {
+                console.log("oneditsave");
+                var camera_stream_configurations = $("#node-input-camera_stream_configuration-container").editableList('items');
+                var node = this;
+                node.camera_stream_configurations = [];
+                camera_stream_configurations.each(function (i) {
+                    var camera_stream_configuration = $(this);
+                    var vRTSP = camera_stream_configuration.find(".node-input-camera_stream_configuration-p-RTSP").prop('checked');
+                    var vHLS = camera_stream_configuration.find(".node-input-camera_stream_configuration-p-HLS").prop('checked');
+                    var vBASIC = camera_stream_configuration.find(".node-input-camera_stream_configuration-t-BASIC").prop('checked');
+                    var vDIGEST = camera_stream_configuration.find(".node-input-camera_stream_configuration-t-DIGEST").prop('checked');
+                    var vNONE = camera_stream_configuration.find(".node-input-camera_stream_configuration-t-NONE").prop('checked');
+                    var vH264 = camera_stream_configuration.find(".node-input-camera_stream_configuration-v-H264").prop('checked');
+                    var vMPEG2 = camera_stream_configuration.find(".node-input-camera_stream_configuration-v-MPEG2").prop('checked');
+                    var vMJPEG = camera_stream_configuration.find(".node-input-camera_stream_configuration-v-MJPEG").prop('checked');
+                    var vJPG = camera_stream_configuration.find(".node-input-camera_stream_configuration-v-JPG").prop('checked');
+                    var vG711 = camera_stream_configuration.find(".node-input-camera_stream_configuration-a-G711").prop('checked');
+                    var vAAC = camera_stream_configuration.find(".node-input-camera_stream_configuration-a-AAC").prop('checked');
+                    var vNONE1 = camera_stream_configuration.find(".node-input-camera_stream_configuration-a-NONE").prop('checked');
+                    var vr = camera_stream_configuration.find(".node-input-camera_stream_configuration-r").val();
+                    var c = {
+                        p: [],
+                        t: [],
+                        v: [],
+                        a: [],
+                        r: []
+                    };
+                    if (vRTSP) c.p.push("RTSP");
+                    if (vHLS) c.p.push("HLS");
+                    if (vBASIC) c.t.push("BASIC");
+                    if (vDIGEST) c.t.push("DIGEST");
+                    if (vNONE) c.t.push("NONE");
+                    if (vH264) c.v.push("H264");
+                    if (vMPEG2) c.v.push("MPEG2");
+                    if (vMJPEG) c.v.push("MJPEG");
+                    if (vJPG) c.v.push("JPG");
+                    if (vG711) c.a.push("G711");
+                    if (vAAC) c.a.push("AAC");
+                    if (vNONE1) c.a.push("NONE");
+                    vr.split(";").forEach(function (res) {
+                        var wh = res.split("*");
+                        if (wh.length === 2 && wh[0].trim() && wh[1].trim()) {
+                            c.r.push([wh[0].trim(), wh[1].trim()])
+                            // c.r = c.r + ";" + wh[0].trim() + '*' + wh[1].trim();
+                        }
+                    });
+                    /*if (c.r) {
+                        c.r = c.r.substring(1);
+                    }*/
+                    console.log("oneditsave " + JSON.stringify(c));
+                    node.camera_stream_configurations.push(c);
+                });
+            }
+        });
+    })();
 </script>
 
 <script type="text/html" data-template-name="alexa-device">
+    <style>
+        ol#node-input-camera_stream_configuration-container .red-ui-typedInput-container {
+            flex:1;
+        }
+    </style>
+
     <div class="form-row">
         <label for="node-input-alexa"><i class="fa fa-globe"></i> <span data-i18n="alexa-device.label.alexa"></span></label>
-        <input type="text" id="node-input-alexa">
+        <input type="text" id="node-input-alexa" data-i18n="[placeholder]alexa-device.placeholder.alexa">
     </div>
 
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.name"></label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]alexa-device.placeholder.name">
     </div>
 
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.topic"></label>
-        <input type="text" id="node-input-topic" placeholder="topic">
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]alexa-device.placeholder.topic">
     </div>
 
     <div class="form-row" id="display_categories">
@@ -133,7 +432,7 @@
             <option value='VACUUM_CLEANER' data-i18n='alexa-device.display_category.VACUUM_CLEANER'></option>
             <option value='VEHICLE' data-i18n='alexa-device.display_category.VEHICLE'></option>
             <option value='WATER_HEATER' data-i18n='alexa-device.display_category.WATER_HEATER'></option>
-            <option value='WEARABLE' data-i18n='alexa-device.display_category.WEARABLE'></option>            
+            <option value='WEARABLE' data-i18n='alexa-device.display_category.WEARABLE'></option>
         </select>
     </div>
 
@@ -153,11 +452,15 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_camera_stream_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_camera_stream_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_camera_stream_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.camera_stream_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row node-input-camera_stream_configuration-container-row">
+            <ol id="node-input-camera_stream_configuration-container"></ol>
         </div>
     </div>
     
@@ -209,11 +512,41 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_equalizer_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_equalizer_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_equalizer_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.equalizer_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-bands"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.bands"></span></label>
+            <select multiple id="node-input-bands" >
+                <option value='BASS' data-i18n='alexa-device.label.BASS'></option>
+                <option value='MIDRANGE' data-i18n='alexa-device.label.MIDRANGE'></option>
+                <option value='TREBLE' data-i18n='alexa-device.label.TREBLE'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-band_range_min"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.band_min"></span></label>
+            <input type="text" id="node-input-band_range_min" data-i18n="[placeholder]alexa-device.placeholder.band_range_min">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-band_range_max"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.band_max"></span></label>
+            <input type="text" id="node-input-band_range_max" data-i18n="[placeholder]alexa-device.placeholder.band_range_max">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-modes"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.modes"></span></label>
+            <select multiple id="node-input-modes" >
+                <option value='MOVIE' data-i18n='alexa-device.label.MOVIE'></option>
+                <option value='MUSIC' data-i18n='alexa-device.label.MUSIC'></option>
+                <option value='NIGHT' data-i18n='alexa-device.label.NIGHT'></option>
+                <option value='SPORT' data-i18n='alexa-device.label.SPORT'></option>
+                <option value='TV' data-i18n='alexa-device.label.TV'></option>
+            </select>
         </div>
     </div>
     
@@ -225,7 +558,7 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_event_detection_sensor" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_event_detection_sensor" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_event_detection_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.event_detection_sensor"></span>
@@ -557,4 +890,4 @@
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html"><i class="fa fa-external-link"></i></a>
         </div>
         </div>
-</script>
+    </script>

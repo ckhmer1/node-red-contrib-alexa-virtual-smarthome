@@ -145,6 +145,9 @@ module.exports = function (RED) {
                 process.nextTick(() => {
                     node.alexa.send_doorbell_press(node.id, msg.payload || '');
                 });
+            } else if (topic === 'CAMERASTREAMS') {
+                node.cameraStreams = msg.payload;
+                if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 const modified = node.setValues(msg.payload, node.state);
@@ -179,6 +182,31 @@ module.exports = function (RED) {
             }
             // CameraStreamController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html
+            if (node.config.i_camera_stream_controller) {
+                if (node.isVerbose()) node._debug("Alexa.CameraStreamController");
+                node.cameraStreams = [];
+                let camera_stream_configurations = [];
+                node.config.camera_stream_configurations.forEach(c => {
+                    let r = [];
+                    c.r.forEach(wh => {
+                        r.push({
+                            width: wh[0],
+                            height: wh[1]
+                        });
+                    });
+                    camera_stream_configurations.push({
+                        protocols: c.p,
+                        resolutions: r,
+                        authorizationTypes: c.t,
+                        videoCodecs: c.v,
+                        audioCodecs: c.a
+                    });
+                });
+                node.addCapability("Alexa.CameraStreamController", undefined,
+                    {
+                        cameraStreamConfigurations: camera_stream_configurations
+                    });
+            }
 
             // ChannelController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-channelcontroller.html
@@ -243,6 +271,50 @@ module.exports = function (RED) {
             // EqualizerController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html
 
+            if (node.config.i_equalizer_controller) {
+                if (node.isVerbose()) node._debug("Alexa.EqualizerController");
+                let properties = {};
+                let configurations = {};
+                if (node.config.bands.length > 0) {
+                    let bands_supported = [];
+                    let bands_value = [];
+                    node.config.bands.forEach(band => {
+                        bands_supported.push({
+                            name: band
+                        });
+                        bands_value.push({
+                            name: band,
+                            value: 0
+                        });
+                    });
+                    properties['bands'] = bands_value;
+                    configurations['bands'] = {
+                        supported: bands_supported,
+                        range: {
+                            minimum: node.to_int(node.config.band_range_min, -6),
+                            maximum: node.to_int(node.config.band_range_max, 6)
+                        }
+                    }
+                }
+                if (node.config.modes.length > 0) {
+                    properties['mode'] = node.config.modes[0];
+                    let modes_supported = [];
+                    node.config.modes.forEach(mode => {
+                        modes_supported.push({
+                            name: mode
+                        });
+                    });
+                    configurations['modes'] = {
+                        supported: modes_supported
+                    }
+
+                }
+                node.addCapability("Alexa.EqualizerController", properties,
+                    {
+                        configurations: configurations
+                    });
+            }
+
             // Estimation
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
 
@@ -253,21 +325,21 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.EventDetectionSensor");
                 node.addCapability("Alexa.EventDetectionSensor", {
                     humanPresenceDetectionState: 'NOT_DETECTED' // DETECTED
-                },  
-                {
-                    configuration: {
-                        detectionMethods: [
-                            "AUDIO",
-                            "VIDEO"
-                        ],
-                        detectionModes: {
-                            humanPresence: {
-                                featureAvailability: "ENABLED",
-                                supportsNotDetected: true
+                },
+                    {
+                        configuration: {
+                            detectionMethods: [
+                                "AUDIO",
+                                "VIDEO"
+                            ],
+                            detectionModes: {
+                                humanPresence: {
+                                    featureAvailability: "ENABLED",
+                                    supportsNotDetected: true
+                                }
                             }
                         }
-                    }
-                });
+                    });
             }
 
             // InputController
@@ -447,7 +519,7 @@ module.exports = function (RED) {
             }
             // ThermostatController.HVAC.Components	
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
-            
+
             // ToggleController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
 
@@ -455,7 +527,8 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
 
             if (node.isVerbose()) node._debug("capabilities " + JSON.stringify(node.capabilities));
-            if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()))
+            if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()));
+            if (node.isVerbose()) node._debug("states " + JSON.stringify(node.state));
         }
 
         getEndpoint() {
@@ -525,7 +598,7 @@ module.exports = function (RED) {
         //
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
-        execCommand(namespace, name, payload) {
+        execCommand(namespace, name, payload, more_data) { // Directive
             var node = this;
             let modified = undefined;
             if (node.isVerbose()) node._debug("execCommand state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
@@ -541,6 +614,75 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.CameraStreamController": // CameraStreamController
+                    if (name === 'InitializeCameraStreams') {
+                        const cameraStreams = payload.cameraStreams;
+                        let css = [];
+                        if (node.cameraStreams && node.cameraStreams.cameraStreams.length > 0) {
+                            node.cameraStreams.cameraStreams.forEach(acs => {
+                                payload.cameraStreams.forEach(rcs => {
+                                    if (acs.protocol === rcs.protocol &&
+                                        acs.resolution.width === rcs.resolution.width &&
+                                        acs.resolution.height === rcs.resolution.height &&
+                                        acs.resolution.authorizationType === rcs.resolution.authorizationType &&
+                                        acs.resolution.videoCodec === rcs.resolution.videoCodec &&
+                                        acs.resolution.audioCodec === rcs.resolution.audioCodec
+                                    ) {
+                                        css.push({
+                                            uri: acs.uri,
+                                            expirationTime: acs.expirationTime,
+                                            idleTimeoutSeconds: acs.idleTimeoutSeconds,
+                                            protocol: acs.protocol,
+                                            resolution: acs.resolution,
+                                            authorizationType: acs.authorizationType,
+                                            videoCodec: acs.videoCodec,
+                                            audioCodec: acs.audioCodec
+                                        });
+                                    }
+                                });
+                            });
+                            if (css.length > 0) {
+                                modified = [];
+                                more_data.cameraStreams = css;
+                                more_data.imageUri = node.cameraStreams.imageUri;
+                            }
+                        }
+                        /*
+                            returns cameraStreams array and imageUri
+                        */
+                        /*
+                        [
+                            {
+                            "protocol": "RTSP",
+                            "resolution": {"width": 1920, "height": 1080},
+                            "authorizationType": "BASIC",
+                            "videoCodec": "H264",
+                            "audioCodec": "AAC"
+                            },
+                            {
+                            "protocol": "RTSP",
+                            "resolution": {"width": 1280, "height": 720},
+                            "authorizationType": "NONE",
+                            "videoCodec": "MPEG2",
+                            "audioCodec": "G711"
+                            }
+                        ]
+                        */
+                        // TODO returns
+                        /*more_data.cameraStreams = [
+                            {
+                                "uri": "rtsp://username:password@link.to.video:443/feed1.mp4",
+                                "expirationTime": "2017-02-03T16:20:50.52Z",
+                                "idleTimeoutSeconds": 30,
+                                "protocol": "RTSP",
+                                "resolution": { "width": 1920, "height": 1080 },
+                                "authorizationType": "BASIC",
+                                "videoCodec": "H264",
+                                "audioCodec": "AAC"
+                            }
+                        ];
+                        more_data.imageUri = "https://username:password@link.to.image/image.jpg";*/
+                    }
                 case "Alexa.ChannelController": // ChannelController
                     if (name === 'ChangeChannel') {
                         modified = node.setValues(payload, node.state);
@@ -578,6 +720,15 @@ module.exports = function (RED) {
                         }, node.state);
                     }
                     break;
+
+                case "Alexa.EqualizerController": // EqualizerController
+                    if (name === 'SetMode') {
+                        modified = node.setValues(payload, node.state);
+                    } else if (name === 'SetBands') {
+                        modified = node.setValues(payload, node.state);
+                    }
+                    break;
+
 
                 case "Alexa.InputController": // InputController
                     if (name === 'SelectInput') {
@@ -811,12 +962,53 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // EqualizerController
+            if (node.config.i_equalizer_controller) {
+                if (typeof node.state['bands'] === 'object') {
+                    properties.push({
+                        namespace: "Alexa.EqualizerController",
+                        name: "bands",
+                        value: node.state['bands'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (typeof node.state['mode'] === 'string') {
+                    properties.push({
+                        namespace: "Alexa.EqualizerController",
+                        name: "mode",
+                        value: node.state['mode'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
             // MotionSensor
             if (node.config.i_motion_sensor) {
                 properties.push({
                     namespace: "Alexa.MotionSensor",
                     name: "detectionState",
                     value: node.state['detectionState'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // PercentageController
+            if (node.config.i_percentage_controller) {
+                properties.push({
+                    namespace: "Alexa.PercentageController",
+                    name: "percentage",
+                    value: node.state['percentage'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // PowerController
+            if (node.config.i_power_controller) {
+                properties.push({
+                    namespace: "Alexa.PowerController",
+                    name: "powerState",
+                    value: node.state['powerState'],
                     timeOfSample: time_of_sample,
                     uncertaintyInMilliseconds: uncertainty,
                 });
@@ -869,16 +1061,6 @@ module.exports = function (RED) {
                         uncertaintyInMilliseconds: uncertainty,
                     });
                 }
-            }
-            // PowerController
-            if (node.config.i_power_controller) {
-                properties.push({
-                    namespace: "Alexa.PowerController",
-                    name: "powerState",
-                    value: node.state['powerState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
             }
             return properties;
         }
@@ -1039,6 +1221,18 @@ module.exports = function (RED) {
                 }
             }
             return differs;
+        }
+        //
+        //
+        //
+        //
+        to_int(value, default_value) {
+            const n = parseInt(value);
+            const f = parseFloat(value);
+            if (!isNaN(value) && Number.isInteger(f)) {
+                return n;
+            }
+            return default_value;
         }
     }
     RED.nodes.registerType("alexa-device", AlexaDeviceNode);
