@@ -123,17 +123,31 @@
             "AAC": "AAC",
             "resolutions" : "Resolutions",
             "resolutions_x" : "Resolutions X",
-            "resolutions_y" : "Resolutions Y"
+            "resolutions_y" : "Resolutions Y",
+            "bands": "Bands",
+            "band_min": "Band min",
+            "band_max": "Band max",
+            "BASS": "Bass",
+            "MIDRANGE": "Mid range",
+            "TREBLE": "Treble",
+            "MOVIE": "Movie",
+            "MUSIC": "Music",
+            "NIGHT": "Night",
+            "SPORT": "Sport"
         },
         "placeholder": {
+            "alexa": "Alexa",
             "name": "Name",
+            "topic": "Topic",
             "username": "Username",
             "password": "Password",
             "secret": "Secret",
             "path": "Path",
             "resolutions" : "Width*Height",
             "resolutions_x" : "Resolutions X",
-            "resolutions_y" : "Resolutions Y"
+            "resolutions_y" : "Resolutions Y",
+            "band_range_min": "Minimum",
+            "band_range_max": "Maximum"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",

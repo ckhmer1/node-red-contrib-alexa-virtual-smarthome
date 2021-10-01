@@ -195,8 +195,8 @@ module.exports = function (RED) {
                 node.http_server = stoppable(http.createServer(node.app), GRACE_MILLISECONDS);
             } else {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
-                node.UnregisterUrl();
             }
+            node.UnregisterUrl();
             let urlencodedParser = bodyParser.urlencoded({ extended: false })
             let jsonParser = bodyParser.json()
 
@@ -235,7 +235,7 @@ module.exports = function (RED) {
         //
         UnregisterUrl() {
             var node = this;
-            if (node._httpNodeRoot !== false) {
+            if (node._httpNodeRoot !== false && node.app._router) {
                 if (node.config.verbose) node._debug("Removing url");
                 var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
                 var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
@@ -276,9 +276,8 @@ module.exports = function (RED) {
             if (node.app != node.http_server) {
                 if (node.config.verbose) node._debug("Stopping server");
                 node.http_server.stop();
-            } else {
-                node.UnregisterUrl();
             }
+            node.UnregisterUrl();
             if (removed) {
                 // this node has been deleted
                 if (node.config.verbose) node._debug("shutdown: removed");

@@ -5,6 +5,17 @@
             const f = parseFloat(v);
             return !isNaN(v) && Number.isInteger(f) && n >= 0;
         }
+        function isMandatoryIngeterNumber(v) {
+            const n = parseInt(v);
+            const f = parseFloat(v);
+            return !isNaN(v) && Number.isInteger(f);
+        }
+        function isIngeterNumber(v) {
+            if (v.trim().length === 0) {
+                return true;
+            }
+            return isMandatoryIngeterNumber(v);
+        }
         RED.nodes.registerType('alexa-device', {
             category: 'alexa-home',
             color: '#3FADB5',
@@ -99,6 +110,10 @@
                         return true;
                     }
                 },
+                bands: { value: [], required: false },
+                modes: { value: [], required: false },
+                band_range_min: { value: -6, required: false, validate: isIngeterNumber },
+                band_range_max: { value: 6, required: false, validate: isIngeterNumber },
             },
             inputs: 1,
             outputs: 1,
@@ -354,17 +369,17 @@
 
     <div class="form-row">
         <label for="node-input-alexa"><i class="fa fa-globe"></i> <span data-i18n="alexa-device.label.alexa"></span></label>
-        <input type="text" id="node-input-alexa">
+        <input type="text" id="node-input-alexa" data-i18n="[placeholder]alexa-device.placeholder.alexa">
     </div>
 
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.name"></label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" data-i18n="[placeholder]alexa-device.placeholder.name">
     </div>
 
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.topic"></label>
-        <input type="text" id="node-input-topic" placeholder="topic">
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]alexa-device.placeholder.topic">
     </div>
 
     <div class="form-row" id="display_categories">
@@ -497,11 +512,41 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_equalizer_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_equalizer_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_equalizer_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.equalizer_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-bands"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.bands"></span></label>
+            <select multiple id="node-input-bands" >
+                <option value='BASS' data-i18n='alexa-device.label.BASS'></option>
+                <option value='MIDRANGE' data-i18n='alexa-device.label.MIDRANGE'></option>
+                <option value='TREBLE' data-i18n='alexa-device.label.TREBLE'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-band_range_min"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.band_min"></span></label>
+            <input type="text" id="node-input-band_range_min" data-i18n="[placeholder]alexa-device.placeholder.band_range_min">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-band_range_max"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.band_max"></span></label>
+            <input type="text" id="node-input-band_range_max" data-i18n="[placeholder]alexa-device.placeholder.band_range_max">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-modes"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.modes"></span></label>
+            <select multiple id="node-input-modes" >
+                <option value='MOVIE' data-i18n='alexa-device.label.MOVIE'></option>
+                <option value='MUSIC' data-i18n='alexa-device.label.MUSIC'></option>
+                <option value='NIGHT' data-i18n='alexa-device.label.NIGHT'></option>
+                <option value='SPORT' data-i18n='alexa-device.label.SPORT'></option>
+                <option value='TV' data-i18n='alexa-device.label.TV'></option>
+            </select>
         </div>
     </div>
     

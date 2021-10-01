@@ -271,6 +271,50 @@ module.exports = function (RED) {
             // EqualizerController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html
 
+            if (node.config.i_equalizer_controller) {
+                if (node.isVerbose()) node._debug("Alexa.EqualizerController");
+                let properties = {};
+                let configurations = {};
+                if (node.config.bands.length > 0) {
+                    let bands_supported = [];
+                    let bands_value = [];
+                    node.config.bands.forEach(band => {
+                        bands_supported.push({
+                            name: band
+                        });
+                        bands_value.push({
+                            name: band,
+                            value: 0
+                        });
+                    });
+                    properties['bands'] = bands_value;
+                    configurations['bands'] = {
+                        supported: bands_supported,
+                        range: {
+                            minimum: node.to_int(node.config.band_range_min, -6),
+                            maximum: node.to_int(node.config.band_range_max, 6)
+                        }
+                    }
+                }
+                if (node.config.modes.length > 0) {
+                    properties['mode'] = node.config.modes[0];
+                    let modes_supported = [];
+                    node.config.modes.forEach(mode => {
+                        modes_supported.push({
+                            name: mode
+                        });
+                    });
+                    configurations['modes'] = {
+                        supported: modes_supported
+                    }
+
+                }
+                node.addCapability("Alexa.EqualizerController", properties,
+                    {
+                        configurations: configurations
+                    });
+            }
+
             // Estimation
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
 
@@ -483,7 +527,8 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
 
             if (node.isVerbose()) node._debug("capabilities " + JSON.stringify(node.capabilities));
-            if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()))
+            if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()));
+            if (node.isVerbose()) node._debug("states " + JSON.stringify(node.state));
         }
 
         getEndpoint() {
@@ -675,6 +720,15 @@ module.exports = function (RED) {
                         }, node.state);
                     }
                     break;
+
+                case "Alexa.EqualizerController": // EqualizerController
+                    if (name === 'SetMode') {
+                        modified = node.setValues(payload, node.state);
+                    } else if (name === 'SetBands') {
+                        modified = node.setValues(payload, node.state);
+                    }
+                    break;
+
 
                 case "Alexa.InputController": // InputController
                     if (name === 'SelectInput') {
@@ -907,6 +961,27 @@ module.exports = function (RED) {
                     timeOfSample: time_of_sample,
                     uncertaintyInMilliseconds: uncertainty,
                 });
+            }
+            // EqualizerController
+            if (node.config.i_equalizer_controller) {
+                if (typeof node.state['bands'] === 'object') {
+                    properties.push({
+                        namespace: "Alexa.EqualizerController",
+                        name: "bands",
+                        value: node.state['bands'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (typeof node.state['mode'] === 'string') {
+                    properties.push({
+                        namespace: "Alexa.EqualizerController",
+                        name: "mode",
+                        value: node.state['mode'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
             }
             // MotionSensor
             if (node.config.i_motion_sensor) {
@@ -1146,6 +1221,18 @@ module.exports = function (RED) {
                 }
             }
             return differs;
+        }
+        //
+        //
+        //
+        //
+        to_int(value, default_value) {
+            const n = parseInt(value);
+            const f = parseFloat(value);
+            if (!isNaN(value) && Number.isInteger(f)) {
+                return n;
+            }
+            return default_value;
         }
     }
     RED.nodes.registerType("alexa-device", AlexaDeviceNode);
