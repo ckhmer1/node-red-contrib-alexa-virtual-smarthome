@@ -148,6 +148,29 @@ module.exports = function (RED) {
             } else if (topic === 'CAMERASTREAMS') {
                 node.cameraStreams = msg.payload;
                 if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
+            } else if (topic === 'SETMEDIA') {
+                const media_to_set = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                const media_id_to_set = media_to_set.map(m => m.id);
+                const current_media_id = node.media.map(m => m.id);
+                const media_id_to_remove = current_media_id.filter(id => !media_id_to_set.includes(id));
+                node.media = media_to_set;
+                const media_id_to_add = node.media.map(m => m.id);
+                if (node.media) node.alexa.send_media_created_or_updated(node.id, node.media);
+                if (media_id_to_remove.length > 0) node.alexa.send_media_deleted(node.id, media_id_to_remove);
+            } else if (topic === 'ADDORUPDATEMEDIA') {
+                const media_to_add = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                const media_id_to_add = media_to_add.map(m => m.id);
+                const existing_media_to_update = node.media.filter(m => media_id_to_add.includes(m.id));
+                const existing_media_id_to_update = existing_media_to_update.map(m => m.id);
+                node.media = node.media.filter(m => !existing_media_id_to_update.includes(m.id)); // Remove old media to update
+                media_to_add.forEach(m => node.media.push(m));
+                if (media_to_add) node.alexa.send_media_created_or_updated(node.id, media_to_add);
+            } else if (topic === 'REMOVEMEDIA') {
+                const media_id_to_remove = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                const media_to_remove = node.media.filter(m => media_id_to_remove.includes(m.id));
+                node.media = node.media.filter(m => !media_id_to_remove.includes(m.id));
+                const media_id_removed = media_to_remove.map(m => m.id);
+                if (media_id_removed.length > 0) node.alexa.send_media_deleted(node.id, media_id_removed);
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 const modified = node.setValues(msg.payload, node.state);
@@ -317,7 +340,40 @@ module.exports = function (RED) {
 
             // Estimation
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
-
+            if (node.config.i_estimation) {
+                if (node.isVerbose()) node._debug("Alexa.DeviceUsage.Estimation");
+                let powerProfile = {};
+                if (node.config.i_color_controller || node.config.i_color_temperature_controller) {
+                    powerProfile['type'] = 'BRIGHTNESS_COLOR';
+                } else if (node.config.i_brightness_controller) {
+                    powerProfile['type'] = 'BRIGHTNESS';
+                } else if (node.config.i_power_controller) {
+                    powerProfile['type'] = 'POWER';
+                }
+                if (powerProfile['type']) {
+                    powerProfile['standbyWattage'] = {
+                        "value": this.to_float(node.config.standby_wattage, .1),
+                        "units": "WATTS"
+                    };
+                    if (powerProfile['type'] === 'POWER') {
+                        powerProfile['onWattage'] = {
+                            "value": this.to_float(node.config.maximum_wattage, 10),
+                            "units": "WATTS"
+                        };
+                    } else {
+                        powerProfile['maximumWattage'] = {
+                            "value": this.to_float(node.config.maximum_wattage, 9),
+                            "units": "WATTS"
+                        };
+                    }
+                    node.addCapability("Alexa.DeviceUsage.Estimation", undefined,
+                        {
+                            configurations: {
+                                powerProfile: powerProfile
+                            }
+                        });
+                }
+            }
             // EventDetectionSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
 
@@ -387,6 +443,11 @@ module.exports = function (RED) {
 
             // MediaMetadata
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
+            if (node.config.i_media_metadata) {
+                if (node.isVerbose()) node._debug("Alexa.MediaMetadata");
+                node.media = [];
+                node.addCapability("Alexa.MediaMetadata");
+            }
 
             // Meter
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html
@@ -647,41 +708,6 @@ module.exports = function (RED) {
                                 more_data.imageUri = node.cameraStreams.imageUri;
                             }
                         }
-                        /*
-                            returns cameraStreams array and imageUri
-                        */
-                        /*
-                        [
-                            {
-                            "protocol": "RTSP",
-                            "resolution": {"width": 1920, "height": 1080},
-                            "authorizationType": "BASIC",
-                            "videoCodec": "H264",
-                            "audioCodec": "AAC"
-                            },
-                            {
-                            "protocol": "RTSP",
-                            "resolution": {"width": 1280, "height": 720},
-                            "authorizationType": "NONE",
-                            "videoCodec": "MPEG2",
-                            "audioCodec": "G711"
-                            }
-                        ]
-                        */
-                        // TODO returns
-                        /*more_data.cameraStreams = [
-                            {
-                                "uri": "rtsp://username:password@link.to.video:443/feed1.mp4",
-                                "expirationTime": "2017-02-03T16:20:50.52Z",
-                                "idleTimeoutSeconds": 30,
-                                "protocol": "RTSP",
-                                "resolution": { "width": 1920, "height": 1080 },
-                                "authorizationType": "BASIC",
-                                "videoCodec": "H264",
-                                "audioCodec": "AAC"
-                            }
-                        ];
-                        more_data.imageUri = "https://username:password@link.to.image/image.jpg";*/
                     }
                 case "Alexa.ChannelController": // ChannelController
                     if (name === 'ChangeChannel') {
@@ -729,6 +755,31 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.MediaMetadata": // MediaMetadata
+                    if (name === 'GetMediaMetadata') {
+                        modified = []; // TODO
+                        more_data.media = [];
+                        more_data.media.push({
+                            id: "media Id from the request",
+                            cause: "cause of media creation",
+                            recording: {
+                                name: "Optional video name",
+                                startTime: "2018-06-29T19:20:41Z",
+                                endTime: "2018-06-29T19:21:41Z",
+                                videoCodec: "H264",
+                                audioCodec: "AAC",
+                                uri: {
+                                    value: "https://somedomain/somevideo.mp4",
+                                    expireTime: "2018-06-29T19:31:41Z"
+                                },
+                                thumbnailUri: {
+                                    value: "https://somedomain/someimage.png",
+                                    expireTime: "2018-06-29T19:31:41Z"
+                                }
+                            }
+                        });
+                    }
+                    break;
 
                 case "Alexa.InputController": // InputController
                     if (name === 'SelectInput') {
@@ -1233,6 +1284,16 @@ module.exports = function (RED) {
                 return n;
             }
             return default_value;
+        }
+        //
+        //
+        //
+        //
+        to_float(value, default_value) {
+            if (isNaN(value)) {
+                return default_value;
+            }
+            return parseFloat(value);
         }
     }
     RED.nodes.registerType("alexa-device", AlexaDeviceNode);

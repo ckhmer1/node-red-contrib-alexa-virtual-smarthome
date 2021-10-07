@@ -1228,11 +1228,11 @@ module.exports = function (RED) {
             else if (typeof changed_propertie_names === 'string') {
                 changed_propertie_names = [changed_propertie_names];
             }
-            const state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
-            if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
-            if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
             node.get_access_token('evn')
                 .then(access_token => {
+                    const state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
+                    if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
+                    if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
                     superagent
                         .post(node.config.event_endpoint)
                         .set('Authorization', 'Bearer ' + access_token)
@@ -1375,8 +1375,90 @@ module.exports = function (RED) {
                 })
                 .catch(err => {
                     node.error('send_add_or_update_report get_access_token err ' + JSON.stringify(err));
-                })
+                });
             if (node.config.verbose) node._debug('send_add_or_update_report sent');
+        }
+
+        //
+        //
+        //
+        // 
+        send_media_created_or_updated(endpointId, media) {
+            // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
+            // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
+            // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
+            var node = this;
+            if (media) {
+                if (Array.isArray(media)) {
+                    media.forEach(m => node.send_media_created_or_updated(endpointId, m));
+                } else {
+                    if (node.config.verbose) node._debug('send_media_created_or_updated ' + endpointId);
+                    node.get_access_token('evn')
+                        .then(access_token => {
+                            const msg = node.get_media_created_or_updated(endpointId, media);
+                            if (node.config.verbose) node._debug('send_media_created_or_updated msg ' + JSON.stringify(msg));
+                            if (node.config.verbose) node._debug('send_media_created_or_updated to event_endpoint ' + node.config.event_endpoint);
+                            superagent
+                                .post(node.config.event_endpoint)
+                                .set('Authorization', 'Bearer ' + access_token)
+                                .send(msg)
+                                .end((err, res) => {
+                                    if (err) {
+                                        node.error('send_media_created_or_updated err ' + JSON.stringify(err));
+                                    } else {
+                                        if (node.config.verbose) node._debug('send_media_created_or_updated res ' + JSON.stringify(res));
+                                    }
+                                });
+                            if (node.config.verbose) node._debug('send_media_created_or_updated sent');
+                        })
+                        .catch(err => {
+                            node.error('send_media_created_or_updated get_access_token err ' + JSON.stringify(err));
+                        });
+                }
+            }
+        }
+
+        //
+        //
+        //
+        //
+        send_media_deleted(endpointId, mediaIds) {
+            // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
+            // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
+            // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
+            var node = this;
+            if (node.config.verbose) node._debug('send_media_deleted ' + endpointId);
+            if (mediaIds === undefined) {
+                mediaIds = [];
+            }
+            else if (typeof mediaIds === 'string') {
+                mediaIds = [mediaIds];
+            }
+            if (mediaIds) {
+                node.get_access_token('evn')
+                    .then(access_token => {
+                        const msg = node.get_media_deleted(endpointId, mediaIds);
+                        if (node.config.verbose) node._debug('send_media_deleted msg ' + JSON.stringify(msg));
+                        if (node.config.verbose) node._debug('send_media_deleted to event_endpoint ' + node.config.event_endpoint);
+                        superagent
+                            .post(node.config.event_endpoint)
+                            .set('Authorization', 'Bearer ' + access_token)
+                            .send(msg)
+                            .end((err, res) => {
+                                if (err) {
+                                    node.error('send_media_deleted err ' + JSON.stringify(err));
+                                } else {
+                                    if (node.config.verbose) node._debug('send_media_deleted res ' + JSON.stringify(res));
+                                }
+                            });
+                        if (node.config.verbose) node._debug('send_media_deleted sent');
+                    })
+                    .catch(err => {
+                        node.error('send_media_deleted get_access_token err ' + JSON.stringify(err));
+                    });
+            }
         }
 
         //
@@ -1435,6 +1517,76 @@ module.exports = function (RED) {
                 }
             };
             return state;
+        }
+
+        //
+        //
+        //
+        //
+        get_media_created_or_updated(endpointId, media, namespace, name, messageId) {
+            var node = this;
+            const oauth2_bearer_token = node.tokens.evn.access_token;
+            if (node.config.verbose) node._debug('endpointId ' + endpointId + ' mediaIds ' + JSON.stringify(mediaIds));
+            const msg = {
+                event: {
+                    header: {
+                        namespace: namespace || "Alexa.MediaMetadata",
+                        name: name || "MediaCreatedOrUpdated",
+                        messageId: messageId || node.tokgen.generate(),
+                        payloadVersion: "3"
+                    },
+                    endpoint: {
+                        scope: {
+                            type: "BearerToken",
+                            token: oauth2_bearer_token
+                        },
+                        endpointId: endpointId,
+                    },
+                    payload: {
+                        scope: {
+                            type: "BearerToken",
+                            token: oauth2_bearer_token
+                        },
+                        media: media
+                    }
+                }
+            };
+            return msg;
+        }
+
+        //
+        //
+        //
+        //
+        get_media_deleted(endpointId, mediaIds, namespace, name, messageId) {
+            var node = this;
+            const oauth2_bearer_token = node.tokens.evn.access_token;
+            if (node.config.verbose) node._debug('endpointId ' + endpointId + ' mediaIds ' + JSON.stringify(mediaIds));
+            const msg = {
+                event: {
+                    header: {
+                        namespace: namespace || "Alexa.MediaMetadata",
+                        name: name || "MediaDeleted",
+                        messageId: messageId || node.tokgen.generate(),
+                        payloadVersion: "3"
+                    },
+                    endpoint: {
+                        scope: {
+                            type: "BearerToken",
+                            token: oauth2_bearer_token
+                        },
+                        endpointId: endpointId,
+                    },
+                    payload: {
+                        scope: {
+                            type: "BearerToken",
+                            token: oauth2_bearer_token
+                        },
+                        mediaIds: mediaIds
+                    }
+                }
+            };
+            return msg;
         }
 
         //

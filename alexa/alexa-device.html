@@ -16,6 +16,16 @@
             }
             return isMandatoryIngeterNumber(v);
         }
+        function isMandatoryPositiveNumber(v) {
+            const n = parseFloat(v);
+            return !isNaN(v) && n > 0;
+        }
+        function isPositiveNumber(v) {
+            if (v.trim().length === 0) {
+                return true;
+            }
+            return isMandatoryPositiveNumber(v);
+        }
         RED.nodes.registerType('alexa-device', {
             category: 'alexa-home',
             color: '#3FADB5',
@@ -114,6 +124,9 @@
                 modes: { value: [], required: false },
                 band_range_min: { value: -6, required: false, validate: isIngeterNumber },
                 band_range_max: { value: 6, required: false, validate: isIngeterNumber },
+                standby_wattage: { value: '', required: false, validate: isPositiveNumber },
+                maximum_wattage: { value: '', required: false, validate: isPositiveNumber },
+                //on_wattage: { value: '', required: false, validate: isPositiveNumber },
             },
             inputs: 1,
             outputs: 1,
@@ -550,12 +563,28 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_estimation" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_estimation" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_estimation" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.estimation"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html"><i class="fa fa-external-link"></i></a>
         </div>
+
+        <div class="form-row">
+            <label for="node-input-standby_wattage"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.standby_wattage"></span></label>
+            <input type="text" id="node-input-standby_wattage" data-i18n="[placeholder]alexa-device.placeholder.standby_wattage">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-maximum_wattage"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.maximum_wattage"></span></label>
+            <input type="text" id="node-input-maximum_wattage" data-i18n="[placeholder]alexa-device.placeholder.maximum_wattage">
+        </div>
+
+        <!--div class="form-row">
+            <label for="node-input-on_wattage"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.on_wattage"></span></label>
+            <input type="text" id="node-input-on_wattage" data-i18n="[placeholder]alexa-device.placeholder.on_wattage">
+        </div-->
+        
     </div>
     
     <div class="form-row red-ui-editableList-border div_trait" id="i_event_detection_sensor" style="background: #fbfbfb; padding: 5px;">
@@ -693,8 +722,8 @@
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-lockcontroller.html"><i class="fa fa-external-link"></i></a>
         </div>
     </div>
-    
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_media_metadata" style="background: #fbfbfb; padding: 5px;">
+     
+    <div class="form-row red-ui-editableList-border div_trait" id="i_media_metadata" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_media_metadata" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.media_metadata"></span>

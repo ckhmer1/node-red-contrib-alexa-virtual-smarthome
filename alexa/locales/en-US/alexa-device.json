@@ -121,9 +121,9 @@
             "audio_codecs": "Audio codecs",
             "G711": "G711",
             "AAC": "AAC",
-            "resolutions" : "Resolutions",
-            "resolutions_x" : "Resolutions X",
-            "resolutions_y" : "Resolutions Y",
+            "resolutions": "Resolutions",
+            "resolutions_x": "Resolutions X",
+            "resolutions_y": "Resolutions Y",
             "bands": "Bands",
             "band_min": "Band min",
             "band_max": "Band max",
@@ -133,7 +133,10 @@
             "MOVIE": "Movie",
             "MUSIC": "Music",
             "NIGHT": "Night",
-            "SPORT": "Sport"
+            "SPORT": "Sport",
+            "standby_wattage": "Standby wattage",
+            "maximum_wattage": "Maximum wattage",
+            "on_wattage": "On wattage"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -143,11 +146,14 @@
             "password": "Password",
             "secret": "Secret",
             "path": "Path",
-            "resolutions" : "Width*Height",
-            "resolutions_x" : "Resolutions X",
-            "resolutions_y" : "Resolutions Y",
+            "resolutions": "Width*Height",
+            "resolutions_x": "Resolutions X",
+            "resolutions_y": "Resolutions Y",
             "band_range_min": "Minimum",
-            "band_range_max": "Maximum"
+            "band_range_max": "Maximum",
+            "standby_wattage": "The energy the device consumes while turned off",
+            "maximum_wattage": "The typical or maximum energy the device consumes while turned on",
+            "on_wattage": "The typical energy the device consumes while turned on"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",
