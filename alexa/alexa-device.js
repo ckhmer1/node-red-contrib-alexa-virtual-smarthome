@@ -515,6 +515,33 @@ module.exports = function (RED) {
 
             // SecurityPanelController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html
+            if (node.config.i_security_panel_controller) {
+                if (node.isVerbose()) node._debug("Alexa.SecurityPanelController");
+                const arm_state = node.config.arm_state || [];
+                const alarms = node.config.alarms || [];
+                const pin_code = node.config.pin_code || '';
+                let configuration = {};
+                if (arm_state.length > 0 || pin_code.trim().length === 4) {
+                    let properties_value = {};
+                    if (arm_state.length > 0) {
+                        properties_value['armState'] = arm_state[0];
+                        configuration['supportedArmStates'] = arm_state.map(state => ({ "value": state }));
+                    }
+                    alarms.forEach(alarm => {
+                        properties_value[alarm] = {
+                            value: "OK"
+                        };
+                    });
+                    if (pin_code.trim().length === 4) {
+                        configuration['supportedAuthorizationTypes'] = ['FOUR_DIGIT_PIN'];
+                    }
+                    node.addCapability("Alexa.SecurityPanelController", properties_value,
+                        {
+                            configuration: configuration
+                        }
+                    );
+                }
+            }
 
             // Speaker
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-speaker.html
@@ -624,17 +651,17 @@ module.exports = function (RED) {
         //
         //
         //
-        getCapability(iface, obj_val) {
+        getCapability(iface, properties_val) {
             var node = this;
             let capability = {
                 type: "AlexaInterface",
                 interface: iface,
                 version: "3",
             };
-            if (obj_val) {
+            if (properties_val) {
                 let supported = [];
-                Object.keys(obj_val).forEach(key => {
-                    node.state[key] = obj_val[key];
+                Object.keys(properties_val).forEach(key => {
+                    node.state[key] = properties_val[key];
                     supported.push({
                         name: key
                     });
@@ -652,9 +679,9 @@ module.exports = function (RED) {
         //
         //
         //
-        addCapability(iface, obj_val, attributes) {
+        addCapability(iface, properties_val, attributes) {
             var node = this;
-            let capability = node.getCapability(iface, obj_val);
+            let capability = node.getCapability(iface, properties_val);
             if (attributes !== undefined) {
                 Object.assign(capability, attributes);
             }
@@ -867,6 +894,20 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.SecurityPanelController": // SecurityPanelController
+                    if (name === 'Arm') {
+                        modified = node.setValues({ armState: payload['armState'] }, node.state);
+                        // TODO ?? "bypassType": "BYPASS_ALL"
+                        // exitDelayInSeconds
+                        // bypassedEndpoints
+                    }
+                    else if (name === 'Disarm') {
+                        if (payload.authorization && payload.authorization.type === 'FOUR_DIGIT_PIN' && payload.authorization.value === node.config.pin_code) {
+                            modified = node.setValues({ armState: 'DISARMED' }, node.state);
+                        }
+                    }
+                    break;
+
                 case "Alexa.Speaker": // Speaker
                     if (name === 'SetVolume') {
                         modified = node.setValues(payload, node.state);
@@ -1067,6 +1108,27 @@ module.exports = function (RED) {
                     value: node.state['percentage'],
                     timeOfSample: time_of_sample,
                     uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // SecurityPanelController
+            if (node.config.i_security_panel_controller) {
+                if (node.state['armState']) {
+                    properties.push({
+                        namespace: "Alexa.SecurityPanelController",
+                        name: "armState",
+                        value: node.state['armState'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                node.config.alarms.forEach(alarm => {
+                    properties.push({
+                        namespace: "Alexa.SecurityPanelController",
+                        name: alarm,
+                        value: node.state[alarm],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
                 });
             }
             // PowerController
