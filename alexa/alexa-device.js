@@ -171,6 +171,14 @@ module.exports = function (RED) {
                 node.media = node.media.filter(m => !media_id_to_remove.includes(m.id));
                 const media_id_removed = media_to_remove.map(m => m.id);
                 if (media_id_removed.length > 0) node.alexa.send_media_deleted(node.id, media_id_removed);
+            } else if (topic === 'EXECCOMMAND') { // test
+                if (node.isVerbose()) {
+                    node._debug(" CCHI command " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
+                    let event_payload = {};
+                    let modified = node.execCommand(msg.namespace, msg.name, msg.payload, event_payload)
+                    node._debug("CCHI modified " + node.id + " modified " + JSON.stringify(modified));
+                    node._debug("CCHI event_payload " + node.id + " event_payload " + JSON.stringify(event_payload));
+                }
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 const modified = node.setValues(msg.payload, node.state);
@@ -659,7 +667,7 @@ module.exports = function (RED) {
         //
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
-        execCommand(namespace, name, payload, more_data) { // Directive
+        execCommand(namespace, name, payload, event_payload) { // Directive
             var node = this;
             let modified = undefined;
             if (node.isVerbose()) node._debug("execCommand state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
@@ -677,24 +685,30 @@ module.exports = function (RED) {
 
                 case "Alexa.CameraStreamController": // CameraStreamController
                     if (name === 'InitializeCameraStreams') {
+                        modified = [];
                         const cameraStreams = payload.cameraStreams;
+                        if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
+                        if (node.isVerbose()) node._debug("CCHI payload " + node.id + " " + JSON.stringify(payload));
                         let css = [];
-                        if (node.cameraStreams && node.cameraStreams.cameraStreams.length > 0) {
+                        if (node.cameraStreams && node.cameraStreams.cameraStreams && node.cameraStreams.cameraStreams.length > 0) {
                             node.cameraStreams.cameraStreams.forEach(acs => {
-                                payload.cameraStreams.forEach(rcs => {
+                                cameraStreams.forEach(rcs => {
                                     if (acs.protocol === rcs.protocol &&
                                         acs.resolution.width === rcs.resolution.width &&
                                         acs.resolution.height === rcs.resolution.height &&
-                                        acs.resolution.authorizationType === rcs.resolution.authorizationType &&
-                                        acs.resolution.videoCodec === rcs.resolution.videoCodec &&
-                                        acs.resolution.audioCodec === rcs.resolution.audioCodec
+                                        acs.authorizationType === rcs.authorizationType &&
+                                        acs.videoCodec === rcs.videoCodec &&
+                                        acs.audioCodec === rcs.audioCodec
                                     ) {
                                         css.push({
                                             uri: acs.uri,
                                             expirationTime: acs.expirationTime,
                                             idleTimeoutSeconds: acs.idleTimeoutSeconds,
                                             protocol: acs.protocol,
-                                            resolution: acs.resolution,
+                                            resolution: {
+                                                width: acs.resolution.width,
+                                                height: acs.resolution.height,
+                                            },
                                             authorizationType: acs.authorizationType,
                                             videoCodec: acs.videoCodec,
                                             audioCodec: acs.audioCodec
@@ -703,9 +717,8 @@ module.exports = function (RED) {
                                 });
                             });
                             if (css.length > 0) {
-                                modified = [];
-                                more_data.cameraStreams = css;
-                                more_data.imageUri = node.cameraStreams.imageUri;
+                                event_payload.cameraStreams = css;
+                                event_payload.imageUri = node.cameraStreams.imageUri || '';
                             }
                         }
                     }
@@ -757,27 +770,28 @@ module.exports = function (RED) {
 
                 case "Alexa.MediaMetadata": // MediaMetadata
                     if (name === 'GetMediaMetadata') {
+                        if (node.isVerbose()) node._debug("execCommand node.media " + name + "/" + namespace + " " + JSON.stringify(node.media));
                         modified = []; // TODO
-                        more_data.media = [];
-                        more_data.media.push({
-                            id: "media Id from the request",
-                            cause: "cause of media creation",
-                            recording: {
-                                name: "Optional video name",
-                                startTime: "2018-06-29T19:20:41Z",
-                                endTime: "2018-06-29T19:21:41Z",
-                                videoCodec: "H264",
-                                audioCodec: "AAC",
-                                uri: {
-                                    value: "https://somedomain/somevideo.mp4",
-                                    expireTime: "2018-06-29T19:31:41Z"
-                                },
-                                thumbnailUri: {
-                                    value: "https://somedomain/someimage.png",
-                                    expireTime: "2018-06-29T19:31:41Z"
+                        if (payload.filters && Array.isArray(payload.filters.mediaIds)) {
+                            event_payload.media = [];
+                            node.media.forEach(m => {
+                                if (payload.filters.mediaIds.includes(m.id)) {
+                                    event_payload.media.push(m);
                                 }
-                            }
-                        });
+                            });
+                            const current_media_id = node.media.map(m => m.id);
+                            event_payload.errors = [];
+                            payload.filters.mediaIds.forEach(id => {
+                                if (!current_media_id.includes(id)) {
+                                    event_payload.errors.push({
+                                        mediaId: id,
+                                        status: "NOT_FOUND"
+                                    });
+                                }
+                            });
+                        } else {
+                            event_payload.media = node.media;
+                        }
                     }
                     break;
 
@@ -925,6 +939,7 @@ module.exports = function (RED) {
                 node.sendState(modified, payload, namespace, name);
             }
 
+            if (node.isVerbose()) node._debug("execCommand event_payload " + name + "/" + namespace + " " + JSON.stringify(event_payload));
             if (node.isVerbose()) node._debug("execCommand modified after " + name + "/" + namespace + " " + JSON.stringify(modified));
             if (node.isVerbose()) node._debug("execCommand state after " + name + "/" + namespace + " " + JSON.stringify(node.state));
             return modified;

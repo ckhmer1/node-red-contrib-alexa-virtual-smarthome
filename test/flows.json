@@ -1,0 +1,2898 @@
+[
+    {
+        "id": "5cc6ca02.0e2a64",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5a2248b8.76ba18",
+        "type": "tab",
+        "label": "Alexa Smart Home",
+        "disabled": true,
+        "info": "https://alexa.amazon.it/spa/index.html#skills/beta/amzn1.ask.skill.a1319900-a900-47c2-bdb4-2f5e4ca89cae/?ref=skill_dsk_skb_ys\n\nhttps://developer.amazon.com/en-US/docs/alexa/smarthome/steps-to-build-a-smart-home-skill.html\n\nhttps://flows.nodered.org/flow/5a4d0fd9e3332ab6ecb56bbd51ed77f8\n\nhttps://www.saggiamente.com/2020/01/come-usare-home-assistant-con-alexa-gratuitamente-metodo-aggiornato-senza-nabucasa-e-token/\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/account-linking-for-sh-and-other.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/add-account-linking-logic-smart-home.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/smarthome/understand-the-smart-home-skill-api.html\n\nhttps://www.home-assistant.io/integrations/alexa.smart_home/\n\nhttps://developer.amazon.com/en-US/docs/alexa/device-apis/message-guide.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-a-web-service.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-a-web-service.html#verify-request-sent-by-alexa\n\nhttps://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-a-web-service.html#manually-verify-request-sent-by-alexa\n\nhttps://github.com/alexa/alexa-skills-kit-sdk-for-nodejs\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/understand-account-linking.html\n\nhttps://developer.amazon.com/docs/login-with-amazon/register-web.html\n\nhttps://developer.amazon.com/docs/login-with-amazon/register-web.html#create-a-new-security-profile\n\nhttps://flows.nodered.org/flow/195773d3b493d81c9bf012f64da02ea3\n\nhttps://developer.amazon.com/docs/login-with-amazon/web-docs.html\n\npassport-amazon\ncognito-express\n\nhttps://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html#directives\n\nhttps://www.home-assistant.io/integrations/alexa.smart_home/\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/configure-authorization-code-grant.html\n"
+    },
+    {
+        "id": "a2728c12.4058f",
+        "type": "alexa-adapter",
+        "name": "Alexa",
+        "http_path": "alexa",
+        "login_with_amazon": true,
+        "event_endpoint": "8",
+        "scope": "7",
+        "emails": [
+            "pippo1"
+        ],
+        "msg_check": false,
+        "verbose": true,
+        "port": ""
+    },
+    {
+        "id": "58c096a.8fa0d68",
+        "type": "alexa-device",
+        "z": "5cc6ca02.0e2a64",
+        "alexa": "a2728c12.4058f",
+        "name": "Camera",
+        "display_categories": [
+            "CAMERA"
+        ],
+        "topic": "",
+        "a_inputs": [
+            "AUX 1",
+            "AUX 2",
+            "AUX 3",
+            "AUX 4",
+            "AUX 5",
+            "AUX 6",
+            "AUX 7",
+            "BLURAY",
+            "CABLE",
+            "CD",
+            "COAX 1",
+            "COAX 2",
+            "COMPOSITE 1",
+            "DVD",
+            "GAME",
+            "HD RADIO",
+            "HDMI 1",
+            "HDMI 2",
+            "HDMI 3",
+            "HDMI 4",
+            "HDMI 5",
+            "HDMI 6",
+            "HDMI 7",
+            "HDMI 8",
+            "HDMI 9",
+            "HDMI 10",
+            "HDMI ARC",
+            "INPUT 1",
+            "INPUT 2",
+            "INPUT 3",
+            "INPUT 4",
+            "INPUT 5",
+            "INPUT 6",
+            "INPUT 7",
+            "INPUT 8",
+            "INPUT 9",
+            "INPUT 10",
+            "IPOD",
+            "LINE 1",
+            "LINE 2",
+            "LINE 3",
+            "LINE 4",
+            "LINE 5",
+            "LINE 6",
+            "LINE 7",
+            "MEDIA PLAYER",
+            "OPTICAL 1",
+            "OPTICAL 2",
+            "PHONO",
+            "PLAYSTATION",
+            "PLAYSTATION 3",
+            "PLAYSTATION 4",
+            "SATELLITE",
+            "SMARTCAST",
+            "TUNER",
+            "TV",
+            "USB DAC",
+            "VIDEO 1",
+            "VIDEO 2",
+            "VIDEO 3",
+            "XBOX"
+        ],
+        "i_automation_management": true,
+        "i_brightness_controller": false,
+        "i_camera_stream_controller": true,
+        "i_channel_controller": false,
+        "i_color_controller": false,
+        "i_color_temperature_controller": false,
+        "i_contact_sensor": false,
+        "i_doorbell_event_source": false,
+        "i_endpoint_health": false,
+        "i_equalizer_controller": false,
+        "i_estimation": false,
+        "i_event_detection_sensor": false,
+        "i_input_controller": false,
+        "i_inventory_level_sensor": true,
+        "i_inventory_usage_sensor": true,
+        "i_keypad_controller": false,
+        "a_kc_keys": [],
+        "i_lock_controller": false,
+        "i_media_metadata": true,
+        "i_meter": true,
+        "i_mode_controller": true,
+        "i_motion_sensor": false,
+        "i_percentage_controller": false,
+        "i_playback_controller": false,
+        "a_playback_modes": [
+            "Play",
+            "Pause",
+            "Stop",
+            "StartOver",
+            "Previous",
+            "Next",
+            "Rewind",
+            "FastForward"
+        ],
+        "i_power_controller": true,
+        "i_power_level_controller": false,
+        "i_range_controller": true,
+        "i_rtc_session_controller": false,
+        "i_scene_controller": false,
+        "i_security_panel_controller": true,
+        "i_speaker": false,
+        "i_step_speaker": false,
+        "i_temperature_sensor": false,
+        "i_thermostat_controller": false,
+        "a_target_setpoint": true,
+        "a_lower_setpoint": true,
+        "a_upper_setpoint": true,
+        "a_modes": [
+            "AUTO",
+            "COOL",
+            "HEAT",
+            "ECO",
+            "OFF"
+        ],
+        "a_supports_scheduling": true,
+        "i_thermostat_controller_hvac_components": true,
+        "i_toggle_controller": true,
+        "i_wake_on_lan_controller": true,
+        "camera_stream_configurations": [
+            {
+                "p": [
+                    "HLS"
+                ],
+                "t": [
+                    "NONE"
+                ],
+                "v": [
+                    "H264",
+                    "MPEG2",
+                    "MJPEG",
+                    "JPG"
+                ],
+                "a": [
+                    "G711",
+                    "AAC",
+                    "NONE"
+                ],
+                "r": [
+                    [
+                        "1024",
+                        "768"
+                    ],
+                    [
+                        "1920",
+                        "1080"
+                    ]
+                ]
+            }
+        ],
+        "bands": [
+            "BASS",
+            "MIDRANGE",
+            "TREBLE"
+        ],
+        "modes": [
+            "MOVIE",
+            "MUSIC",
+            "NIGHT",
+            "SPORT",
+            "TV"
+        ],
+        "band_range_min": "-6",
+        "band_range_max": "6",
+        "standby_wattage": "1",
+        "maximum_wattage": "10",
+        "x": 440,
+        "y": 540,
+        "wires": [
+            [
+                "21a10626.9a490a"
+            ]
+        ]
+    },
+    {
+        "id": "cd04c495.b87798",
+        "type": "catch",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 100,
+        "y": 60,
+        "wires": [
+            [
+                "6aee81d.47ab88"
+            ]
+        ]
+    },
+    {
+        "id": "bbe95b00.b05d18",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Ask tokens",
+        "func": "const cid = flow.get(\"cid\", \"\");\nconst sec = flow.get(\"sec\", \"\");\nmsg.url = 'https://api.amazon.com/auth/o2/token';\nmsg.headers = { \n    \"Authorization\": \"Basic \" + Buffer.from(cid + \":\" + sec).toString(\"base64\"),\n    \"Content-Type\": \"application/x-www-form-urlencoded;charset=UTF-8\"\n}\n\nmsg.payload = \"grant_type=authorization_code\" +\n    \"&code=\" + msg.payload.code +\n    \"&redirect_uri=https://smart-home.chimera.dynu.com/alexa/token\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 350,
+        "y": 980,
+        "wires": [
+            [
+                "ad2b06fb.52f5a8"
+            ]
+        ]
+    },
+    {
+        "id": "ad2b06fb.52f5a8",
+        "type": "http request",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 530,
+        "y": 980,
+        "wires": [
+            [
+                "f21f7175.5d212",
+                "41cb66f9.735728"
+            ]
+        ]
+    },
+    {
+        "id": "6aee81d.47ab88",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 270,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "21a10626.9a490a",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "d8c878fa.c923b8",
+        "type": "http in",
+        "z": "5a2248b8.76ba18",
+        "name": "/alexa/smarthome",
+        "url": "1/alexa/smarthome",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 260,
+        "wires": [
+            [
+                "557c2004.c3a75",
+                "d1f1bc85.ea53c",
+                "67446ad6.6005f4",
+                "80ebb271.fbb36"
+            ]
+        ]
+    },
+    {
+        "id": "9a1bb05f.d2e1d",
+        "type": "http response",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "x": 1624.0790710449219,
+        "y": 357.19420623779297,
+        "wires": []
+    },
+    {
+        "id": "67446ad6.6005f4",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Request Payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 230,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b7f0a6d5.e25498",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "check namespace",
+        "property": "req.body.directive.header.namespace",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Alexa.Discovery",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Alexa.ConnectedHome.System",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Alexa.ConnectedHome.Control",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Alexa",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "8f8662f3.bc633"
+            ],
+            [
+                "390b23f2.5ccdec"
+            ],
+            [
+                "db82b2df.e7f6b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c21e0114.0174",
+        "type": "template",
+        "z": "5a2248b8.76ba18",
+        "name": "Discovery Response",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n  \"event\": {\n    \"header\": {\n      \"namespace\": \"Alexa.Discovery\",\n      \"name\": \"Discover.Response\",\n      \"payloadVersion\": \"3\",\n      \"messageId\": \"{{_msgid}}\"\n    },\n    \"payload\": {\n      \"endpoints\": [\n        {\n          \"endpointId\": \"25897\",\n          \"manufacturerName\": \"Sample Manufacturer\",\n          \"description\": \"Smart Light by Sample Manufacturer\",\n          \"friendlyName\": \"Living Room Light\",\n          \"additionalAttributes\":  {\n            \"manufacturer\" : \"Sample Manufacturer\",\n            \"model\" : \"Sample Model\",\n            \"serialNumber\": \"987456\",\n            \"firmwareVersion\" : \"1.0\",\n            \"softwareVersion\": \"1.2\",\n            \"customIdentifier\": \"456\"\n          },\n          \"displayCategories\": [\"LIGHT\"],\n          \"cookie\": {},\n          \"capabilities\": [\n            {\n              \"type\": \"AlexaInterface\",\n              \"interface\": \"Alexa.PowerController\",\n              \"version\": \"3\",\n              \"properties\": {\n                \"supported\": [\n                  {\n                    \"name\": \"powerState\"\n                  }\n                ],\n                \"proactivelyReported\": true,\n                \"retrievable\": true\n              }\n            },\n            {\n              \"type\": \"AlexaInterface\",\n              \"interface\": \"Alexa.BrightnessController\",\n              \"version\": \"3\",\n              \"properties\": {\n                \"supported\": [\n                  {\n                    \"name\": \"brightness\"\n                  }\n                ],\n                \"proactivelyReported\": true,\n                \"retrievable\": true\n              }\n            },\n            {\n              \"type\": \"AlexaInterface\",\n              \"interface\": \"Alexa.EndpointHealth\",\n              \"version\": \"3\",\n              \"properties\": {\n                \"supported\": [\n                  {\n                    \"name\": \"connectivity\"\n                  }\n                ],\n                \"proactivelyReported\": true,\n                \"retrievable\": true\n              }\n            },\n            {\n              \"type\": \"AlexaInterface\",\n              \"interface\": \"Alexa\",\n              \"version\": \"3\"\n            }\n          ],\n          \"connections\": [\n            {\n              \"type\": \"TCP_IP\",\n              \"macAddress\": \"00:11:22:AA:BB:33:44:55\"\n            },\n            {\n              \"type\": \"ZIGBEE\",\n              \"macAddress\": \"00:11:22:33:44:55\"\n            },\n            {\n              \"type\": \"ZWAVE\",\n              \"homeId\": \"0x00002000\",\n              \"nodeId\": \"0x30\"\n            },\n            {\n              \"type\": \"UNKNOWN\",\n              \"value\": \"00:11:22:33:44:55\"\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+        "x": 1016.6665954589844,
+        "y": 224.66659545898438,
+        "wires": [
+            [
+                "9a1bb05f.d2e1d",
+                "c0547535.97ed38"
+            ]
+        ]
+    },
+    {
+        "id": "390b23f2.5ccdec",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "HealthCheckRequest",
+        "property": "req.body.header.name",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "HealthCheckRequest",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 1,
+        "x": 753.2421569824219,
+        "y": 277.95311737060547,
+        "wires": [
+            [
+                "4069c1ff.5ce7c"
+            ]
+        ]
+    },
+    {
+        "id": "4069c1ff.5ce7c",
+        "type": "template",
+        "z": "5a2248b8.76ba18",
+        "name": "HealthCheckResponse",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"header\": {\n        \"messageId\": \"{{_msgid}}\",\n        \"name\": \"HealthCheckResponse\",\n        \"namespace\": \"Alexa.ConnectedHome.System\",\n        \"payloadVersion\": \"2\"\n    },\n    \"payload\": {\n        \"description\": \"The system is currently healthy\",\n        \"isHealthy\": true\n    }\n}",
+        "x": 1024.2421569824219,
+        "y": 277.13280487060547,
+        "wires": [
+            [
+                "9a1bb05f.d2e1d"
+            ]
+        ]
+    },
+    {
+        "id": "8f8662f3.bc633",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "Discover",
+        "property": "req.body.directive.header.name",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Discover",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 714.5077819824219,
+        "y": 224.52342224121094,
+        "wires": [
+            [
+                "c21e0114.0174",
+                "c2fe022f.611"
+            ]
+        ]
+    },
+    {
+        "id": "557c2004.c3a75",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Request Body",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "req.body",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 140,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "b513dbda.e8f538",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "invalid oauth key return error 401",
+        "rules": [
+            {
+                "t": "set",
+                "p": "statusCode",
+                "pt": "msg",
+                "to": "401",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 600,
+        "y": 340,
+        "wires": [
+            [
+                "9a1bb05f.d2e1d"
+            ]
+        ]
+    },
+    {
+        "id": "db82b2df.e7f6b",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "applianceid",
+        "property": "req.body.payload.appliance.applianceId",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "testlight",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "thermostat",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 726.25,
+        "y": 582.9452972412109,
+        "wires": [
+            [
+                "e80d4cca.26651"
+            ],
+            [
+                "e6ce36ad.83bff8"
+            ]
+        ]
+    },
+    {
+        "id": "e80d4cca.26651",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "req.body.header.name",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 913.0198669433594,
+        "y": 544.9218673706055,
+        "wires": [
+            [
+                "912adbaa.b72ea8",
+                "c9328294.af43f"
+            ]
+        ]
+    },
+    {
+        "id": "5358d664.c30898",
+        "type": "template",
+        "z": "5a2248b8.76ba18",
+        "name": "ControlResponse",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "json",
+        "syntax": "mustache",
+        "template": "{\n    \"header\": {\n        \"messageId\": \"{{_msgid}}\",\n        \"name\": \"{{payload}}\",\n        \"namespace\": \"Alexa.ConnectedHome.Control\",\n        \"payloadVersion\": \"2\"\n    },\n    \"payload\": {}\n}\n",
+        "x": 1420.2421569824219,
+        "y": 545.6328048706055,
+        "wires": [
+            [
+                "9a1bb05f.d2e1d"
+            ]
+        ]
+    },
+    {
+        "id": "912adbaa.b72ea8",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "set confirmation",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "TurnOnRequest",
+                "fromt": "str",
+                "to": "TurnOnConfirmation",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "TurnOffRequest",
+                "fromt": "str",
+                "to": "TurnOffConfirmation",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "SetPercentageRequest",
+                "fromt": "str",
+                "to": "SetPercentageConfirmation",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1150.1308288574219,
+        "y": 545.3108139038086,
+        "wires": [
+            [
+                "5358d664.c30898"
+            ]
+        ]
+    },
+    {
+        "id": "c9328294.af43f",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "On / Off / Percentage",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "TurnOnRequest",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "TurnOffRequest",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "SetPercentageRequest",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 3,
+        "x": 1172.8333435058594,
+        "y": 468.66661834716797,
+        "wires": [
+            [
+                "799dd08f.61465"
+            ],
+            [
+                "e29b098a.0459a8"
+            ],
+            [
+                "e44bcb63.179558"
+            ]
+        ]
+    },
+    {
+        "id": "e44bcb63.179558",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "testlight percent",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "testlight",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "req.body.payload.percentageState.value",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1411.3889083862305,
+        "y": 506.9999885559082,
+        "wires": [
+            [
+                "81b9eee3.07f19"
+            ]
+        ]
+    },
+    {
+        "id": "799dd08f.61465",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "testlight on",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "testlight",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "on",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1402.6665954589844,
+        "y": 430.66661834716797,
+        "wires": [
+            [
+                "81b9eee3.07f19"
+            ]
+        ]
+    },
+    {
+        "id": "e29b098a.0459a8",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "testlight off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "testlight",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "off",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1401.1110534667969,
+        "y": 468.8888626098633,
+        "wires": [
+            [
+                "81b9eee3.07f19"
+            ]
+        ]
+    },
+    {
+        "id": "45a19fe1.860a7",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "Edit DiscoveryResponse with your device names",
+        "info": "See the following for details on the fields:\n\nhttps://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/smart-home-skill-api-reference",
+        "x": 1097.4812927246094,
+        "y": 128.6296157836914,
+        "wires": []
+    },
+    {
+        "id": "81b9eee3.07f19",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 1644.8149108886719,
+        "y": 469.2221908569336,
+        "wires": []
+    },
+    {
+        "id": "f53f43e.60bc2c",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "ControlRequest",
+        "info": "",
+        "x": 725.9258728027344,
+        "y": 479.4073715209961,
+        "wires": []
+    },
+    {
+        "id": "80541fe8.2412d",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "testlight",
+        "info": "",
+        "x": 872.8334045410156,
+        "y": 450.99999237060547,
+        "wires": []
+    },
+    {
+        "id": "e6ce36ad.83bff8",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "req.body.header.name",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 910.6665954589844,
+        "y": 623.6667098999023,
+        "wires": [
+            [
+                "50689281.9725ac"
+            ]
+        ]
+    },
+    {
+        "id": "50689281.9725ac",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "Set / Incr / Decr",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "SetTargetTemperatureRequest",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "IncrementTargetTemperatureRequest",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "DecrementTargetTemperatureRequest",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 3,
+        "x": 1145.6665954589844,
+        "y": 672.6667098999023,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "730c62c8.6a736c",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "thermostat",
+        "info": "",
+        "x": 881.6665954589844,
+        "y": 530.6667098999023,
+        "wires": []
+    },
+    {
+        "id": "5553e653.c6d578",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "Thermostat Work-In-Progress",
+        "info": "",
+        "x": 1155.8333435058594,
+        "y": 554.0000839233398,
+        "wires": []
+    },
+    {
+        "id": "d1f1bc85.ea53c",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Request",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "req",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 160,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "7e0016.330c6fec",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1410,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "c2fe022f.611",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "cbe903f0.94e31",
+        "type": "http in",
+        "z": "5a2248b8.76ba18",
+        "name": "1-2 /alexa/oauth",
+        "url": "/alexa/oauth",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 720,
+        "wires": [
+            [
+                "f80ce547.4e7de8",
+                "355c0cca.d11554"
+            ]
+        ]
+    },
+    {
+        "id": "6d830059.ac32d",
+        "type": "http response",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "content-type": "text/html"
+        },
+        "x": 890,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "b0cc2d0a.86e1b",
+        "type": "http in",
+        "z": "5a2248b8.76ba18",
+        "name": "3 /alexa/token",
+        "url": "/alexa/token",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 860,
+        "wires": [
+            [
+                "661775ad.a3205c",
+                "bbe95b00.b05d18",
+                "b9ed480c.2dcd88"
+            ]
+        ]
+    },
+    {
+        "id": "f80ce547.4e7de8",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 290,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "661775ad.a3205c",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 290,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "e1713c17.6b8de",
+        "type": "template",
+        "z": "5a2248b8.76ba18",
+        "name": "1. Login Page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<html>\n<div id=\"amazon-root\"></div>\n <script type=\"text/javascript\">\n\n    window.onAmazonLoginReady = function() {\n      amazon.Login.setClientId('{{payload.cid}}');\n    };\n    (function(d) {\n      var a = d.createElement('script'); a.type = 'text/javascript';\n      a.async = true; a.id = 'amazon-login-sdk';\n      a.src = 'https://assets.loginwithamazon.com/sdk/na/login1.js';\n      d.getElementById('amazon-root').appendChild(a);\n    })(document);\n\n</script>\n<a href id=\"LoginWithAmazon\">\n    <img border=\"0\" alt=\"Login with Amazon\"\n        src=\"https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png\"\n        width=\"156\" height=\"32\" />\n</a>\n<br><a href id=\"Logout\">Logout</a> \n<script type=\"text/javascript\">\n    document.getElementById('LoginWithAmazon').onclick = function() {\n        options = {popup: true}\n        options.scope = 'profile';\n        options.scope_data = {\n            'profile' : {'essential': false}\n        };\n        amazon.Login.authorize(options,\n            '{{{payload.home}}}oauth');\n        return false;\n    };\n</script>\n<script type=\"text/javascript\">\n  document.getElementById('Logout').onclick = function() { \n     amazon.Login.logout();\n  };\n</script>\n</html>\n",
+        "output": "str",
+        "x": 680,
+        "y": 740,
+        "wires": [
+            [
+                "6d830059.ac32d"
+            ]
+        ]
+    },
+    {
+        "id": "355c0cca.d11554",
+        "type": "switch",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "property": "payload.access_token",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 290,
+        "y": 720,
+        "wires": [
+            [
+                "6dd88ba1.994614"
+            ],
+            [
+                "720b6981.fa9808"
+            ]
+        ]
+    },
+    {
+        "id": "f519cbed.614d58",
+        "type": "http response",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "content-type": "text/html"
+        },
+        "x": 710,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "6dd88ba1.994614",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "2. Redirect to /alexa/token",
+        "func": "if (msg.payload.redirect_uri) {\n    flow.set(\"redirect_uri\", msg.payload.redirect_uri);\n}\nif (msg.payload.state) {\n    flow.set(\"state\", msg.payload.state);\n}\nconst state=flow.get(\"state\", \"\");\nconst cid = flow.get(\"cid\", \"\");\nmsg.statusCode = 303;\nmsg.headers = {\n    Location: \"https://www.amazon.com/ap/oa?client_id=\" + cid\n    + \"&scope=profile\"\n    + \"&response_type=code\"\n    + \"&redirect_uri=https://smart-home.chimera.dynu.com/alexa/token\"\n    + \"&state=\" + state\n}\n//    + \"&code_challenge=Fw7s3XHRVb2m1nT7s646UrYiYLMJ54as0ZIU_injyqw\"\n//    + \"&code_challenge_method=S256\"\ndelete msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 510,
+        "y": 700,
+        "wires": [
+            [
+                "6d830059.ac32d",
+                "abc36006.065be"
+            ]
+        ]
+    },
+    {
+        "id": "165f2f8a.79482",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 1040,
+        "wires": [
+            [
+                "debb74d2.9c10a8"
+            ]
+        ]
+    },
+    {
+        "id": "c8592862.48c568",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "f21f7175.5d212",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "func": "if (msg.payload.access_token) {\n    flow.set(\"access_token\", msg.payload.access_token);\n}\nif (msg.payload.refresh_token) {\n    flow.set(\"refresh_token\", msg.payload.refresh_token);\n}\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 720,
+        "y": 980,
+        "wires": [
+            [
+                "c8592862.48c568"
+            ]
+        ]
+    },
+    {
+        "id": "debb74d2.9c10a8",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Ask token",
+        "func": "const cid = flow.get(\"cid\", \"\");\nconst sec = flow.get(\"sec\", \"\");\nconst refresh_token = flow.get(\"refresh_token\", \"\");\nmsg.url = 'https://api.amazon.com/auth/o2/token';\nmsg.headers = { \n    \"Authorization\": \"Basic \" + Buffer.from(cid + \":\" + sec).toString(\"base64\"),\n    \"Content-Type\": \"application/x-www-form-urlencoded;charset=UTF-8\"\n}\n\nmsg.payload = \"grant_type=refresh_token\" +\n    \"&refresh_token=\" + refresh_token;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 360,
+        "y": 1040,
+        "wires": [
+            [
+                "34b02ba0.5107a4"
+            ]
+        ]
+    },
+    {
+        "id": "34b02ba0.5107a4",
+        "type": "http request",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 530,
+        "y": 1040,
+        "wires": [
+            [
+                "f21f7175.5d212"
+            ]
+        ]
+    },
+    {
+        "id": "5d296f2e.b00e5",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 720,
+        "y": 380,
+        "wires": [
+            [
+                "89d3f716.84c7b8"
+            ]
+        ]
+    },
+    {
+        "id": "5ffdd49a.e13fcc",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1230,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "89d3f716.84c7b8",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Ask token",
+        "func": "const cid = flow.get(\"cid\", \"\");\nconst sec = flow.get(\"sec\", \"\");\nconst refresh_token = flow.get(\"refresh_token\", \"\");\nmsg.url = 'https://api.amazon.com/auth/o2/token';\nmsg.headers = { \n    \"Authorization\": \"Basic \" + Buffer.from(cid + \":\" + sec).toString(\"base64\"),\n    \"Content-Type\": \"application/x-www-form-urlencoded;charset=UTF-8\"\n}\n\nmsg.payload = \"grant_type=refresh_token\" +\n    \"&refresh_token=\" + refresh_token;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 880,
+        "y": 380,
+        "wires": [
+            [
+                "5d10cb17.1ff684"
+            ]
+        ]
+    },
+    {
+        "id": "5d10cb17.1ff684",
+        "type": "http request",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1050,
+        "y": 380,
+        "wires": [
+            [
+                "5ffdd49a.e13fcc"
+            ]
+        ]
+    },
+    {
+        "id": "41cb66f9.735728",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Ask Profile",
+        "func": "if (msg.payload.access_token) {\n    msg.url = 'https://api.amazon.com/user/profile';\n    msg.headers = { \n        \"Authorization\": \"Bearer  \" + msg.payload.access_token,\n        \"Content-Type\": \"application/x-www-form-urlencoded;charset=UTF-8\"\n    }\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 720,
+        "y": 1040,
+        "wires": [
+            [
+                "2408f840.c93b18"
+            ]
+        ]
+    },
+    {
+        "id": "2408f840.c93b18",
+        "type": "http request",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 890,
+        "y": 1040,
+        "wires": [
+            [
+                "eb6b81e0.6c2fd"
+            ]
+        ]
+    },
+    {
+        "id": "eb6b81e0.6c2fd",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "4dfe5a67.31a0c4",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "User ID",
+        "info": "{\n    \"user_id\":\"amzn1.account.AGSN7ZQNC7GSPFRSBIIL3M7FZLGA\",\n    \"name\":\"Claudio Chimera\",\n    \"email\":\"ckhmer1@gmail.com\"\n}",
+        "x": 1070,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "6ba904e9.7d4bbc",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Redirect back",
+        "func": "const redirect_uri = flow.get(\"redirect_uri\", \"\");\nconst state = flow.get(\"state\", \"\");\nconst code = flow.get(\"access_token\", \"\");\nmsg.statusCode = 303;\nmsg.headers = {\n    Location: redirect_uri + \"&state=\" + state + \"&code=\" + code + \"CCHI\"\n}\ndelete msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 500,
+        "y": 860,
+        "wires": [
+            [
+                "f519cbed.614d58",
+                "648ee1c6.999d3"
+            ]
+        ]
+    },
+    {
+        "id": "648ee1c6.999d3",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "720b6981.fa9808",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "state",
+                "pt": "flow",
+                "to": "payload.state",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "redirect_uri",
+                "pt": "flow",
+                "to": "payload.redirect_uri",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "payload.cid",
+                "pt": "msg",
+                "to": "cid",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.home",
+                "pt": "msg",
+                "to": "home",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 740,
+        "wires": [
+            [
+                "e1713c17.6b8de"
+            ]
+        ]
+    },
+    {
+        "id": "1460b061.171e6",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "func": "msg.cid = flow.get(\"cid\", \"\");\nmsg.sec = flow.get(\"sec\",\"\");\nmsg.access_token = flow.get(\"access_token\", \"\");\nmsg.refresh_token = flow.get(\"refresh_token\", \"\");\nmsg.home = flow.get(\"home\", \"\");\nmsg.state = flow.get(\"state\", \"\");\nmsg.client_id = flow.get(\"client_id\", \"\");\nmsg.redirect_uri = flow.get(\"redirect_uri\", \"\");\nmsg.username = flow.get(\"username\", \"\");\nmsg.password = flow.get(\"password\", \"\");\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 600,
+        "y": 60,
+        "wires": [
+            [
+                "7735e1dd.f76d6"
+            ]
+        ]
+    },
+    {
+        "id": "8de24cff.070ed",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Get",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 420,
+        "y": 60,
+        "wires": [
+            [
+                "1460b061.171e6"
+            ]
+        ]
+    },
+    {
+        "id": "7735e1dd.f76d6",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "ef1a502b.abe6a",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "func": "flow.set(\"cid\", msg.cid);\nflow.set(\"sec\", msg.sec);\nflow.set(\"access_token\", msg.access_token);\nflow.set(\"refresh_token\", msg.refresh_token);\nflow.set(\"home\", msg.home);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 600,
+        "y": 100,
+        "wires": [
+            [
+                "7735e1dd.f76d6"
+            ]
+        ]
+    },
+    {
+        "id": "c19110b3.bc49c",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Set",
+        "props": [
+            {
+                "p": "access_token",
+                "v": "Atza|IwEBIB8ua1XMAO4B_HChNO3looKSTKM5ViOb1edHtNDtACL4-zcQbZ6VPXkneVFbO1Lg0lEmKZ-NQ54OG7gdSCsKt0tcYU7W_fRefIQnc3Cr5BPGVsQS6owvTlDOMgDeDHscUZrOcgAb7BG_tPuiCrBqfzU6AL7m12E_TWGhHWYut3eP0mO2h7oPKT6aiYDCSGI1TLqLXnJ2M4ZCgrYk34qeUN1K2fhMs9MS_UGcEhPHP2LBYi9eUTz-YY_MhGJ8wdgqHrbx8Q80bOKu6PvhgzVXfpsqkirekMR_isnENX5wYaZ7HSECNcBk6ldJH0rKszCzTcE6gMLbNia0jnibdH-ojD0-Bh16WGBbd1dzgpdWE2ugnmU95vClJiUjh6_NrS9SxD15YsqH2K5VcJpjzw_w6Ijh",
+                "vt": "str"
+            },
+            {
+                "p": "refresh_token",
+                "v": "Atzr|IwEBIKT5DE7_XDEYvFI0OZoi6ZCKCXSMJ3nGCRI7SuoTgdzuQNXSl24tKOZIYUlbhv8a0a3BnJWdXvmw9uOxsYjrQLCtD57cBGjl5wWT0iWpFb9lM0OVcmJEm2UMUk5JeM-xukjr4idEdOHKUkmoeZivhQRC08eQsP0cG7IyiTYi0VnFo6y9mUzRxcCRIxYg0XAkyfJKmVc1crIyeKJNpzHJBcT7Z1bUR2ll9xV3B6_F4TPy-iXNxRfSHykmIyWrc09cv_x3Wy9zCTTr6XiTOsO9FNNo6PMIO-R-HDKESiLpDzMBgqbcd4EVR-8f2mfiSpH7LIrtTNkLZE_WQ530FWG9EGiRJ8X5PYc-JZTjRHIcmdDEkg",
+                "vt": "str"
+            },
+            {
+                "p": "cid",
+                "v": "amzn1.application-oa2-client.d359ed2095be4231bab9ce6eaf802129",
+                "vt": "str"
+            },
+            {
+                "p": "sec",
+                "v": "20ff310bf0f59508c7edc38bc349c55f1a17f0b6732ba3ab1a7daeb2a51fbff5",
+                "vt": "str"
+            },
+            {
+                "p": "home",
+                "v": "https://smart-home.chimera.dynu.com/alexa/",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 420,
+        "y": 100,
+        "wires": [
+            [
+                "ef1a502b.abe6a"
+            ]
+        ]
+    },
+    {
+        "id": "fdff23a6.eae97",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "Impostazioni, non condividere",
+        "info": "Impostazioni, non condividere",
+        "x": 600,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "fdf4eaa0.5341b8",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "Login with Amazon",
+        "info": "https://developer.amazon.com/docs/login-with-amazon/web-docs.html",
+        "x": 140,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "b9ed480c.2dcd88",
+        "type": "delay",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "7",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 300,
+        "y": 860,
+        "wires": [
+            [
+                "6ba904e9.7d4bbc"
+            ]
+        ]
+    },
+    {
+        "id": "abc36006.065be",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "74db7376.2b865c",
+        "type": "http in",
+        "z": "5a2248b8.76ba18",
+        "name": "1 /alexa/oauth",
+        "url": "1/alexa/oauth",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 1160,
+        "wires": [
+            [
+                "608f734d.2366fc",
+                "88ff0845.4ec248"
+            ]
+        ]
+    },
+    {
+        "id": "608f734d.2366fc",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "state",
+                "pt": "flow",
+                "to": "payload.state",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "redirect_uri",
+                "pt": "flow",
+                "to": "payload.redirect_uri",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "client_id",
+                "pt": "flow",
+                "to": "payload.client_id",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 300,
+        "y": 1160,
+        "wires": [
+            [
+                "6c8cc14f.fdaa9"
+            ]
+        ]
+    },
+    {
+        "id": "6c8cc14f.fdaa9",
+        "type": "template",
+        "z": "5a2248b8.76ba18",
+        "name": "1. Login Page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n    <meta name=\"description\" content=\"\">\n    <meta name=\"author\" content=\"\">\n    <link rel=\"icon\" href=\"favicon.ico\">\n\n    <title>Smart Home Login</title>\n\n    <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css\" integrity=\"sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh\" crossorigin=\"anonymous\">\n\n    <script src=\"https://code.jquery.com/jquery-3.4.1.slim.min.js\" integrity=\"sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n\" crossorigin=\"anonymous\"></script>\n    <script src=\"https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js\" integrity=\"sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo\" crossorigin=\"anonymous\"></script>\n    <script src=\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js\" integrity=\"sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6\" crossorigin=\"anonymous\"></script>\n  </head>\n\n  <body class=\"text-center\">\n    <form action=\"/alexa/oauth\" method=\"post\">\n      <img class=\"mb-4\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_Alexa_logo.svg/320px-Amazon_Alexa_logo.svg.png\" alt=\"Alexa\">\n      <img class=\"mb-4\" src=\"https://nodered.org/about/resources/media/node-red-icon-2.svg\" alt=\"Node-RED\" width=\"72\" height=\"72\">\n      <h1 class=\"h3 mb-3 font-weight-normal\">Please login in</h1>\n      <label for=\"username\" class=\"sr-only\">Username</label>\n      <input type=\"text\" id=\"username\" name=\"username\" class=\"form-control\" placeholder=\"Username\" required autofocus>\n      <label for=\"password\" class=\"sr-only\">Password</label>\n      <input type=\"password\" id=\"password\" name=\"password\" class=\"form-control\" placeholder=\"Password\" required>\n      <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Log in</button>\n    </form>\n  </body>\n</html>\n",
+        "output": "str",
+        "x": 520,
+        "y": 1160,
+        "wires": [
+            [
+                "51d8243c.0103bc"
+            ]
+        ]
+    },
+    {
+        "id": "51d8243c.0103bc",
+        "type": "http response",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "content-type": "text/html"
+        },
+        "x": 730,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "448521d3.f3b51",
+        "type": "http in",
+        "z": "5a2248b8.76ba18",
+        "name": "2 /alexa/oauth",
+        "url": "1/alexa/oauth",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 1200,
+        "wires": [
+            [
+                "96958ce8.dce92",
+                "b00bcd53.c8c8e"
+            ]
+        ]
+    },
+    {
+        "id": "96958ce8.dce92",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Login post",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 290,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "b00bcd53.c8c8e",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "func": "const username=flow.get(\"username\", undefined);\nconst password=flow.get(\"password\", undefined);\nif (msg.payload.username === username && msg.payload.password === password) {\n    return [null, msg];\n}\nreturn [msg, null];   \n",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 300,
+        "y": 1200,
+        "wires": [
+            [
+                "6c8cc14f.fdaa9"
+            ],
+            [
+                "a55a5ba4.72a828"
+            ]
+        ]
+    },
+    {
+        "id": "12875e4f.dc8e12",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Setup",
+        "props": [
+            {
+                "p": "username",
+                "v": "ckhmer1",
+                "vt": "str"
+            },
+            {
+                "p": "password",
+                "v": "eVtK*6b2!m[!vwv;_>4V4c?TnyzjrY'6E>Tv6HAsp7wPHR>X\"%/b(4fpL.5RHrfn\"HT<_L3bC:snhm.(KF3]J;\"B9Zy.hC&.>aRGFJ{J/:KE;Tf@`c5-?b5JzUB2~4K3",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 110,
+        "y": 1420,
+        "wires": [
+            [
+                "852b915f.2b543",
+                "80e9ec80.10bf7"
+            ]
+        ]
+    },
+    {
+        "id": "852b915f.2b543",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "username",
+                "pt": "flow",
+                "to": "username",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "password",
+                "pt": "flow",
+                "to": "password",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 280,
+        "y": 1420,
+        "wires": [
+            [
+                "2738bdd4.21a072"
+            ]
+        ]
+    },
+    {
+        "id": "2738bdd4.21a072",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Login/Password",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "a55a5ba4.72a828",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Redirect back",
+        "func": "let code = \"\";\nwhile (code.length < 32) {\n    code = code + Math.random().toString(36).substring(2);\n}\ncode = code.substring(0, 32);\nconst redirect_uri = flow.get(\"redirect_uri\", \"\");\nconst state = flow.get(\"state\", \"\");\nflow.set(\"state\");\nflow.set(\"code\", code);\nmsg.statusCode = 303;\nmsg.headers = {\n    Location: redirect_uri + \"?state=\" + state + \"&code=\" + code\n}\n//    Location: redirect_uri + \"&state=\" + state + \"&code=Atza|\" + code\ndelete msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 520,
+        "y": 1200,
+        "wires": [
+            [
+                "51d8243c.0103bc",
+                "fd65ca76.4553f8"
+            ]
+        ]
+    },
+    {
+        "id": "fd65ca76.4553f8",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Login redirect",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "88ff0845.4ec248",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Login get",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 280,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "17de5070.ccc68",
+        "type": "template",
+        "z": "5a2248b8.76ba18",
+        "name": "1. Login Page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<html>\n    <body>\n        <form action=\"/alexa/oauth\" method=\"post\">\n            <div>\n                <label for=\"login\">Login: </label>\n                <input type=\"text\" name=\"login\" id=\"login\" required>\n            </div>\n            <div>\n                <label for=\"password\">Password: </label>\n                <input type=\"password\" name=\"password\" id=\"password\" required>\n            </div>\n            <div>\n                <input type=\"submit\" value=\"Login\">\n            </div>\n        </form>\n    </body>\n</html>\n",
+        "output": "str",
+        "x": 520,
+        "y": 1120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "792ffa01.8dd9c4",
+        "type": "http in",
+        "z": "5a2248b8.76ba18",
+        "name": "2 /alexa/token",
+        "url": "1/alexa/token",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 1300,
+        "wires": [
+            [
+                "617d54d3.b76dac",
+                "fcfaedcb.23d5b"
+            ]
+        ]
+    },
+    {
+        "id": "617d54d3.b76dac",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Token post",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 290,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "fcfaedcb.23d5b",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "func": "const code = flow.get(\"code\", \"\");\nconst redirect_uri = flow.get(\"redirect_uri\", \"\");\nconst client_id = flow.get(\"client_id\", \"\");\n\nif (msg.payload.grant_type !== 'authorization_code' ||\n    msg.payload.redirect_uri !== redirect_uri ||\n    msg.payload.client_id !== client_id ||\n    msg.payload.client_secret !== 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9' ||\n    msg.payload.code !== code) {\n        msg.statusCode = 401;\n        delete msg.payload;\n    return msg;\n}\nconst tl = 128;\nlet access_token = \"\";\nwhile (access_token.length < tl) {\n    access_token = access_token + Math.random().toString(36).substring(2);\n}\nflow.set(\"access_token\", access_token);\n\nlet refresh_token = \"\";\nwhile (refresh_token.length < tl) {\n    refresh_token = refresh_token + Math.random().toString(36).substring(2);\n}\nflow.set(\"refresh_token\", refresh_token);\nflow.set(\"access_token_expire\", Date.now()+3600 * 1000);\nmsg.payload = {\n    \"access_token\":\"Atza|\" + access_token,\n   \"token_type\":\"bearer\",\n   \"expires_in\":3600,\n   \"refresh_token\":\"Atzr|\" + refresh_token\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 280,
+        "y": 1300,
+        "wires": [
+            [
+                "963cb24.0a1935",
+                "f6240e8f.05898"
+            ]
+        ]
+    },
+    {
+        "id": "963cb24.0a1935",
+        "type": "http response",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "x": 490,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "9854b0a8.831e2",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Tokens",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1180,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "98ded228.d91b5",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "oauth2",
+        "info": "",
+        "x": 80,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "d795fc87.6f935",
+        "type": "json",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 650,
+        "y": 1340,
+        "wires": [
+            [
+                "9e87b216.cbecb"
+            ]
+        ]
+    },
+    {
+        "id": "9e87b216.cbecb",
+        "type": "file",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "filename": "/data/alexa-oauth2.json",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 850,
+        "y": 1340,
+        "wires": [
+            [
+                "9771eee2.a91de"
+            ]
+        ]
+    },
+    {
+        "id": "658b8765.b230c8",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Save tokens",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Date.now()+3600 * 1000",
+        "payloadType": "jsonata",
+        "x": 330,
+        "y": 1380,
+        "wires": [
+            [
+                "f6240e8f.05898"
+            ]
+        ]
+    },
+    {
+        "id": "f6240e8f.05898",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "Tokens",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "payload.access_token",
+                "pt": "msg",
+                "to": "access_token",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.refresh_token",
+                "pt": "msg",
+                "to": "refresh_token",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "payload.access_token_expire",
+                "pt": "msg",
+                "to": "access_token_expire",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 1340,
+        "wires": [
+            [
+                "d795fc87.6f935"
+            ]
+        ]
+    },
+    {
+        "id": "80e9ec80.10bf7",
+        "type": "file in",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "filename": "/data/alexa-oauth2.json",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 310,
+        "y": 1460,
+        "wires": [
+            [
+                "86c80470.df56e8"
+            ]
+        ]
+    },
+    {
+        "id": "86c80470.df56e8",
+        "type": "json",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 510,
+        "y": 1460,
+        "wires": [
+            [
+                "6f8d24f4.21225c"
+            ]
+        ]
+    },
+    {
+        "id": "6f8d24f4.21225c",
+        "type": "change",
+        "z": "5a2248b8.76ba18",
+        "name": "Tokens",
+        "rules": [
+            {
+                "t": "set",
+                "p": "access_token",
+                "pt": "flow",
+                "to": "payload.access_token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "refresh_token",
+                "pt": "flow",
+                "to": "payload.refresh_token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "timestamp_token",
+                "pt": "flow",
+                "to": "payload.timestamp_token",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 660,
+        "y": 1460,
+        "wires": [
+            [
+                "5cd06ed0.3e161"
+            ]
+        ]
+    },
+    {
+        "id": "5cd06ed0.3e161",
+        "type": "debug",
+        "z": "5a2248b8.76ba18",
+        "name": "Tokens",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 1460,
+        "wires": []
+    },
+    {
+        "id": "9771eee2.a91de",
+        "type": "json",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1050,
+        "y": 1340,
+        "wires": [
+            [
+                "9854b0a8.831e2"
+            ]
+        ]
+    },
+    {
+        "id": "80ebb271.fbb36",
+        "type": "function",
+        "z": "5a2248b8.76ba18",
+        "name": "Verify Authorization",
+        "func": "const access_token = flow.get(\"access_token\", \"\");\n// node.error(\"access_token Atza|\" + access_token);\nlet scope = {};\nif (typeof msg.payload.directive.payload.scope === 'object') {\n    scope = msg.payload.directive.payload.scope;\n} else if (typeof msg.payload.directive.endpoint.scope === 'object') {\n    scope = msg.payload.directive.endpoint.scope;\n}\n// node.error(\"token \" + scope.token);\n// node.error(\"type \"  + scope.type);\nif (\"Atza|\" + access_token !== scope.token\n    || \"BearerToken\" !== scope.type) {\n        node.error(\"Wrong Authorization\");\n    return [null, msg];\n}\nreturn msg;\n\n",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 310,
+        "y": 280,
+        "wires": [
+            [
+                "b7f0a6d5.e25498"
+            ],
+            [
+                "b513dbda.e8f538"
+            ]
+        ]
+    },
+    {
+        "id": "c0547535.97ed38",
+        "type": "json",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1250,
+        "y": 220,
+        "wires": [
+            [
+                "7e0016.330c6fec"
+            ]
+        ]
+    },
+    {
+        "id": "1de08038.aaef",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa\",\"name\":\"ReportState\",\"payloadVersion\":\"3\",\"messageId\":\"6d2d68df-4724-4175-bb25-b096df452006\",\"correlationToken\":\"AAAAAAAAAQBGnJ1usdfSHWw2tZY0X9J1/AEAAAAAAADV+YFJzVCC7LUcCtTUyVoD53hR564r9kd70rA3TBLNA8+sNBNoEzhhHsaUVdOL/JEWoFKOiICCkUgREy/jH/0Lf5z2F66lmjC2zpEGMpy6b47U3RZO/gOP3krYc5TIG+Z1PNX6WOc3AFPlYSR1GZ8kc/4VcyyLRQBYsrstb1f/XuW6TOXUM7iEZ6nEfzEhXBLdqQxM8SRsDCu+FeadfHXGEzZzUFS4XOhQDWBpkrat9j56SWo9+sCF1zGIJG3iyG5iIkBy+JVqhBiucFZgLbS4vath0fbsLR1qhGxkO5puybVu2hrMr5RBUP9f1eRsodXTkVTLsOMRl5UkxDpdKvW/M5cWZY56LiX/SNq39Z6IEez3hbowO1RQ6D/bP/CrJCJvbk0tecfhdIO1zUmZL5QCvZNZTVMyaosVM1WFcOnBnWuAQ8raCRUX8CXbTO6+fM8NYVw5CjgfRLiBLqdkyvb4Nu2T5uiIoJ8LqViVC/oC8LkBT5yoqo3pPGhkdbJwUDTW4+fjX9IrJNA0TtpQUw4mhX9rgDeMbl/8bnNk7ic9SSixqT1S86Eg7MUHSbIh+abmpHRrHr4mDrZKQvZVEKTJhCU9sQd0Sro6SfovgLogJo0gRglwJMTsShFuim/yvvOnQkKOe1JpLjo3YjfHNtKz7n/a+iR2V+bqYEgR\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|442ledsk0aa5b8i89bmvxwhlfk76som7uv0tosbeccuwl7t0kslbweawuvwmlkbvucb9au6xgpirpxwv9j92s9nxzvqtd48d9o0esnivo85b6n4ag3ued06ipergnugoe\"},\"endpointId\":\"25897\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "80ebb271.fbb36"
+            ]
+        ]
+    },
+    {
+        "id": "6f4aa0e9.8adc2",
+        "type": "comment",
+        "z": "5a2248b8.76ba18",
+        "name": "Login with amazon",
+        "info": "",
+        "x": 130,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "c359c45b.db9df8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "reportState",
+        "payload": "reportState",
+        "payloadType": "str",
+        "x": 200,
+        "y": 540,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "4875dfe1.7f992",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "SetMedia 1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SetMedia",
+        "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
+        "payloadType": "json",
+        "x": 230,
+        "y": 460,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "5ccc13e4.e9e5dc",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "SetMedia 2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SetMedia",
+        "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
+        "payloadType": "json",
+        "x": 230,
+        "y": 500,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "d8a877bb.329d08",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "AddOrUpdateMedia 1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "AddOrUpdateMedia",
+        "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 580,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "6b7972c8.d196ac",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "AddOrUpdateMedia 2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "AddOrUpdateMedia",
+        "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 620,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "520f57ab.bd85c8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "SetMedia",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SetMedia",
+        "payload": "[]",
+        "payloadType": "json",
+        "x": 240,
+        "y": 420,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "3bdd2b87.908d34",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "RemoveMedia 1",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "RemoveMedia",
+        "payload": "1",
+        "payloadType": "str",
+        "x": 220,
+        "y": 660,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "a018dd66.8e2bb",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "RemoveMedia 2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "RemoveMedia",
+        "payload": "2",
+        "payloadType": "str",
+        "x": 220,
+        "y": 700,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "44750f6a.f113b",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "RemoveMedia 3",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "RemoveMedia",
+        "payload": "3",
+        "payloadType": "str",
+        "x": 220,
+        "y": 740,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "e585d5d.fbeb028",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "InitializeCameraStreams RTSP",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "name",
+                "v": "InitializeCameraStreams",
+                "vt": "str"
+            },
+            {
+                "p": "namespace",
+                "v": "Alexa.CameraStreamController",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "execCommand",
+        "payload": "{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"RTSP\",\"videoCodec\":\"JPG\",\"audioCodec\":\"G711\",\"resolution\":{\"width\":1920,\"height\":1080}}]}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 380,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "adb9c6e69e992eb0",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "cameraStreams",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "8",
+        "topic": "cameraStreams",
+        "payload": "{\"cameraStreams\":[{\"uri\":\"https://pizza.dynu.net/hls/bbb.m3u8\",\"expirationTime\":\"2022-02-03T16:20:50.52Z\",\"idleTimeoutSeconds\":30,\"protocol\":\"HLS\",\"resolution\":{\"width\":1920,\"height\":1080},\"authorizationType\":\"NONE\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\"}],\"imageUri\":\"https://upload.wikimedia.org/wikipedia/commons/f/fb/Veduta_di_Paestum_2010.jpg\"}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 300,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "ef173799.7ac148",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "InitializeCameraStreams HLS",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "name",
+                "v": "InitializeCameraStreams",
+                "vt": "str"
+            },
+            {
+                "p": "namespace",
+                "v": "Alexa.CameraStreamController",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "execCommand",
+        "payload": "{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"HLS\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"resolution\":{\"width\":1920,\"height\":1080}}]}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 340,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "2193df88.f952e",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"own\":{\"access_token\":\"Atza|access_token-own\",\"refresh_token\":\"Atzr|refresh_token-own\",\"expire_at\":2633687638936},\"lwa\":{\"access_token\":\"Atza|access_token-lwa\",\"refresh_token\":\"Atzr|refresh_token-lwa\",\"expire_at\":2630610982765},\"evn\":{\"access_token\":\"Atza|access_token-evn\",\"refresh_token\":\"Atzr|refresh_token-evn\",\"expire_at\":2633691954758}}",
+        "payloadType": "json",
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "b8e1e43b.bd2b78"
+            ]
+        ]
+    },
+    {
+        "id": "b8e1e43b.bd2b78",
+        "type": "file",
+        "z": "5cc6ca02.0e2a64",
+        "name": "token",
+        "filename": "alexa-tokens_a2728c12.4058f.json",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 270,
+        "y": 120,
+        "wires": [
+            [
+                "ef81a452.b470c8"
+            ]
+        ]
+    },
+    {
+        "id": "ef81a452.b470c8",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 430,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "13cff97f.461ba7",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "InitializeCameraStreams",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.CameraStreamController\",\"name\":\"InitializeCameraStreams\",\"payloadVersion\":\"3\",\"messageId\":\"d1aabb49-a0e8-4327-b4de-0b35136dc8a0\",\"correlationToken\":\"mio_correlation_token\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"HLS\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"resolution\":{\"width\":1920,\"height\":1080}}]}}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "691dc41b.b1bb1c"
+            ]
+        ]
+    },
+    {
+        "id": "2a08b5ed.e79fca",
+        "type": "http request",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost:1880/alexa/smarthome/",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 590,
+        "y": 180,
+        "wires": [
+            [
+                "2761cc07.74fb64"
+            ]
+        ]
+    },
+    {
+        "id": "1633b4b4.8bc82b",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 870,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2761cc07.74fb64",
+        "type": "json",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 750,
+        "y": 180,
+        "wires": [
+            [
+                "1633b4b4.8bc82b"
+            ]
+        ]
+    },
+    {
+        "id": "d62fe93.0032618",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "GetMediaMetadata ",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.MediaMetadata\",\"name\":\"GetMediaMetadata\",\"messageId\":\"123-456-789\",\"correlationToken\":\"token\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{\"filters\":{\"mediaIds\":[\"media Ids\",\"1\",\"2\",\"3\"]}}}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "691dc41b.b1bb1c"
+            ]
+        ]
+    },
+    {
+        "id": "691dc41b.b1bb1c",
+        "type": "change",
+        "z": "5cc6ca02.0e2a64",
+        "name": "endpointId",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.directive.endpoint.endpointId",
+                "pt": "msg",
+                "to": "58c096a.8fa0d68",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 410,
+        "y": 180,
+        "wires": [
+            [
+                "2a08b5ed.e79fca"
+            ]
+        ]
+    }
+]

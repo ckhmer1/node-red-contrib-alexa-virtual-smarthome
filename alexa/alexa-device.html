@@ -26,6 +26,12 @@
             }
             return isMandatoryPositiveNumber(v);
         }
+        function isValidPinCODE(v) {
+            if (v.trim().length === 0) {
+                return true;
+            }
+            return isNaturalNumber(v) && v.trim().length === 4;
+        }
         RED.nodes.registerType('alexa-device', {
             category: 'alexa-home',
             color: '#3FADB5',
@@ -127,6 +133,9 @@
                 standby_wattage: { value: '', required: false, validate: isPositiveNumber },
                 maximum_wattage: { value: '', required: false, validate: isPositiveNumber },
                 //on_wattage: { value: '', required: false, validate: isPositiveNumber },
+                arm_state: { value: [], required: false },
+                alarms: { value: [], required: false },
+                pin_code: { value: "", required: false, validate: isValidPinCODE },
             },
             inputs: 1,
             outputs: 1,
@@ -825,12 +834,38 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_security_panel_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_security_panel_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_security_panel_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.security_panel_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html"><i class="fa fa-external-link"></i></a>
         </div>
+
+        <div class="form-row">
+            <label for="node-input-arm_state"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.arm_state"></span></label>
+            <select multiple id="node-input-arm_state" >
+                <option value='ARMED_AWAY' data-i18n='alexa-device.label.ARMED_AWAY'></option>
+                <option value='ARMED_STAY' data-i18n='alexa-device.label.ARMED_STAY'></option>
+                <option value='ARMED_NIGHT' data-i18n='alexa-device.label.ARMED_NIGHT'></option>
+                <option value='DISARMED' data-i18n='alexa-device.label.DISARMED'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-alarms"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.alarms"></span></label>
+            <select multiple id="node-input-alarms" >
+                <option value='burglaryAlarm' data-i18n='alexa-device.label.burglary_alarm'></option>
+                <option value='carbonMonoxideAlarm' data-i18n='alexa-device.label.carbon_monoxide_alarm'></option>
+                <option value='fireAlarm' data-i18n='alexa-device.label.fire_alarm'></option>
+                <option value='waterAlarm' data-i18n='alexa-device.label.water_alarm'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-pin_code"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.pin_code"></span></label>
+            <input type="text" id="node-input-pin_code" data-i18n="[placeholder]alexa-device.placeholder.pin_code">
+        </div>
+
     </div>
     
     <div class="form-row red-ui-editableList-border div_trait" id="i_speaker" style="background: #fbfbfb; padding: 5px;">

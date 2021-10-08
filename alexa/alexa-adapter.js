@@ -197,8 +197,8 @@ module.exports = function (RED) {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
             }
             node.UnregisterUrl();
-            let urlencodedParser = bodyParser.urlencoded({ extended: false })
-            let jsonParser = bodyParser.json()
+            let urlencodedParser = express.urlencoded({ extended: false })
+            let jsonParser = express.json()
 
             node.app.get(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
             node.app.post(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
@@ -630,6 +630,7 @@ module.exports = function (RED) {
             const namespace = header.namespace;
             const name = header.name;
 
+            if (node.config.verbose) node._debug("CCHI received directive " + JSON.stringify(namespace) + " " + JSON.stringify(name) + " " + JSON.stringify(endpointId));
             if (namespace === "Alexa.Authorization" && name === 'AcceptGrant') {
                 if (node.config.verbose) node.error('smarthome_post: oauth_get AcceptGrant');
                 // https://developer.amazon.com/en-US/docs/alexa/smarthome/authenticate-a-customer-permissions.html
@@ -650,15 +651,15 @@ module.exports = function (RED) {
                                 res.end();
                             })
                             .catch(err => {
-                                node.error("smarthome_post get_access_token evn error " + err);
+                                node.error("smarthome_post ReportState get_access_token evn error " + err);
                                 node.senderror_response(res, messageId, endpointId);
                             });
                         return;
                     } else {
                         if (node.config.verbose) node._debug(" CCHI command " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
-                            let more_data = {};
-                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload, more_data);
+                            let event_payload = {};
+                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload, event_payload);
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
@@ -671,6 +672,11 @@ module.exports = function (RED) {
                                             } else {
                                                 r_name = 'DeactivationStarted';
                                             }
+                                        } else if (namespace === 'Alexa.CameraStreamController') {
+                                            r_namespace = namespace;
+                                        } else if (namespace === 'Alexa.MediaMetadata') {
+                                            r_namespace = namespace;
+                                            r_name = name + '.Response';
                                         }
                                         let response = node.get_response_report(endpointId, header.correlationToken, access_token, r_namespace, r_name);
                                         if (namespace === 'Alexa.SceneController') {
@@ -681,8 +687,8 @@ module.exports = function (RED) {
                                                 timestamp: new Date().toISOString()
                                             };
                                         }
-                                        Object.keys(more_data).forEach(key => {
-                                            response.payload[key] = more_data[key];
+                                        Object.keys(event_payload).forEach(key => {
+                                            response.event.payload[key] = event_payload[key];
                                         });
                                         if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
@@ -745,6 +751,7 @@ module.exports = function (RED) {
                     res.json(discovery);
                     res.end();
                 } else {
+                    node.error("No endpoint for directive " + JSON.stringify(namespace) + " " + JSON.stringify(name));
                     error = 'INVALID_DIRECTIVE';
                     error_message = RED._("alexa-adapter.error.invalid-directive")
                     node.senderror_response(res, messageId, endpointId, error, error_message);
@@ -1692,13 +1699,13 @@ module.exports = function (RED) {
                         } else if (node.tokens[type]) {
                             if (node.tokens[type].access_token) {
                                 if (node.tokens[type].expire_at > Date.now()) {
-                                    if (node.config.verbose) node._debug("get_access_token use access_token");
+                                    if (node.config.verbose) node._debug("get_access_token use access_token " + type);
                                     return resolve(node.tokens[type].access_token);
                                 }
                             }
                             if (node.tokens[type].refresh_token) {
                                 // access token already retrieved the first time, so this should be a token refresh request
-                                if (node.config.verbose) node._debug("get_access_token request with refresh_token");
+                                if (node.config.verbose) node._debug("get_access_token request with refresh_token " + type);
                                 params = {
                                     grant_type: "refresh_token",
                                     refresh_token: node.tokens[type].refresh_token,
