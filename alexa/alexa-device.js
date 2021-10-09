@@ -533,7 +533,7 @@ module.exports = function (RED) {
                         };
                     });
                     if (pin_code.trim().length === 4) {
-                        configuration['supportedAuthorizationTypes'] = ['FOUR_DIGIT_PIN'];
+                        configuration['supportedAuthorizationTypes'] = [{ type: 'FOUR_DIGIT_PIN' }];
                     }
                     node.addCapability("Alexa.SecurityPanelController", properties_value,
                         {
