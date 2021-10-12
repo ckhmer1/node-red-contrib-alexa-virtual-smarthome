@@ -171,11 +171,31 @@ module.exports = function (RED) {
                 node.media = node.media.filter(m => !media_id_to_remove.includes(m.id));
                 const media_id_removed = media_to_remove.map(m => m.id);
                 if (media_id_removed.length > 0) node.alexa.send_media_deleted(node.id, media_id_removed);
-            } else if (topic === 'EXECCOMMAND') { // test
+            } else if (topic === 'SETSECURITYDEVICENAMESINERROR') {
+                const names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                node.security_device_names_in_error = [];
+                for (const [id, name] of Object.entries(node.alexa.get_id_from_name(msg.payload))) {
+                    node.security_device_names_in_error.push(name);
+                }
+                node._debug("CCHI " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
+            } else if (topic === 'ADDSECURITYDEVICENAMESINERROR') {
+                let a_names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                a_names.forEach(name => node.security_device_names_in_error.push(name));
+                a_names = node.security_device_names_in_error;
+                node.security_device_names_in_error = [];
+                for (const [id, name] of Object.entries(node.alexa.get_id_from_name(msg.payload))) {
+                    node.security_device_names_in_error.push(name);
+                }
+                node._debug("CCHI " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
+            } else if (topic === 'DELSECURITYDEVICENAMESINERROR') {
+                const r_names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                node.security_device_names_in_error = node.security_device_names_in_error.filter(name => !r_names.includes(name));
+                node._debug("CCHI2 " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
+            } else if (topic === 'EXECDIRECTIVE') { // test
                 if (node.isVerbose()) {
-                    node._debug(" CCHI command " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
+                    node._debug(" CCHI execDirective " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
                     let event_payload = {};
-                    let modified = node.execCommand(msg.namespace, msg.name, msg.payload, event_payload)
+                    let modified = node.execDirective(msg.namespace, msg.name, msg.payload, event_payload)
                     node._debug("CCHI modified " + node.id + " modified " + JSON.stringify(modified));
                     node._debug("CCHI event_payload " + node.id + " event_payload " + JSON.stringify(event_payload));
                 }
@@ -517,6 +537,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html
             if (node.config.i_security_panel_controller) {
                 if (node.isVerbose()) node._debug("Alexa.SecurityPanelController");
+                node.security_device_names_in_error = [];
                 const arm_state = node.config.arm_state || [];
                 const alarms = node.config.alarms || [];
                 const pin_code = node.config.pin_code || '';
@@ -524,7 +545,7 @@ module.exports = function (RED) {
                 if (arm_state.length > 0 || pin_code.trim().length === 4) {
                     let properties_value = {};
                     if (arm_state.length > 0) {
-                        properties_value['armState'] = arm_state[0];
+                        properties_value['armState'] = arm_state.includes('DISARMED') ? 'DISARMED' : arm_state[0];
                         configuration['supportedArmStates'] = arm_state.map(state => ({ "value": state }));
                     }
                     alarms.forEach(alarm => {
@@ -694,10 +715,18 @@ module.exports = function (RED) {
         //
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
-        execCommand(namespace, name, payload, event_payload) { // Directive
+        execDirective(namespace, name, payload, cmd_res) { // Directive
             var node = this;
-            let modified = undefined;
             if (node.isVerbose()) node._debug("execCommand state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
+            let modified = undefined;
+            let event_payload = {};
+            let res_payload = {};
+            cmd_res['event'] = {
+                payload: event_payload
+            }
+            cmd_res['payload'] = res_payload;
+            cmd_res['name'] = 'Response';
+            cmd_res['namespace'] = 'Alexa';
 
             switch (namespace) {
                 case "Alexa.BrightnessController": // BrightnessController
@@ -713,6 +742,7 @@ module.exports = function (RED) {
                 case "Alexa.CameraStreamController": // CameraStreamController
                     if (name === 'InitializeCameraStreams') {
                         modified = [];
+                        cmd_res['namespace'] = namespace;
                         const cameraStreams = payload.cameraStreams;
                         if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
                         if (node.isVerbose()) node._debug("CCHI payload " + node.id + " " + JSON.stringify(payload));
@@ -797,6 +827,8 @@ module.exports = function (RED) {
 
                 case "Alexa.MediaMetadata": // MediaMetadata
                     if (name === 'GetMediaMetadata') {
+                        cmd_res['namespace'] = namespace;
+                        cmd_res['name'] = name + '.Response';
                         if (node.isVerbose()) node._debug("execCommand node.media " + name + "/" + namespace + " " + JSON.stringify(node.media));
                         modified = []; // TODO
                         if (payload.filters && Array.isArray(payload.filters.mediaIds)) {
@@ -888,22 +920,81 @@ module.exports = function (RED) {
                 case "Alexa.SceneController": // SceneController
                     if (name === 'Activate') {
                         modified = [];
+                        cmd_res['name'] = 'ActivationStarted';
                     }
                     else if (name === 'Deactivate') {
                         modified = [];
+                        cmd_res['name'] = 'DeactivationStarted';
                     }
+                    res_payload['cause'] = {
+                        type: "VOICE_INTERACTION"
+
+                    };
+                    res_payload['timestamp'] = new Date().toISOString();
                     break;
 
                 case "Alexa.SecurityPanelController": // SecurityPanelController
                     if (name === 'Arm') {
-                        modified = node.setValues({ armState: payload['armState'] }, node.state);
-                        // TODO ?? "bypassType": "BYPASS_ALL"
-                        // exitDelayInSeconds
-                        // bypassedEndpoints
+                        cmd_res['namespace'] = 'Alexa.SecurityPanelController';
+                        cmd_res['name'] = 'Arm.Response';
+                        if (node.state['armState'] === payload['armState']) {
+                            modified = [];
+                        } else if (node.state['armState'] === 'DISARMED') {
+                            node._debug("CCHI event_payload security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
+                            if (node.security_device_names_in_error.length > 0) {
+                                let security_device_in_error = [];
+                                for (const [id, name] of Object.entries(node.alexa.get_id_from_name(node.security_device_names_in_error))) {
+                                    security_device_in_error.push({
+                                        friendlyName: name,
+                                        endpointId: id
+                                    });
+                                }
+                                if ('BYPASS_ALL' === (payload['bypassType'] || '')) {
+                                    event_payload['bypassedEndpoints'] = security_device_in_error;
+                                    modified = node.setValues({ armState: payload['armState'] }, node.state);
+                                    const exit_delay = parseInt(node.config.exit_delay || 0);
+                                    if (exit_delay > 0) {
+                                        event_payload['exitDelayInSeconds'] = exit_delay;
+                                    }
+                                } else {
+                                    event_payload['endpointsNeedingBypass'] = security_device_in_error;
+                                    cmd_res['name'] = 'ErrorResponse';
+                                    event_payload['type'] = 'BYPASS_NEEDED';
+                                    event_payload['message'] = 'The security panel has open zones that the user must bypass.';
+                                    modified = [];
+                                }
+                            } else {
+                                modified = node.setValues({ armState: payload['armState'] }, node.state);
+                                const exit_delay = parseInt(node.config.exit_delay || 0);
+                                if (exit_delay > 0) {
+                                    event_payload['exitDelayInSeconds'] = exit_delay;
+                                }
+                            }
+                        } else {
+                            cmd_res['name'] = 'ErrorResponse';
+                            event_payload['type'] = 'AUTHORIZATION_REQUIRED';
+                            event_payload['message'] = 'The security panel is already armed.';
+                            modified = [];
+                        }
                     }
                     else if (name === 'Disarm') {
-                        if (payload.authorization && payload.authorization.type === 'FOUR_DIGIT_PIN' && payload.authorization.value === node.config.pin_code) {
+                        cmd_res['namespace'] = 'Alexa';
+                        cmd_res['name'] = 'Response';
+                        if (node.state['armState'] === 'DISARMED') {
+                            modified = [];
+                        } else if (node.config.pin_code.trim().length > 0) {
+                            if (payload.authorization && payload.authorization.type === 'FOUR_DIGIT_PIN' && payload.authorization.value === node.config.pin_code) {
+                                modified = node.setValues({ armState: 'DISARMED' }, node.state);
+                                // TODO Check Add alarms if any
+                            } else {
+                                cmd_res['name'] = 'ErrorResponse';
+                                event_payload['type'] = 'UNAUTHORIZED';
+                                event_payload['message'] = 'The PIN code is missing or not correct.';
+                                modified = [];
+                            }
+                        } else {
                             modified = node.setValues({ armState: 'DISARMED' }, node.state);
+                            // TODO Check Add alarms if any??
                         }
                     }
                     break;

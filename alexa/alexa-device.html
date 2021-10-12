@@ -32,6 +32,12 @@
             }
             return isNaturalNumber(v) && v.trim().length === 4;
         }
+        function isPositiveNumber255(v) {
+            if (v.trim().length === 0) {
+                return true;
+            }
+            return isNaturalNumber(v) && parseInt(v) <= 255;
+        }
         RED.nodes.registerType('alexa-device', {
             category: 'alexa-home',
             color: '#3FADB5',
@@ -139,6 +145,7 @@
                 arm_state: { value: [], required: false },
                 alarms: { value: [], required: false },
                 pin_code: { value: "", required: false, validate: isValidPinCODE },
+                exit_delay: { value: "", required: false, validate: isPositiveNumber255 },
             },
             inputs: 1,
             outputs: 1,
@@ -371,14 +378,12 @@
                         var wh = res.split("*");
                         if (wh.length === 2 && wh[0].trim() && wh[1].trim()) {
                             c.r.push([wh[0].trim(), wh[1].trim()])
-                            // c.r = c.r + ";" + wh[0].trim() + '*' + wh[1].trim();
                         }
                     });
-                    /*if (c.r) {
-                        c.r = c.r.substring(1);
-                    }*/
-                    console.log("oneditsave " + JSON.stringify(c));
-                    node.camera_stream_configurations.push(c);
+                    if (!(c.p.length === 0 && c.t.length === 0 && c.v.length === 0 && c.a.length === 0 && c.r.trim().length === 0)) {
+                        console.log("oneditsave " + JSON.stringify(c));
+                        node.camera_stream_configurations.push(c);
+                    }
                 });
             }
         });
@@ -847,10 +852,10 @@
         <div class="form-row">
             <label for="node-input-arm_state"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.arm_state"></span></label>
             <select multiple id="node-input-arm_state" >
-                <option value='ARMED_AWAY' data-i18n='alexa-device.label.ARMED_AWAY'></option>
+                <option value='DISARMED' data-i18n='alexa-device.label.DISARMED'></option>
                 <option value='ARMED_STAY' data-i18n='alexa-device.label.ARMED_STAY'></option>
                 <option value='ARMED_NIGHT' data-i18n='alexa-device.label.ARMED_NIGHT'></option>
-                <option value='DISARMED' data-i18n='alexa-device.label.DISARMED'></option>
+                <option value='ARMED_AWAY' data-i18n='alexa-device.label.ARMED_AWAY'></option>
             </select>
         </div>
 
@@ -867,6 +872,11 @@
         <div class="form-row">
             <label for="node-input-pin_code"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.pin_code"></span></label>
             <input type="text" id="node-input-pin_code" data-i18n="[placeholder]alexa-device.placeholder.pin_code">
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-exit_delay"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.exit_delay"></span></label>
+            <input type="text" id="node-input-exit_delay" data-i18n="[placeholder]alexa-device.placeholder.exit_delay">
         </div>
 
     </div>

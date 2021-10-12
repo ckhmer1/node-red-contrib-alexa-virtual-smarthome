@@ -147,7 +147,8 @@
             "carbon_monoxide_alarm": "CarbonMonoxide alarm",
             "fire_alarm": "FireA alarm",
             "water_alarm": "Water alarm",
-            "pin_code": "PIN code"
+            "pin_code": "PIN code",
+            "exit_delay": "Exit delay (s)"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -165,7 +166,8 @@
             "standby_wattage": "The energy the device consumes while turned off",
             "maximum_wattage": "The typical or maximum energy the device consumes while turned on",
             "on_wattage": "The typical energy the device consumes while turned on",
-            "pin_code": "Four-digit PIN code"
+            "pin_code": "Four-digit PIN code",
+            "exit_delay": "Exit delay in seconds"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",

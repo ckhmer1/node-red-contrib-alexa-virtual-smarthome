@@ -656,48 +656,25 @@ module.exports = function (RED) {
                             });
                         return;
                     } else {
-                        if (node.config.verbose) node._debug(" CCHI command " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
+                        if (node.config.verbose) node._debug(" CCHI directive " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
-                            let event_payload = {};
-                            const changed_propertie_names = node.devices[endpointId].execCommand(namespace, name, req.body.directive.payload, event_payload);
+                            let cmd_res = {};
+                            const changed_propertie_names = node.devices[endpointId].execDirective(namespace, name, req.body.directive.payload, cmd_res);
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
-                                        let r_namespace = undefined;
-                                        let r_name = undefined;
-                                        if (namespace === 'Alexa.SceneController') {
-                                            r_namespace = namespace;
-                                            if (name === 'Activate') {
-                                                r_name = 'ActivationStarted';
-                                            } else {
-                                                r_name = 'DeactivationStarted';
-                                            }
-                                        } else if (namespace === 'Alexa.CameraStreamController') {
-                                            r_namespace = namespace;
-                                        } else if (namespace === 'Alexa.MediaMetadata') {
-                                            r_namespace = namespace;
-                                            r_name = name + '.Response';
-                                        }
-                                        let response = node.get_response_report(endpointId, header.correlationToken, access_token, r_namespace, r_name);
-                                        if (namespace === 'Alexa.SceneController') {
-                                            response.payload = {
-                                                cause: {
-                                                    type: "VOICE_INTERACTION"
-                                                },
-                                                timestamp: new Date().toISOString()
-                                            };
-                                        }
-                                        Object.keys(event_payload).forEach(key => {
-                                            response.event.payload[key] = event_payload[key];
-                                        });
+                                        let response = node.get_response_report(endpointId, header.correlationToken, access_token, cmd_res['namespace'], cmd_res['name']);
+                                        node.objectMerge(response, cmd_res);
                                         if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
                                         res.end();
                                         // const report_state = node.get_report_state(endpointId, header.correlationToken, access_token, messageId);
                                         // if (node.config.verbose) node._debug("CCHI report_state async response NOT SENT YET " + JSON.stringify(report_state));
-                                        process.nextTick(() => {
-                                            node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION);
-                                        });
+                                        if (changed_propertie_names.length > 0) {
+                                            process.nextTick(() => {
+                                                node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION);
+                                            });
+                                        }
                                     })
                                     .catch(err => {
                                         node.error("smarthome_post get_access_token evn error " + err);
@@ -707,14 +684,14 @@ module.exports = function (RED) {
                             } else {
                                 error = 'INVALID_DIRECTIVE';
                                 error_message = RED._("alexa-adapter.error.invalid-directive")
-                                node.error("smarthome_post: execCommand unknown directive " + namespace + " " + name);
+                                node.error("smarthome_post: execDirective unknown directive " + namespace + " " + name);
                                 node.senderror_response(res, messageId, endpointId, error, error_message);
                             }
                         } catch (err) {
-                            node.error("smarthome_post: execCommand error " + err.stack);
+                            node.error("smarthome_post: execDirective error " + err.stack);
                             error = 'INVALID_DIRECTIVE';
                             error_message = RED._("alexa-adapter.error.invalid-directive")
-                            node.error("CCHI execCommand error");
+                            node.error("CCHI execDirective error");
                             node.senderror_response(res, messageId, endpointId, error, error_message);
                         }
                     }
@@ -1083,6 +1060,22 @@ module.exports = function (RED) {
                 names[device.id] = device.config.name;
             });
             return names;
+        }
+
+        //
+        //
+        //
+        //
+        get_id_from_name(names) {
+            var node = this;
+            let id_names = {};
+            Object.keys(node.devices).forEach(function (key) {
+                const device = node.devices[key];
+                if (names.includes(device.config.name)) {
+                    id_names[key] = device.config.name;
+                }
+            });
+            return id_names;
         }
 
         //
@@ -1903,6 +1896,26 @@ module.exports = function (RED) {
                         if (node.config.verbose) node._debug('writeJson: ' + tag + ' saved');
                         return resolve(data);
                     });
+            });
+        }
+
+
+        //
+        //
+        //
+        //
+        objectMerge(to_object, from_object) {
+            var node = this;
+            Object.keys(from_object).forEach(function (key) {
+                if (to_object.hasOwnProperty(key)) {
+                    if (typeof from_object[key] === 'object') {
+                        node.objectMerge(to_object[key], from_object[key]);
+                    } else {
+                        to_object[key] = from_object[key];
+                    }
+                } else {
+                    to_object[key] = from_object[key];
+                }
             });
         }
     }
