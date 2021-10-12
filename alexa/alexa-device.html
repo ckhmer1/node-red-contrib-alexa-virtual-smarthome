@@ -144,8 +144,9 @@
                 //on_wattage: { value: '', required: false, validate: isPositiveNumber },
                 arm_state: { value: [], required: false },
                 alarms: { value: [], required: false },
-                pin_code: { value: "", required: false, validate: isValidPinCODE },
-                exit_delay: { value: "", required: false, validate: isPositiveNumber255 },
+                pin_code: { value: '', required: false, validate: isValidPinCODE },
+                exit_delay: { value: '', required: false, validate: isPositiveNumber255 },
+                MACAddresses: { value: '', required: false },
             },
             inputs: 1,
             outputs: 1,
@@ -960,11 +961,16 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_wake_on_lan_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_wake_on_lan_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_wake_on_lan_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.wake_on_lan_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html"><i class="fa fa-external-link"></i></a>
         </div>
+
+        <div class="form-row">
+            <label for="node-input-MACAddresses"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.MACAddresses"></span></label>
+            <input type="text" id="node-input-MACAddresses" data-i18n="[placeholder]alexa-device.placeholder.MACAddresses">
         </div>
-    </script>
+    </div>
+</script>

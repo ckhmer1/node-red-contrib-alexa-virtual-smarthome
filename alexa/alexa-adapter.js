@@ -663,16 +663,20 @@ module.exports = function (RED) {
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
-                                        let response = node.get_response_report(endpointId, header.correlationToken, access_token, cmd_res['namespace'], cmd_res['name']);
+                                        const r_namespace = cmd_res['namespace'];
+                                        const r_name = cmd_res['name'];
+                                        delete cmd_res['name'];
+                                        delete cmd_res['namespace'];
+                                        let response = node.get_response_report(endpointId, header.correlationToken, access_token, r_namespace, r_name);
                                         node.objectMerge(response, cmd_res);
                                         if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
                                         res.end();
                                         // const report_state = node.get_report_state(endpointId, header.correlationToken, access_token, messageId);
                                         // if (node.config.verbose) node._debug("CCHI report_state async response NOT SENT YET " + JSON.stringify(report_state));
-                                        if (changed_propertie_names.length > 0) {
+                                        if (r_name != 'DeferredResponse' && r_name != 'ErrorResponse' && r_namespace != "Alexa.SceneController") {
                                             process.nextTick(() => {
-                                                node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION);
+                                                node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION, cmd_res);
                                             });
                                         }
                                     })
@@ -1216,7 +1220,7 @@ module.exports = function (RED) {
         //
         //
         //
-        send_change_report(endpointId, changed_propertie_names, reason, namespace, name) {
+        send_change_report(endpointId, changed_propertie_names, reason, cmd_res, namespace, name) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
@@ -1230,7 +1234,8 @@ module.exports = function (RED) {
             }
             node.get_access_token('evn')
                 .then(access_token => {
-                    const state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
+                    let state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
+                    node.objectMerge(state, cmd_res);
                     if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
                     if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
                     superagent
@@ -1906,17 +1911,19 @@ module.exports = function (RED) {
         //
         objectMerge(to_object, from_object) {
             var node = this;
-            Object.keys(from_object).forEach(function (key) {
-                if (to_object.hasOwnProperty(key)) {
-                    if (typeof from_object[key] === 'object') {
-                        node.objectMerge(to_object[key], from_object[key]);
+            if (from_object) {
+                Object.keys(from_object).forEach(function (key) {
+                    if (to_object.hasOwnProperty(key)) {
+                        if (typeof from_object[key] === 'object') {
+                            node.objectMerge(to_object[key], from_object[key]);
+                        } else {
+                            to_object[key] = from_object[key];
+                        }
                     } else {
                         to_object[key] = from_object[key];
                     }
-                } else {
-                    to_object[key] = from_object[key];
-                }
-            });
+                });
+            }
         }
     }
 

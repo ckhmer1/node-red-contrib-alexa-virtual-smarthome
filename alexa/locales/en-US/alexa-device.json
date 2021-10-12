@@ -148,7 +148,8 @@
             "fire_alarm": "FireA alarm",
             "water_alarm": "Water alarm",
             "pin_code": "PIN code",
-            "exit_delay": "Exit delay (s)"
+            "exit_delay": "Exit delay (s)",
+            "MACAddresses": "MAC Addresses"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -167,7 +168,8 @@
             "maximum_wattage": "The typical or maximum energy the device consumes while turned on",
             "on_wattage": "The typical energy the device consumes while turned on",
             "pin_code": "Four-digit PIN code",
-            "exit_delay": "Exit delay in seconds"
+            "exit_delay": "Exit delay in seconds",
+            "MACAddresses": "The MAC address of the device to wake up."
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",

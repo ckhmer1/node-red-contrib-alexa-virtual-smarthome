@@ -532,6 +532,12 @@ module.exports = function (RED) {
 
             // SceneController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-scenecontroller.html
+            if (node.config.i_scene_controller) {
+                if (node.isVerbose()) node._debug("Alexa.SceneController");
+                node.addCapability("Alexa.SceneController", undefined, {
+                    supportsDeactivation: true
+                });
+            }
 
             // SecurityPanelController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html
@@ -642,6 +648,16 @@ module.exports = function (RED) {
 
             // WakeOnLANController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
+            if (node.config.i_wake_on_lan_controller) {
+                if (node.isVerbose()) node._debug("Alexa.WakeOnLANController");
+                if ((node.config.MACAddresses || '').trim().length > 0) {
+                    node.addCapability("Alexa.WakeOnLANController", undefined, {
+                        configuration: {
+                            MACAddresses: [node.config.MACAddresses]
+                        }
+                    });
+                }
+            }
 
             if (node.isVerbose()) node._debug("capabilities " + JSON.stringify(node.capabilities));
             if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()));
@@ -893,9 +909,20 @@ module.exports = function (RED) {
 
                 case "Alexa.PowerController": // PowerController
                     if (name === 'TurnOn') {
-                        modified = node.setValues({
-                            powerState: 'ON'
-                        }, node.state);
+                        if (node.config.i_wake_on_lan_controller) {
+                            cmd_res["name"] = "DeferredResponse";
+                            event_payload['estimatedDeferralInSeconds'] = 15;
+                            modified = [];
+                            process.nextTick(() => {
+                                if (node.isVerbose()) node._debug("execCommand send_change_report");
+                                 // TODO manage response
+                                node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", undefined, 'Alexa.WakeOnLANController', 'WakeUp');
+                            });
+                        } else {
+                            modified = node.setValues({
+                                powerState: 'ON'
+                            }, node.state);
+                        }
                     }
                     else if (name === 'TurnOff') {
                         modified = node.setValues({
@@ -918,6 +945,7 @@ module.exports = function (RED) {
                     break;
 
                 case "Alexa.SceneController": // SceneController
+                    cmd_res['namespace'] = 'Alexa.SceneController';
                     if (name === 'Activate') {
                         modified = [];
                         cmd_res['name'] = 'ActivationStarted';
@@ -926,11 +954,11 @@ module.exports = function (RED) {
                         modified = [];
                         cmd_res['name'] = 'DeactivationStarted';
                     }
-                    res_payload['cause'] = {
+                    event_payload['cause'] = {
                         type: "VOICE_INTERACTION"
 
                     };
-                    res_payload['timestamp'] = new Date().toISOString();
+                    event_payload['timestamp'] = new Date().toISOString();
                     break;
 
                 case "Alexa.SecurityPanelController": // SecurityPanelController
@@ -1113,7 +1141,7 @@ module.exports = function (RED) {
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
         getProperties() {
             var node = this;
-            const uncertainty = 0;
+            const uncertainty = 500;
             let properties = [];
             const time_of_sample = (new Date()).toISOString();
             // BrightnessController

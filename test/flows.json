@@ -19,10 +19,10 @@
         "name": "Alexa",
         "http_path": "alexa",
         "login_with_amazon": true,
-        "event_endpoint": "8",
-        "scope": "7",
+        "event_endpoint": "http://127.0.0.1:1880/alexa/events",
+        "scope": "smart_home",
         "emails": [
-            "pippo1"
+            "claudio@gmail.com"
         ],
         "msg_check": false,
         "verbose": true,
@@ -33,11 +33,11 @@
         "type": "alexa-device",
         "z": "5cc6ca02.0e2a64",
         "alexa": "a2728c12.4058f",
-        "name": "Camera",
+        "name": "Multi",
         "display_categories": [
             "CAMERA"
         ],
-        "topic": "",
+        "topic": "multi",
         "a_inputs": [
             "AUX 1",
             "AUX 2",
@@ -117,7 +117,19 @@
         "i_inventory_level_sensor": true,
         "i_inventory_usage_sensor": true,
         "i_keypad_controller": false,
-        "a_kc_keys": [],
+        "a_kc_keys": [
+            "UP",
+            "DOWN",
+            "LEFT",
+            "RIGHT",
+            "SELECT",
+            "PAGE_UP",
+            "PAGE_DOWN",
+            "PAGE_LEFT",
+            "PAGE_RIGHT",
+            "INFO",
+            "MORE"
+        ],
         "i_lock_controller": false,
         "i_media_metadata": true,
         "i_meter": true,
@@ -135,7 +147,7 @@
             "Rewind",
             "FastForward"
         ],
-        "i_power_controller": true,
+        "i_power_controller": false,
         "i_power_level_controller": false,
         "i_range_controller": true,
         "i_rtc_session_controller": false,
@@ -206,8 +218,22 @@
         "band_range_max": "6",
         "standby_wattage": "1",
         "maximum_wattage": "10",
-        "x": 440,
-        "y": 540,
+        "arm_state": [
+            "ARMED_AWAY",
+            "ARMED_STAY",
+            "ARMED_NIGHT",
+            "DISARMED"
+        ],
+        "alarms": [
+            "burglaryAlarm",
+            "carbonMonoxideAlarm",
+            "fireAlarm",
+            "waterAlarm"
+        ],
+        "pin_code": "1234",
+        "exit_delay": "10",
+        "x": 430,
+        "y": 700,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -282,7 +308,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 270,
+        "x": 230,
         "y": 60,
         "wires": []
     },
@@ -300,7 +326,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 590,
-        "y": 540,
+        "y": 700,
         "wires": []
     },
     {
@@ -2358,7 +2384,7 @@
         "payload": "reportState",
         "payloadType": "str",
         "x": 200,
-        "y": 540,
+        "y": 700,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2387,7 +2413,7 @@
         "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
         "x": 230,
-        "y": 460,
+        "y": 620,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2416,7 +2442,7 @@
         "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
         "x": 230,
-        "y": 500,
+        "y": 660,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2445,7 +2471,7 @@
         "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
         "x": 200,
-        "y": 580,
+        "y": 740,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2474,7 +2500,7 @@
         "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
         "x": 200,
-        "y": 620,
+        "y": 780,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2503,7 +2529,7 @@
         "payload": "[]",
         "payloadType": "json",
         "x": 240,
-        "y": 420,
+        "y": 580,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2532,7 +2558,7 @@
         "payload": "1",
         "payloadType": "str",
         "x": 220,
-        "y": 660,
+        "y": 820,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2561,7 +2587,7 @@
         "payload": "2",
         "payloadType": "str",
         "x": 220,
-        "y": 700,
+        "y": 860,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2590,7 +2616,7 @@
         "payload": "3",
         "payloadType": "str",
         "x": 220,
-        "y": 740,
+        "y": 900,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2605,34 +2631,20 @@
         "props": [
             {
                 "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            },
-            {
-                "p": "name",
-                "v": "InitializeCameraStreams",
-                "vt": "str"
-            },
-            {
-                "p": "namespace",
-                "v": "Alexa.CameraStreamController",
-                "vt": "str"
             }
         ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "execCommand",
-        "payload": "{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"RTSP\",\"videoCodec\":\"JPG\",\"audioCodec\":\"G711\",\"resolution\":{\"width\":1920,\"height\":1080}}]}",
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.CameraStreamController\",\"name\":\"InitializeCameraStreams\",\"payloadVersion\":\"3\",\"messageId\":\"d1aabb49-a0e8-4327-b4de-0b35136dc8a0\",\"correlationToken\":\"mio_correlation_token\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"RTSP\",\"videoCodec\":\"JPG\",\"audioCodec\":\"G711\",\"resolution\":{\"width\":1920,\"height\":1080}}]}}}",
         "payloadType": "json",
         "x": 170,
-        "y": 380,
+        "y": 460,
         "wires": [
             [
-                "58c096a.8fa0d68"
+                "691dc41b.b1bb1c"
             ]
         ]
     },
@@ -2658,7 +2670,7 @@
         "payload": "{\"cameraStreams\":[{\"uri\":\"https://pizza.dynu.net/hls/bbb.m3u8\",\"expirationTime\":\"2022-02-03T16:20:50.52Z\",\"idleTimeoutSeconds\":30,\"protocol\":\"HLS\",\"resolution\":{\"width\":1920,\"height\":1080},\"authorizationType\":\"NONE\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\"}],\"imageUri\":\"https://upload.wikimedia.org/wikipedia/commons/f/fb/Veduta_di_Paestum_2010.jpg\"}",
         "payloadType": "json",
         "x": 220,
-        "y": 300,
+        "y": 540,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2673,34 +2685,20 @@
         "props": [
             {
                 "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            },
-            {
-                "p": "name",
-                "v": "InitializeCameraStreams",
-                "vt": "str"
-            },
-            {
-                "p": "namespace",
-                "v": "Alexa.CameraStreamController",
-                "vt": "str"
             }
         ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "execCommand",
-        "payload": "{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"HLS\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"resolution\":{\"width\":1920,\"height\":1080}}]}",
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.CameraStreamController\",\"name\":\"InitializeCameraStreams\",\"payloadVersion\":\"3\",\"messageId\":\"d1aabb49-a0e8-4327-b4de-0b35136dc8a0\",\"correlationToken\":\"mio_correlation_token\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"HLS\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"resolution\":{\"width\":1920,\"height\":1080}}]}}}",
         "payloadType": "json",
         "x": 180,
-        "y": 340,
+        "y": 420,
         "wires": [
             [
-                "58c096a.8fa0d68"
+                "691dc41b.b1bb1c"
             ]
         ]
     },
@@ -2708,7 +2706,7 @@
         "id": "2193df88.f952e",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
-        "name": "",
+        "name": "Tokens",
         "props": [
             {
                 "p": "payload"
@@ -2739,7 +2737,7 @@
         "createDir": false,
         "overwriteFile": "false",
         "encoding": "none",
-        "x": 270,
+        "x": 230,
         "y": 120,
         "wires": [
             [
@@ -2760,7 +2758,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 430,
+        "x": 350,
         "y": 120,
         "wires": []
     },
@@ -2781,8 +2779,8 @@
         "topic": "",
         "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.CameraStreamController\",\"name\":\"InitializeCameraStreams\",\"payloadVersion\":\"3\",\"messageId\":\"d1aabb49-a0e8-4327-b4de-0b35136dc8a0\",\"correlationToken\":\"mio_correlation_token\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{\"cameraStreams\":[{\"authorizationType\":\"NONE\",\"protocol\":\"HLS\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"resolution\":{\"width\":1920,\"height\":1080}}]}}}",
         "payloadType": "json",
-        "x": 170,
-        "y": 180,
+        "x": 190,
+        "y": 340,
         "wires": [
             [
                 "691dc41b.b1bb1c"
@@ -2803,7 +2801,7 @@
         "proxy": "",
         "authType": "",
         "x": 590,
-        "y": 180,
+        "y": 280,
         "wires": [
             [
                 "2761cc07.74fb64"
@@ -2819,12 +2817,12 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
+        "complete": "payload",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 870,
-        "y": 180,
+        "x": 890,
+        "y": 280,
         "wires": []
     },
     {
@@ -2836,7 +2834,7 @@
         "action": "",
         "pretty": false,
         "x": 750,
-        "y": 180,
+        "y": 280,
         "wires": [
             [
                 "1633b4b4.8bc82b"
@@ -2860,8 +2858,8 @@
         "topic": "",
         "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.MediaMetadata\",\"name\":\"GetMediaMetadata\",\"messageId\":\"123-456-789\",\"correlationToken\":\"token\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{\"filters\":{\"mediaIds\":[\"media Ids\",\"1\",\"2\",\"3\"]}}}}",
         "payloadType": "json",
-        "x": 190,
-        "y": 240,
+        "x": 210,
+        "y": 380,
         "wires": [
             [
                 "691dc41b.b1bb1c"
@@ -2880,6 +2878,13 @@
                 "pt": "msg",
                 "to": "58c096a.8fa0d68",
                 "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.directive.endpoint.scope.token",
+                "pt": "msg",
+                "to": "Atza|access_token-own",
+                "tot": "str"
             }
         ],
         "action": "",
@@ -2887,12 +2892,606 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 410,
-        "y": 180,
+        "x": 430,
+        "y": 280,
         "wires": [
             [
                 "2a08b5ed.e79fca"
             ]
+        ]
+    },
+    {
+        "id": "47019e74.d4e6b",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "getState",
+        "x": 240,
+        "y": 500,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "7b40b80.dcbf448",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"powerState\": \"ON\"}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 940,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "3c9b7fa6.6357f",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"powerState\": \"OFF\"}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 980,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "64e97e7e.02b51",
+        "type": "http in",
+        "z": "5cc6ca02.0e2a64",
+        "name": "events",
+        "url": "/alexa/events",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 390,
+        "y": 60,
+        "wires": [
+            [
+                "2616a91b.32ee96",
+                "746c1951.6cd4e8"
+            ]
+        ]
+    },
+    {
+        "id": "afa570a9.7798c",
+        "type": "http response",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 760,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "2616a91b.32ee96",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "746c1951.6cd4e8",
+        "type": "change",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "OK",
+                "tot": "str"
+            },
+            {
+                "t": "delete",
+                "p": "req",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 580,
+        "y": 40,
+        "wires": [
+            [
+                "afa570a9.7798c"
+            ]
+        ]
+    },
+    {
+        "id": "3dbb339c.17bc1c",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "ARMED_AWAY",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.SecurityPanelController\",\"name\":\"Arm\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"armState\":\"ARMED_AWAY\"}}}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 200,
+        "wires": [
+            [
+                "691dc41b.b1bb1c"
+            ]
+        ]
+    },
+    {
+        "id": "d964914b.de33c",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "DISARMED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.SecurityPanelController\",\"name\":\"Disarm\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "691dc41b.b1bb1c"
+            ]
+        ]
+    },
+    {
+        "id": "63af05b4.8b25bc",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "ARMED_STAY",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.SecurityPanelController\",\"name\":\"Arm\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"armState\":\"ARMED_STAY\"}}}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 160,
+        "wires": [
+            [
+                "691dc41b.b1bb1c"
+            ]
+        ]
+    },
+    {
+        "id": "305bfeb8.df66b2",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "DISARMED 1234",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.SecurityPanelController\",\"name\":\"Disarm\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"authorization\":{\"type\":\"FOUR_DIGIT_PIN\",\"value\":\"1234\"}}}}",
+        "payloadType": "json",
+        "x": 220,
+        "y": 280,
+        "wires": [
+            [
+                "691dc41b.b1bb1c"
+            ]
+        ]
+    },
+    {
+        "id": "5afc7e5.655468",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "SetSecurityDeviceNamesInError",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SetSecurityDeviceNamesInError",
+        "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1020,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "d8f22efa.dde0a",
+        "type": "alexa-device",
+        "z": "5cc6ca02.0e2a64",
+        "alexa": "a2728c12.4058f",
+        "name": "Finestra Cucina",
+        "display_categories": [
+            "DOOR"
+        ],
+        "topic": "",
+        "a_inputs": [
+            "BLURAY",
+            "CABLE",
+            "CD",
+            "DVD",
+            "GAME",
+            "IPOD",
+            "PHONO",
+            "PLAYSTATION",
+            "SATELLITE",
+            "SMARTCAST",
+            "TUNER",
+            "TV",
+            "XBOX"
+        ],
+        "i_automation_management": "",
+        "i_brightness_controller": "",
+        "i_camera_stream_controller": "",
+        "i_channel_controller": "",
+        "i_color_controller": "",
+        "i_color_temperature_controller": "",
+        "i_contact_sensor": "",
+        "i_doorbell_event_source": "",
+        "i_endpoint_health": "",
+        "i_equalizer_controller": "",
+        "i_estimation": "",
+        "i_event_detection_sensor": "",
+        "i_input_controller": "",
+        "i_inventory_level_sensor": "",
+        "i_inventory_usage_sensor": "",
+        "i_keypad_controller": "",
+        "a_kc_keys": [],
+        "i_lock_controller": "",
+        "i_media_metadata": "",
+        "i_meter": "",
+        "i_mode_controller": "",
+        "i_motion_sensor": "",
+        "i_percentage_controller": "",
+        "i_playback_controller": "",
+        "a_playback_modes": [],
+        "i_power_controller": "",
+        "i_power_level_controller": "",
+        "i_range_controller": "",
+        "i_rtc_session_controller": "",
+        "i_scene_controller": "",
+        "i_security_panel_controller": "",
+        "i_speaker": "",
+        "i_step_speaker": "",
+        "i_temperature_sensor": "",
+        "i_thermostat_controller": "",
+        "a_target_setpoint": false,
+        "a_lower_setpoint": false,
+        "a_upper_setpoint": false,
+        "a_modes": [],
+        "a_supports_scheduling": false,
+        "i_thermostat_controller_hvac_components": "",
+        "i_toggle_controller": "",
+        "i_wake_on_lan_controller": "",
+        "camera_stream_configurations": [],
+        "bands": [],
+        "modes": [],
+        "band_range_min": -6,
+        "band_range_max": 6,
+        "standby_wattage": "",
+        "maximum_wattage": "",
+        "arm_state": [],
+        "alarms": [],
+        "pin_code": "",
+        "exit_delay": "",
+        "x": 540,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "12c1a902.fc37c7",
+        "type": "alexa-device",
+        "z": "5cc6ca02.0e2a64",
+        "alexa": "a2728c12.4058f",
+        "name": "Finestra Bagno",
+        "display_categories": [
+            "DOOR"
+        ],
+        "topic": "",
+        "a_inputs": [
+            "BLURAY",
+            "CABLE",
+            "CD",
+            "DVD",
+            "GAME",
+            "IPOD",
+            "PHONO",
+            "PLAYSTATION",
+            "SATELLITE",
+            "SMARTCAST",
+            "TUNER",
+            "TV",
+            "XBOX"
+        ],
+        "i_automation_management": "",
+        "i_brightness_controller": "",
+        "i_camera_stream_controller": "",
+        "i_channel_controller": "",
+        "i_color_controller": "",
+        "i_color_temperature_controller": "",
+        "i_contact_sensor": "",
+        "i_doorbell_event_source": "",
+        "i_endpoint_health": "",
+        "i_equalizer_controller": "",
+        "i_estimation": "",
+        "i_event_detection_sensor": "",
+        "i_input_controller": "",
+        "i_inventory_level_sensor": "",
+        "i_inventory_usage_sensor": "",
+        "i_keypad_controller": "",
+        "a_kc_keys": [],
+        "i_lock_controller": "",
+        "i_media_metadata": "",
+        "i_meter": "",
+        "i_mode_controller": "",
+        "i_motion_sensor": "",
+        "i_percentage_controller": "",
+        "i_playback_controller": "",
+        "a_playback_modes": [],
+        "i_power_controller": "",
+        "i_power_level_controller": "",
+        "i_range_controller": "",
+        "i_rtc_session_controller": "",
+        "i_scene_controller": "",
+        "i_security_panel_controller": "",
+        "i_speaker": "",
+        "i_step_speaker": "",
+        "i_temperature_sensor": "",
+        "i_thermostat_controller": "",
+        "a_target_setpoint": false,
+        "a_lower_setpoint": false,
+        "a_upper_setpoint": false,
+        "a_modes": [],
+        "a_supports_scheduling": false,
+        "i_thermostat_controller_hvac_components": "",
+        "i_toggle_controller": "",
+        "i_wake_on_lan_controller": "",
+        "camera_stream_configurations": [],
+        "bands": [],
+        "modes": [],
+        "band_range_min": -6,
+        "band_range_max": 6,
+        "standby_wattage": "",
+        "maximum_wattage": "",
+        "arm_state": [],
+        "alarms": [],
+        "pin_code": "",
+        "exit_delay": "",
+        "x": 540,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "14103df2.b76e12",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "AddSecurityDeviceNamesInError",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "AddSecurityDeviceNamesInError",
+        "payload": "[\"Finestra Cucina\",\"Finestra Salotto\",\"Finestra Bagno\"]",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1060,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "90e497ed.6da6c8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "DelSecurityDeviceNamesInError",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "DelSecurityDeviceNamesInError",
+        "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1100,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "3dc2d311.e5477c",
+        "type": "alexa-device",
+        "z": "5cc6ca02.0e2a64",
+        "alexa": "a2728c12.4058f",
+        "name": "Finestra Salotto",
+        "display_categories": [
+            "DOOR"
+        ],
+        "topic": "",
+        "a_inputs": [
+            "BLURAY",
+            "CABLE",
+            "CD",
+            "DVD",
+            "GAME",
+            "IPOD",
+            "PHONO",
+            "PLAYSTATION",
+            "SATELLITE",
+            "SMARTCAST",
+            "TUNER",
+            "TV",
+            "XBOX"
+        ],
+        "i_automation_management": "",
+        "i_brightness_controller": "",
+        "i_camera_stream_controller": "",
+        "i_channel_controller": "",
+        "i_color_controller": "",
+        "i_color_temperature_controller": "",
+        "i_contact_sensor": "",
+        "i_doorbell_event_source": "",
+        "i_endpoint_health": "",
+        "i_equalizer_controller": "",
+        "i_estimation": "",
+        "i_event_detection_sensor": "",
+        "i_input_controller": "",
+        "i_inventory_level_sensor": "",
+        "i_inventory_usage_sensor": "",
+        "i_keypad_controller": "",
+        "a_kc_keys": [],
+        "i_lock_controller": "",
+        "i_media_metadata": "",
+        "i_meter": "",
+        "i_mode_controller": "",
+        "i_motion_sensor": "",
+        "i_percentage_controller": "",
+        "i_playback_controller": "",
+        "a_playback_modes": [],
+        "i_power_controller": "",
+        "i_power_level_controller": "",
+        "i_range_controller": "",
+        "i_rtc_session_controller": "",
+        "i_scene_controller": "",
+        "i_security_panel_controller": "",
+        "i_speaker": "",
+        "i_step_speaker": "",
+        "i_temperature_sensor": "",
+        "i_thermostat_controller": "",
+        "a_target_setpoint": false,
+        "a_lower_setpoint": false,
+        "a_upper_setpoint": false,
+        "a_modes": [],
+        "a_supports_scheduling": false,
+        "i_thermostat_controller_hvac_components": "",
+        "i_toggle_controller": "",
+        "i_wake_on_lan_controller": "",
+        "camera_stream_configurations": [],
+        "bands": [],
+        "modes": [],
+        "band_range_min": -6,
+        "band_range_max": 6,
+        "standby_wattage": "",
+        "maximum_wattage": "",
+        "arm_state": [],
+        "alarms": [],
+        "pin_code": "",
+        "exit_delay": "",
+        "x": 540,
+        "y": 900,
+        "wires": [
+            []
         ]
     }
 ]
