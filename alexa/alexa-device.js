@@ -117,7 +117,7 @@ module.exports = function (RED) {
             const topic = topicArr[topicArr.length - 1].toUpperCase();
             if (node.isVerbose()) node._debug("onInput " + topic);
             if (topic === 'REPORTSTATE') {
-                node.alexa.send_change_report(node.id);
+                node.alexa.send_change_report(node.id).then(() => { });
             } else if (topic === 'GETSTATE') {
                 node.send({
                     topic: "getState",
@@ -195,7 +195,7 @@ module.exports = function (RED) {
                 if (node.isVerbose()) {
                     node._debug(" CCHI execDirective " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
                     let event_payload = {};
-                    let modified = node.execDirective(msg.namespace, msg.name, msg.payload, event_payload)
+                    let modified = node.execDirective(msg, msg.payload, event_payload)
                     node._debug("CCHI modified " + node.id + " modified " + JSON.stringify(modified));
                     node._debug("CCHI event_payload " + node.id + " event_payload " + JSON.stringify(event_payload));
                 }
@@ -206,7 +206,7 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
                 if (modified.length > 0) {
                     process.nextTick(() => {
-                        node.alexa.send_change_report(node.id, modified);
+                        node.alexa.send_change_report(node.id, modified).then(() => { });
                     });
                 }
                 // node.sendState(modified, msg.payload);
@@ -299,6 +299,8 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.ContactSensor");
                 node.addCapability("Alexa.ContactSensor", {
                     detectionState: 'NOT_DETECTED'
+                }, undefined, {
+                    detectionState: 'contactDetectionState'
                 });
             }
 
@@ -489,6 +491,8 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.MotionSensor");
                 node.addCapability("Alexa.MotionSensor", {
                     detectionState: 'NOT_DETECTED' // DETECTED
+                }, undefined, {
+                    detectionState: 'motionDetectionState'
                 });
             }
             // PercentageController
@@ -650,10 +654,10 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
             if (node.config.i_wake_on_lan_controller) {
                 if (node.isVerbose()) node._debug("Alexa.WakeOnLANController");
-                if ((node.config.MACAddresses || '').trim().length > 0) {
+                if (node.config.mac_addresses.length > 0) {
                     node.addCapability("Alexa.WakeOnLANController", undefined, {
                         configuration: {
-                            MACAddresses: [node.config.MACAddresses]
+                            mac_addresses: node.config.mac_addresses
                         }
                     });
                 }
@@ -688,7 +692,7 @@ module.exports = function (RED) {
         //
         //
         //
-        getCapability(iface, properties_val) {
+        getCapability(iface, properties_val, properties_map) {
             var node = this;
             let capability = {
                 type: "AlexaInterface",
@@ -696,9 +700,12 @@ module.exports = function (RED) {
                 version: "3",
             };
             if (properties_val) {
+                if (typeof properties_map === 'undefined') {
+                    properties_map = {};
+                }
                 let supported = [];
                 Object.keys(properties_val).forEach(key => {
-                    node.state[key] = properties_val[key];
+                    node.state[properties_map[key] || key] = properties_val[key];
                     supported.push({
                         name: key
                     });
@@ -716,9 +723,9 @@ module.exports = function (RED) {
         //
         //
         //
-        addCapability(iface, properties_val, attributes) {
+        addCapability(iface, properties_val, attributes, properties_map) {
             var node = this;
-            let capability = node.getCapability(iface, properties_val);
+            let capability = node.getCapability(iface, properties_val, properties_map);
             if (attributes !== undefined) {
                 Object.assign(capability, attributes);
             }
@@ -731,9 +738,11 @@ module.exports = function (RED) {
         //
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
-        execDirective(namespace, name, payload, cmd_res) { // Directive
+        execDirective(header, payload, cmd_res) { // Directive
             var node = this;
-            if (node.isVerbose()) node._debug("execCommand state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
+            const namespace = header['namespace']
+            const name = header['name']
+            if (node.isVerbose()) node._debug("execDirective state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
             let modified = undefined;
             let event_payload = {};
             let res_payload = {};
@@ -845,7 +854,7 @@ module.exports = function (RED) {
                     if (name === 'GetMediaMetadata') {
                         cmd_res['namespace'] = namespace;
                         cmd_res['name'] = name + '.Response';
-                        if (node.isVerbose()) node._debug("execCommand node.media " + name + "/" + namespace + " " + JSON.stringify(node.media));
+                        if (node.isVerbose()) node._debug("execDirective node.media " + name + "/" + namespace + " " + JSON.stringify(node.media));
                         modified = []; // TODO
                         if (payload.filters && Array.isArray(payload.filters.mediaIds)) {
                             event_payload.media = [];
@@ -914,9 +923,27 @@ module.exports = function (RED) {
                             event_payload['estimatedDeferralInSeconds'] = 15;
                             modified = [];
                             process.nextTick(() => {
-                                if (node.isVerbose()) node._debug("execCommand send_change_report");
-                                 // TODO manage response
-                                node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", undefined, 'Alexa.WakeOnLANController', 'WakeUp');
+                                if (node.isVerbose()) node._debug("execDirective send_change_report");
+                                // TODO manage response
+                                node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", undefined, 'Alexa.WakeOnLANController', 'WakeUp')
+                                    .then(res => {
+                                        if (node.isVerbose()) node._debug("execDirective send_change_report for WakeUp OK");
+                                        modified = node.setValues({
+                                            powerState: 'ON'
+                                        }, node.state);
+                                        node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", {
+                                            event: {
+                                                header: {
+                                                    correlationToken: header.correlationToken
+                                                }
+                                            }
+                                        }, 'Alexa', 'Response')
+                                            .then(() => { });
+                                    })
+                                    .catch(() => {
+                                        if (node.isVerbose()) node._debug("execDirective send_change_report for WakeUp ERROR");
+                                        node.alexa.send_error_response(undefined, undefined, node.id, 'INTERNAL_ERROR', 'Unknown error');
+                                    });
                             });
                         } else {
                             modified = node.setValues({
@@ -1091,7 +1118,7 @@ module.exports = function (RED) {
                     break;
 
                 default:
-                    node.error("execCommand invalid directive " + name + "/" + namespace);
+                    node.error("execDirective invalid directive " + name + "/" + namespace);
             }
 
 
@@ -1099,9 +1126,9 @@ module.exports = function (RED) {
                 node.sendState(modified, payload, namespace, name);
             }
 
-            if (node.isVerbose()) node._debug("execCommand event_payload " + name + "/" + namespace + " " + JSON.stringify(event_payload));
-            if (node.isVerbose()) node._debug("execCommand modified after " + name + "/" + namespace + " " + JSON.stringify(modified));
-            if (node.isVerbose()) node._debug("execCommand state after " + name + "/" + namespace + " " + JSON.stringify(node.state));
+            if (node.isVerbose()) node._debug("execDirective event_payload " + name + "/" + namespace + " " + JSON.stringify(event_payload));
+            if (node.isVerbose()) node._debug("execDirective modified after " + name + "/" + namespace + " " + JSON.stringify(modified));
+            if (node.isVerbose()) node._debug("execDirective state after " + name + "/" + namespace + " " + JSON.stringify(node.state));
             return modified;
         }
 
@@ -1178,6 +1205,16 @@ module.exports = function (RED) {
                     });
                 }
             }
+            // ContactSensor
+            if (node.config.i_contact_sensor) {
+                properties.push({
+                    namespace: "Alexa.ContactSensor",
+                    name: "detectionState",
+                    value: node.state['contactDetectionState'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
             // EndpointHealth
             if (node.config.i_endpoint_health) {
                 properties.push({
@@ -1214,7 +1251,7 @@ module.exports = function (RED) {
                 properties.push({
                     namespace: "Alexa.MotionSensor",
                     name: "detectionState",
-                    value: node.state['detectionState'],
+                    value: node.state['motionDetectionState'],
                     timeOfSample: time_of_sample,
                     uncertaintyInMilliseconds: uncertainty,
                 });
@@ -1251,7 +1288,7 @@ module.exports = function (RED) {
                 });
             }
             // PowerController
-            if (node.config.i_power_controller) {
+            if (node.config.i_power_controller || node.config.i_wake_on_lan_controller) {
                 properties.push({
                     namespace: "Alexa.PowerController",
                     name: "powerState",

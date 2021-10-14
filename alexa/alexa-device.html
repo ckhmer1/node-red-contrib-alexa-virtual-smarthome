@@ -96,7 +96,6 @@
                         if (!camera_stream_configurations || camera_stream_configurations.length === 0) { return true }
                         for (var i = 0; i < camera_stream_configurations.length; i++) {
                             var c = camera_stream_configurations[i];
-                            console.log("validate " + JSON.stringify(c));
                             if (c.p.length === 0 && c.t.length === 0 && c.v.length === 0 && c.a.length === 0 && c.r.trim().length === 0) {
                                 return true;
                             }
@@ -146,7 +145,7 @@
                 alarms: { value: [], required: false },
                 pin_code: { value: '', required: false, validate: isValidPinCODE },
                 exit_delay: { value: '', required: false, validate: isPositiveNumber255 },
-                MACAddresses: { value: '', required: false },
+                mac_addresses: { value: [], required: false },
             },
             inputs: 1,
             outputs: 1,
@@ -178,6 +177,7 @@
                 var G711 = this._("alexa-device.label.G711");
                 var AAC = this._("alexa-device.label.AAC");
 
+                // Camera Stream Configurations
                 $('#node-input-camera_stream_configuration-container').css('min-height', '150px').css('min-width', '450px').editableList({
                     addItem: function (container, i, opt) {
                         var camera_stream_configuration = opt;
@@ -190,7 +190,6 @@
                                 r: []
                             };
                         }
-                        console.log("addItem " + JSON.stringify(camera_stream_configuration));
                         container.css({
                             overflow: 'hidden',
                             whiteSpace: 'nowrap'
@@ -335,9 +334,39 @@
                     var c = this.camera_stream_configurations[i];
                     $("#node-input-camera_stream_configuration-container").editableList('addItem', c);
                 }
+
+                // MAC Address
+                $('#node-input-mac_address-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var mac = opt;
+                        if (!mac.hasOwnProperty('name')) {
+                            mac = { name: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
+                        var propertyName = $('<input/>', { class: "node-input-mac_address-property-name", type: "text" })
+                            .appendTo(row1);
+                        propertyName.val(mac.name);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                if (!this.mac_addresses) {
+                    this.mac_addresses = [];
+                }
+                for (var i = 0; i < this.mac_addresses.length; i++) {
+                    var mac_address = this.mac_addresses[i];
+                    $("#node-input-mac_address-container").editableList('addItem', { name: mac_address });
+                }
             },
             oneditsave: function () {
-                console.log("oneditsave");
+                // Camera Stream
                 var camera_stream_configurations = $("#node-input-camera_stream_configuration-container").editableList('items');
                 var node = this;
                 node.camera_stream_configurations = [];
@@ -382,9 +411,16 @@
                         }
                     });
                     if (!(c.p.length === 0 && c.t.length === 0 && c.v.length === 0 && c.a.length === 0 && c.r.trim().length === 0)) {
-                        console.log("oneditsave " + JSON.stringify(c));
                         node.camera_stream_configurations.push(c);
                     }
+                });
+                // mac_addresses
+                var mac_addresses = $("#node-input-mac_address-container").editableList('items');
+                node.mac_addresses = [];
+                mac_addresses.each(function (i) {
+                    var mac_address = $(this);
+                    var name = mac_address.find(".node-input-mac_address-property-name").val();
+                    node.mac_addresses.push(name);
                 });
             }
         });
@@ -394,6 +430,9 @@
 <script type="text/html" data-template-name="alexa-device">
     <style>
         ol#node-input-camera_stream_configuration-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-mac_address .red-ui-typedInput-container {
             flex:1;
         }
     </style>
@@ -968,9 +1007,11 @@
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html"><i class="fa fa-external-link"></i></a>
         </div>
 
-        <div class="form-row">
-            <label for="node-input-MACAddresses"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.MACAddresses"></span></label>
-            <input type="text" id="node-input-MACAddresses" data-i18n="[placeholder]alexa-device.placeholder.MACAddresses">
+       <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-device.label.MACAddresses"></span>
+        </div>
+        <div class="form-row node-input-mac_address-container-row">
+            <ol id="node-input-mac_address-container"></ol>
         </div>
     </div>
 </script>

@@ -652,14 +652,14 @@ module.exports = function (RED) {
                             })
                             .catch(err => {
                                 node.error("smarthome_post ReportState get_access_token evn error " + err);
-                                node.senderror_response(res, messageId, endpointId);
+                                node.send_error_response(res, messageId, endpointId);
                             });
                         return;
                     } else {
                         if (node.config.verbose) node._debug(" CCHI directive " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
                             let cmd_res = {};
-                            const changed_propertie_names = node.devices[endpointId].execDirective(namespace, name, req.body.directive.payload, cmd_res);
+                            const changed_propertie_names = node.devices[endpointId].execDirective(header, req.body.directive.payload, cmd_res);
                             if (changed_propertie_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
@@ -676,34 +676,34 @@ module.exports = function (RED) {
                                         // if (node.config.verbose) node._debug("CCHI report_state async response NOT SENT YET " + JSON.stringify(report_state));
                                         if (r_name != 'DeferredResponse' && r_name != 'ErrorResponse' && r_namespace != "Alexa.SceneController") {
                                             process.nextTick(() => {
-                                                node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION, cmd_res);
+                                                node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION, cmd_res).then(() => { });
                                             });
                                         }
                                     })
                                     .catch(err => {
                                         node.error("smarthome_post get_access_token evn error " + err);
-                                        node.senderror_response(res, messageId, endpointId, error, error_message);
+                                        node.send_error_response(res, messageId, endpointId, error, error_message);
                                     });
                                 return;
                             } else {
                                 error = 'INVALID_DIRECTIVE';
                                 error_message = RED._("alexa-adapter.error.invalid-directive")
                                 node.error("smarthome_post: execDirective unknown directive " + namespace + " " + name);
-                                node.senderror_response(res, messageId, endpointId, error, error_message);
+                                node.send_error_response(res, messageId, endpointId, error, error_message);
                             }
                         } catch (err) {
                             node.error("smarthome_post: execDirective error " + err.stack);
                             error = 'INVALID_DIRECTIVE';
                             error_message = RED._("alexa-adapter.error.invalid-directive")
                             node.error("CCHI execDirective error");
-                            node.senderror_response(res, messageId, endpointId, error, error_message);
+                            node.send_error_response(res, messageId, endpointId, error, error_message);
                         }
                     }
                 } else {
                     error = 'NO_SUCH_ENDPOINT';
                     error_message = RED._("alexa-adapter.error.invalid-directive")
                     node.error("smarthome_post: no such endpoint");
-                    node.senderror_response(res, messageId, endpointId, error, error_message);
+                    node.send_error_response(res, messageId, endpointId, error, error_message);
                     process.nextTick(() => {
                         node.send_delete_report(endpointId, header.correlationToken);
                     });
@@ -735,7 +735,7 @@ module.exports = function (RED) {
                     node.error("No endpoint for directive " + JSON.stringify(namespace) + " " + JSON.stringify(name));
                     error = 'INVALID_DIRECTIVE';
                     error_message = RED._("alexa-adapter.error.invalid-directive")
-                    node.senderror_response(res, messageId, endpointId, error, error_message);
+                    node.send_error_response(res, messageId, endpointId, error, error_message);
                 }
             }
         }
@@ -745,14 +745,51 @@ module.exports = function (RED) {
         //
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-errorresponse.html
-        senderror_response(res, messageId, endpointId, error_type, error_message) {
+        send_error_response(res, messageId, endpointId, error_type, error_message) {
+            var node = this;
+            const error_msg = node.get_error_response(error_type, error_message, endpointId, messageId);
+            if (node.config.verbose) node._debug("CCHI send_error_response " + JSON.stringify(error_msg));
+            if (res) {
+                res.json(error_msg);
+                res.end();
+            } else {
+                node.get_access_token('evn')
+                    .then(access_token => {
+                        if (node.config.verbose) node._debug('send_error_response error_msg ' + JSON.stringify(error_msg));
+                        if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
+                        superagent
+                            .post(node.config.event_endpoint)
+                            .set('Authorization', 'Bearer ' + access_token)
+                            .send(error_msg)
+                            .end((err, res) => {
+                                if (err) {
+                                    node.error('send_change_report err ' + JSON.stringify(err));
+                                    reject(err);
+                                } else {
+                                    if (node.config.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
+                                    resolve(res);
+                                }
+                            });
+                        if (node.config.verbose) node._debug('send_change_report sent');
+                    })
+                    .catch(err => {
+                        node.error('send_change_report get_access_token err ' + JSON.stringify(err));
+                    });
+            }
+        }
+
+        //
+        //
+        //
+        //
+        get_error_response(error_type, error_message, endpointId, messageId) {
             var node = this;
             let error_msg = {
                 "event": {
                     "header": {
                         "namespace": "Alexa",
                         "name": "ErrorResponse",
-                        "messageId": messageId,
+                        "messageId": messageId || node.tokgen.generate(),
                         "payloadVersion": "3"
                     },
                     "payload": {
@@ -766,11 +803,8 @@ module.exports = function (RED) {
                     "endpointId": endpointId
                 };
             }
-            if (node.config.verbose) node._debug("CCHI senderror_response " + JSON.stringify(error_msg));
-            res.json(error_msg);
-            res.end();
+            return error_msg;
         }
-
         //
         //
         //
@@ -1225,35 +1259,39 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             var node = this;
-            if (node.config.verbose) node._debug('send_change_report ' + endpointId);
-            if (changed_propertie_names === undefined) {
-                changed_propertie_names = [];
-            }
-            else if (typeof changed_propertie_names === 'string') {
-                changed_propertie_names = [changed_propertie_names];
-            }
-            node.get_access_token('evn')
-                .then(access_token => {
-                    let state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
-                    node.objectMerge(state, cmd_res);
-                    if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
-                    if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
-                    superagent
-                        .post(node.config.event_endpoint)
-                        .set('Authorization', 'Bearer ' + access_token)
-                        .send(state)
-                        .end((err, res) => {
-                            if (err) {
-                                node.error('send_change_report err ' + JSON.stringify(err));
-                            } else {
-                                if (node.config.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
-                            }
-                        });
-                    if (node.config.verbose) node._debug('send_change_report sent');
-                })
-                .catch(err => {
-                    node.error('send_change_report get_access_token err ' + JSON.stringify(err));
-                })
+            return new Promise((resolve, reject) => {
+                if (node.config.verbose) node._debug('send_change_report ' + endpointId);
+                if (changed_propertie_names === undefined) {
+                    changed_propertie_names = [];
+                }
+                else if (typeof changed_propertie_names === 'string') {
+                    changed_propertie_names = [changed_propertie_names];
+                }
+                node.get_access_token('evn')
+                    .then(access_token => {
+                        let state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
+                        node.objectMerge(state, cmd_res);
+                        if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
+                        if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
+                        superagent
+                            .post(node.config.event_endpoint)
+                            .set('Authorization', 'Bearer ' + access_token)
+                            .send(state)
+                            .end((err, res) => {
+                                if (err) {
+                                    node.error('send_change_report err ' + JSON.stringify(err));
+                                    reject(err);
+                                } else {
+                                    if (node.config.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
+                                    resolve(res);
+                                }
+                            });
+                        if (node.config.verbose) node._debug('send_change_report sent');
+                    })
+                    .catch(err => {
+                        node.error('send_change_report get_access_token err ' + JSON.stringify(err));
+                    });
+            });
         }
 
         //
