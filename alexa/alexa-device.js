@@ -74,6 +74,7 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("(on-close) " + node.config.name);
                 node.onClose(removed, done);
             });
+            node.updateStatusIcon();
         }
 
         //
@@ -277,9 +278,9 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.ColorController");
                 node.addCapability("Alexa.ColorController", {
                     color: {
-                        "hue": 350.5,
-                        "saturation": 0.7138,
-                        "brightness": 0.6524
+                        hue: 350.5,
+                        saturation: 0.7138,
+                        brightness: 0.6524
                     }
                 });
             }
@@ -299,8 +300,6 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.ContactSensor");
                 node.addCapability("Alexa.ContactSensor", {
                     detectionState: 'NOT_DETECTED'
-                }, undefined, {
-                    detectionState: 'contactDetectionState'
                 });
             }
 
@@ -491,8 +490,6 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.MotionSensor");
                 node.addCapability("Alexa.MotionSensor", {
                     detectionState: 'NOT_DETECTED' // DETECTED
-                }, undefined, {
-                    detectionState: 'motionDetectionState'
                 });
             }
             // PercentageController
@@ -692,7 +689,7 @@ module.exports = function (RED) {
         //
         //
         //
-        getCapability(iface, properties_val, properties_map) {
+        getCapability(iface, properties_val) {
             var node = this;
             let capability = {
                 type: "AlexaInterface",
@@ -700,12 +697,11 @@ module.exports = function (RED) {
                 version: "3",
             };
             if (properties_val) {
-                if (typeof properties_map === 'undefined') {
-                    properties_map = {};
-                }
                 let supported = [];
                 Object.keys(properties_val).forEach(key => {
-                    node.state[properties_map[key] || key] = properties_val[key];
+                    const mapped_key = node.alexa.get_mapped_property(iface, key);
+                    console.log("CCHI TOOOOOOOOOOOOOOOOOOOOOOOOOOOOO TODO mapped_key " + iface + ' ' + key + " . " + mapped_key)
+                    node.state[mapped_key] = properties_val[key];
                     supported.push({
                         name: key
                     });
@@ -723,9 +719,9 @@ module.exports = function (RED) {
         //
         //
         //
-        addCapability(iface, properties_val, attributes, properties_map) {
+        addCapability(iface, properties_val, attributes) {
             var node = this;
-            let capability = node.getCapability(iface, properties_val, properties_map);
+            let capability = node.getCapability(iface, properties_val);
             if (attributes !== undefined) {
                 Object.assign(capability, attributes);
             }
@@ -744,6 +740,7 @@ module.exports = function (RED) {
             const name = header['name']
             if (node.isVerbose()) node._debug("execDirective state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
             let modified = undefined;
+            let send_state_in_out = true;
             let event_payload = {};
             let res_payload = {};
             cmd_res['event'] = {
@@ -922,6 +919,7 @@ module.exports = function (RED) {
                             cmd_res["name"] = "DeferredResponse";
                             event_payload['estimatedDeferralInSeconds'] = 15;
                             modified = [];
+                            send_state_in_out = false;
                             process.nextTick(() => {
                                 if (node.isVerbose()) node._debug("execDirective send_change_report");
                                 // TODO manage response
@@ -931,6 +929,7 @@ module.exports = function (RED) {
                                         modified = node.setValues({
                                             powerState: 'ON'
                                         }, node.state);
+                                        node.sendState(modified, payload, namespace, name);
                                         node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", {
                                             event: {
                                                 header: {
@@ -1122,7 +1121,7 @@ module.exports = function (RED) {
             }
 
 
-            if (modified !== undefined) {
+            if (send_state_in_out && modified !== undefined) {
                 node.sendState(modified, payload, namespace, name);
             }
 
@@ -1353,6 +1352,85 @@ module.exports = function (RED) {
         //
         //
         //
+        updateStatusIcon() {
+            const node = this;
+            let text = '';
+            let fill = 'blue';
+            let shape = 'dot';
+            if (node.state.powerState !== undefined) {
+                if (node.state.powerState === 'ON') {
+                    text = 'ON';
+                    fill = 'green';
+                } else {
+                    text = 'OFF';
+                    fill = 'red';
+                }
+            }
+            if (node.state.powerLevel !== undefined) {
+                text += " P: " + node.state.powerLevel;
+            }
+            if (node.state.brightness !== undefined) {
+                text += " bri: " + node.state.brightness;
+            }
+            if (node.state.colorTemperatureInKelvin !== undefined) {
+                text += ' temp: ' + node.state.colorTemperatureInKelvin;
+            }
+            if (node.state.color !== undefined) {
+                text += ' H: ' + node.state.color.hue +
+                    ' S: ' + node.state.color.saturation +
+                    ' B: ' + node.state.color.brightness;
+            }
+            if (node.state.lockState !== undefined) {
+                text += ' ' + node.state.lockState;
+            }
+            if (node.state.armState !== undefined) {
+                text += ' ' + node.state.armState;
+            }
+            if (node.state.percentage !== undefined) {
+                text += ' ' + node.state.percentage + "% ";
+            }
+            if (node.state.volume !== undefined) {
+                text += ' vol: ' + node.state.volume;
+            }
+            if (node.state.muted !== undefined && node.state.muted) {
+                text += ' M';
+            }
+            if (node.state.temperature !== undefined) {
+                text += ' T: ' + node.state.temperature.value;
+            }
+            if (node.state.targetSetpoint !== undefined) {
+                text += ' TS: ' + node.state.targetSetpoint.value;
+            }
+
+            if (node.state.lowerSetpoint !== undefined && node.state.upperSetpoint !== undefined) {
+                text += ' TS: [' + node.state.lowerSetpoint.value + ',' + node.state.upperSetpoint.value + ']';
+            }
+
+            if (node.state.motionDetectionState !== undefined) {
+                text += node.state.motionDetectionState === 'DETECTED' ? ' MOTION' : ' NO MOTION';
+            }
+
+            if (node.state.contactDetectionState !== undefined) {
+                text += node.state.contactDetectionState === 'DETECTED' ? ' CONTACT' : ' NO CONTACT';
+            }
+            if (node.state.connectivity !== undefined) {
+                if (node.state.connectivity === 'UNREACHABLE') {
+                    fill = 'red';
+                } else if (fill !== 'red') {
+                    fill = 'green';
+                }
+            }
+
+            if (!text) {
+                text = 'Unknown';
+            }
+            node.status({ fill: fill, shape: shape, text: text });
+        }
+
+        //
+        //
+        //
+        //
         /*setState(from_object, to_object) {
             var node = this;
             let new_value;
@@ -1422,6 +1500,7 @@ module.exports = function (RED) {
                     }
                 }
             });
+            node.updateStatusIcon();
             return differs;
         }
 

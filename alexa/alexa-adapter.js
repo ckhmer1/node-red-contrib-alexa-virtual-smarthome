@@ -82,6 +82,11 @@ module.exports = function (RED) {
     const RULE_TRIGGER = 'RULE_TRIGGER';
     const VOICE_INTERACTION = 'VOICE_INTERACTION';
 
+    const PROPERTIES_MAPPING = {
+        motionDetectionState: ['Alexa.MotionSensor', 'detectionState'],
+        contactDetectionState: ['Alexa.ContactSensor', 'detectionState']
+    };
+
     class AlexaAdapterNode {
         constructor(config) {
             RED.nodes.createNode(this, config);
@@ -659,8 +664,8 @@ module.exports = function (RED) {
                         if (node.config.verbose) node._debug(" CCHI directive " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
                             let cmd_res = {};
-                            const changed_propertie_names = node.devices[endpointId].execDirective(header, req.body.directive.payload, cmd_res);
-                            if (changed_propertie_names !== undefined) {
+                            const changed_property_names = node.devices[endpointId].execDirective(header, req.body.directive.payload, cmd_res);
+                            if (changed_property_names !== undefined) {
                                 node.get_access_token('evn')
                                     .then(access_token => {
                                         const r_namespace = cmd_res['namespace'];
@@ -676,7 +681,7 @@ module.exports = function (RED) {
                                         // if (node.config.verbose) node._debug("CCHI report_state async response NOT SENT YET " + JSON.stringify(report_state));
                                         if (r_name != 'DeferredResponse' && r_name != 'ErrorResponse' && r_namespace != "Alexa.SceneController") {
                                             process.nextTick(() => {
-                                                node.send_change_report(endpointId, changed_propertie_names, VOICE_INTERACTION, cmd_res).then(() => { });
+                                                node.send_change_report(endpointId, changed_property_names, VOICE_INTERACTION, cmd_res).then(() => { });
                                             });
                                         }
                                     })
@@ -1254,22 +1259,22 @@ module.exports = function (RED) {
         //
         //
         //
-        send_change_report(endpointId, changed_propertie_names, reason, cmd_res, namespace, name) {
+        send_change_report(endpointId, changed_property_names, reason, cmd_res, namespace, name) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             var node = this;
             return new Promise((resolve, reject) => {
                 if (node.config.verbose) node._debug('send_change_report ' + endpointId);
-                if (changed_propertie_names === undefined) {
-                    changed_propertie_names = [];
+                if (changed_property_names === undefined) {
+                    changed_property_names = [];
                 }
-                else if (typeof changed_propertie_names === 'string') {
-                    changed_propertie_names = [changed_propertie_names];
+                else if (typeof changed_property_names === 'string') {
+                    changed_property_names = [changed_property_names];
                 }
                 node.get_access_token('evn')
                     .then(access_token => {
-                        let state = node.get_change_report(endpointId, namespace, name, undefined, changed_propertie_names, reason);
+                        let state = node.get_change_report(endpointId, namespace, name, undefined, changed_property_names, reason);
                         node.objectMerge(state, cmd_res);
                         if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
                         if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
@@ -1508,17 +1513,46 @@ module.exports = function (RED) {
         //
         //
         //
-        get_change_report(endpointId, namespace, name, messageId, changed_propertie_names, reason) {
+        get_mapped_property(namespace, name) {
+            Object.keys(PROPERTIES_MAPPING).forEach(i_name => {
+                if (PROPERTIES_MAPPING[i_name][1] === name && PROPERTIES_MAPPING[i_name][0] === namespace) {
+                    name = i_name;
+                }
+            });
+            return name;
+        }
+
+        //
+        //
+        //
+        //
+        is_changed_property(name, namespace, changed_property_names) {
+            if (changed_property_names.includes(name)) {
+                return true;
+            }
+            let res = false;
+            Object.keys(PROPERTIES_MAPPING).forEach(key => {
+                if (PROPERTIES_MAPPING[key][1] === name && PROPERTIES_MAPPING[key][0] === namespace && changed_property_names.includes(key)) {
+                    res = true;
+                }
+            });
+            return res;
+        }
+        //
+        //
+        //
+        //
+        get_change_report(endpointId, namespace, name, messageId, changed_property_names, reason) {
             var node = this;
             let changed_properties = [];
             let unchanged_properties = [];
             let payload = {};
             const oauth2_bearer_token = node.tokens.evn.access_token;
             const properties = node.devices[endpointId].getProperties();
-            if (node.config.verbose) node._debug('endpointId ' + endpointId + ' properties ' + JSON.stringify(properties));
-            if (changed_propertie_names && changed_propertie_names.length > 0) {
+            if (node.config.verbose) node._debug('get_change_report endpointId ' + endpointId + ' properties ' + JSON.stringify(properties));
+            if (changed_property_names.length > 0) {
                 properties.forEach(property => {
-                    if (changed_propertie_names && changed_propertie_names.includes(property.name)) {
+                    if (node.is_changed_property(property.name, property.namespace, changed_property_names)) {
                         changed_properties.push(property);
                     } else {
                         unchanged_properties.push(property);
