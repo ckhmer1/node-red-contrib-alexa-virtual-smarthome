@@ -149,7 +149,24 @@
             "water_alarm": "Water alarm",
             "pin_code": "PIN code",
             "exit_delay": "Exit delay (s)",
-            "MACAddresses": "MAC Addresses"
+            "MACAddresses": "MAC Addresses",
+            "primary_heater_operation": "Primary heater operation",
+            "auxiliary_heater_operation": "Auxiliary heater operation",
+            "cooler_operation": "Cooler operation",
+            "fan_operation": "Fan operation",
+            "STAGE_1": "On/Off",
+            "STAGE_2": "Low/High/Off",
+            "STAGE_3": "Low/Medium/High/Off",
+            "unit": "Unit",
+            "measuring_method": "Measuring method",
+            "default_resolution": "Default resolution",
+            "electricity": "Electricity",
+            "natural_gas": "Natural Gas",
+            "MILLIWATT_HOUR": "Milliwatt hour",
+            "BTU": "BTU",
+            "CUBIC_FOOT": "Cubic foot",
+            "MEASURED": "Measured",
+            "ESTIMATED": "Estimated"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -169,7 +186,8 @@
             "on_wattage": "The typical energy the device consumes while turned on",
             "pin_code": "Four-digit PIN code",
             "exit_delay": "Exit delay in seconds",
-            "MACAddresses": "The MAC address of the device to wake up."
+            "MACAddresses": "The MAC address of the device to wake up.",
+            "default_resolution": "The resolution of your data readings, in seconds."
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",
@@ -240,7 +258,7 @@
             "keypad_controller": "Keypad Controller",
             "lock_controller": "Lock Controller",
             "media_metadata": "Media Metadata",
-            "meter": "Meter",
+            "deviceusage_meter": "Deviceusage meter",
             "mode_controller": "Mode Controller",
             "motion_sensor": "Motion Sensor",
             "percentage_controller": "Percentage Controller",

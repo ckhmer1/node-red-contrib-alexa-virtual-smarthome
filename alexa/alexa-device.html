@@ -57,7 +57,7 @@
                 i_doorbell_event_source: { value: "", required: false },
                 i_endpoint_health: { value: "", required: false },
                 i_equalizer_controller: { value: "", required: false },
-                i_estimation: { value: "", required: false },
+                i_device_usage_estimation: { value: "", required: false },
                 i_event_detection_sensor: { value: "", required: false },
                 i_input_controller: { value: "", required: false },
                 i_inventory_level_sensor: { value: "", required: false },
@@ -66,7 +66,7 @@
                 a_kc_keys: { value: [], required: false },
                 i_lock_controller: { value: "", required: false },
                 i_media_metadata: { value: "", required: false },
-                i_meter: { value: "", required: false },
+                i_device_usage_meter: { value: "", required: false },
                 i_mode_controller: { value: "", required: false },
                 i_motion_sensor: { value: "", required: false },
                 i_percentage_controller: { value: "", required: false },
@@ -146,6 +146,16 @@
                 pin_code: { value: '', required: false, validate: isValidPinCODE },
                 exit_delay: { value: '', required: false, validate: isPositiveNumber255 },
                 mac_addresses: { value: [], required: false },
+                primary_heater_operation: { value: '', required: false },
+                auxiliary_heater_operation: { value: false, required: false },
+                cooler_operation: { value: '', required: false },
+                fan_operation: { value: '', required: false },
+                electricity_measuring_method: { value: '', required: false },
+                electricity_unit: { value: 'MILLIWATT_HOUR', required: false },
+                electricity_default_resolution: { value: 3600, required: false },
+                natural_gas_measuring_method: { value: '', required: false },
+                natural_gas_unit: { value: 'CUBIC_FOOT', required: false },
+                natural_gas_default_resolution: { value: 3600, required: false },
             },
             inputs: 1,
             outputs: 1,
@@ -620,9 +630,9 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" id="i_estimation" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_device_usage_estimation" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
-            <input type="checkbox" id="node-input-i_estimation" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <input type="checkbox" id="node-input-i_device_usage_estimation" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.estimation"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html"><i class="fa fa-external-link"></i></a>
         </div>
@@ -788,11 +798,63 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_meter" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_device_usage_meter" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
-            <input type="checkbox" id="node-input-i_meter" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-device.interface.meter"></span>
+            <input type="checkbox" id="node-input-i_device_usage_meter" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.deviceusage_meter"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row red-ui-editableList-border">
+            <div class="form-row"><span data-i18n="alexa-device.label.electricity"></span></div>
+            <div class="form-row">
+                <label for="node-input-electricity_measuring_method"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.measuring_method"></span></label>
+                <select id="node-input-electricity_measuring_method" >
+                    <option value='' data-i18n='alexa-device.label.NONE'></option>
+                    <option value='ESTIMATED' data-i18n='alexa-device.label.ESTIMATED'></option>
+                    <option value='MEASURED' data-i18n='alexa-device.label.MEASURED'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-electricity_unit"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.unit"></span></label>
+                <select id="node-input-electricity_unit" >
+                    <option value='MILLIWATT_HOUR' data-i18n='alexa-device.label.MILLIWATT_HOUR'></option>
+                    <option value='BTU' data-i18n='alexa-device.label.BTU'></option>
+                    <option value='CUBIC_FOOT' data-i18n='alexa-device.label.CUBIC_FOOT'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-electricity_default_resolution"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.default_resolution"></span></label>
+                <input type="text" id="node-input-electricity_default_resolution" data-i18n="[placeholder]alexa-device.placeholder.default_resolution">
+            </div>
+        </div>
+
+        <div class="form-row red-ui-editableList-border">
+            <div class="form-row"><span data-i18n="alexa-device.label.natural_gas"></span></div>
+            <div class="form-row">
+                <label for="node-input-natural_gas_measuring_method"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.measuring_method"></span></label>
+                <select id="node-input-natural_gas_measuring_method" >
+                    <option value='' data-i18n='alexa-device.label.NONE'></option>
+                    <option value='ESTIMATED' data-i18n='alexa-device.label.ESTIMATED'></option>
+                    <option value='MEASURED' data-i18n='alexa-device.label.MEASURED'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-natural_gas_unit"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.unit"></span></label>
+                <select id="node-input-natural_gas_unit" >
+                    <option value='MILLIWATT_HOUR' data-i18n='alexa-device.label.MILLIWATT_HOUR'></option>
+                    <option value='BTU' data-i18n='alexa-device.label.BTU'></option>
+                    <option value='CUBIC_FOOT' data-i18n='alexa-device.label.CUBIC_FOOT'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-natural_gas_default_resolution"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.default_resolution"></span></label>
+                <input type="text" id="node-input-natural_gas_default_resolution" data-i18n="[placeholder]alexa-device.placeholder.default_resolution">
+            </div>
         </div>
     </div>
     
@@ -965,31 +1027,67 @@
 
         <div class="form-row">
             <input type="checkbox" id="node-input-a_target_setpoint" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-device.label.target_setpoint">
+            <span data-i18n="alexa-device.label.target_setpoint"></span>
         </div>
 
         <div class="form-row">
             <input type="checkbox" id="node-input-a_lower_setpoint" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-device.label.lower_setpoint">
+            <span data-i18n="alexa-device.label.lower_setpoint"></span>
         </div>
 
         <div class="form-row">
             <input type="checkbox" id="node-input-a_upper_setpoint" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-device.label.upper_setpoint">
+            <span data-i18n="alexa-device.label.upper_setpoint"></span>
         </div>
 
         <div class="form-row">
             <input type="checkbox" id="node-input-a_supports_scheduling" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-device.label.supports_scheduling">
+            <span data-i18n="alexa-device.label.supports_scheduling"></span>
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_thermostat_controller_hvac_components" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_thermostat_controller_hvac_components" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_thermostat_controller_hvac_components" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.thermostat_controller_hvac_components"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html"><i class="fa fa-external-link"></i></a>
         </div>
+
+        <div class="form-row">
+            <label for="node-input-primary_heater_operation"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.primary_heater_operation"></span></label>
+            <select id="node-input-primary_heater_operation" >
+                <option value='' data-i18n='alexa-device.label.NONE'></option>
+                <option value='1' data-i18n='alexa-device.label.STAGE_1'></option>
+                <option value='2' data-i18n='alexa-device.label.STAGE_2'></option>
+                <option value='3' data-i18n='alexa-device.label.STAGE_3'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <input type="checkbox" id="node-input-auxiliary_heater_operation" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.label.auxiliary_heater_operation"></span>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-cooler_operation"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.cooler_operation"></span></label>
+            <select id="node-input-cooler_operation" >
+                <option value='' data-i18n='alexa-device.label.NONE'></option>
+                <option value='1' data-i18n='alexa-device.label.STAGE_1'></option>
+                <option value='2' data-i18n='alexa-device.label.STAGE_2'></option>
+                <option value='3' data-i18n='alexa-device.label.STAGE_3'></option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-fan_operation"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.fan_operation"></span></label>
+            <select id="node-input-fan_operation" >
+                <option value='' data-i18n='alexa-device.label.NONE'></option>
+                <option value='1' data-i18n='alexa-device.label.STAGE_1'></option>
+                <option value='2' data-i18n='alexa-device.label.STAGE_2'></option>
+                <option value='3' data-i18n='alexa-device.label.STAGE_3'></option>
+            </select>
+        </div>
+
     </div>
     
     <div class="form-row red-ui-editableList-border div_trait" hidden id="i_toggle_controller" style="background: #fbfbfb; padding: 5px;">

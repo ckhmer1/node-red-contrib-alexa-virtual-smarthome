@@ -285,15 +285,15 @@ This is a checklist for the config:
 * Open your browser at "https://YOUR_DOMAIN.COM/alexa/token"
 * You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding to the reverse proxy  or reverse proxy config.
 
-### Check the forward rule for /alexa/smarhome
+### Check the forward rule for /alexa/smarthome
 * Enable the debug log in the Node-Red Alexa node configuration.
-* Open your browser at "https://YOUR_DOMAIN.COM/alexa/smarhome"
+* Open your browser at "https://YOUR_DOMAIN.COM/alexa/smarthome"
 * You should get the following message:
 
 ```
 Alexa SmartHome test page
 
-Url: https://YOUR_DOMAIN.COM/alexa/smarhome
+Url: https://YOUR_DOMAIN.COM/alexa/smarthome
 Post: {"ok":"ok"}
 ```
 

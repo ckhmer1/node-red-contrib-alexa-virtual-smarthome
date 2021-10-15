@@ -192,6 +192,16 @@ module.exports = function (RED) {
                 const r_names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                 node.security_device_names_in_error = node.security_device_names_in_error.filter(name => !r_names.includes(name));
                 node._debug("CCHI2 " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
+            } else if (topic === 'MEASUREMENTSREPORT') {
+                let other_data = {};
+                if (msg.correlationToken) {
+                    other_data['event'] = {
+                        header: {
+                            correlationToken: msg.correlationToken
+                        }
+                    }
+                };
+                node.alexa.send_event_gw(node.id, 'Alexa.DeviceUsage.Meter', 'MeasurementsReport', msg.payload, other_data).then(() => { });
             } else if (topic === 'EXECDIRECTIVE') { // test
                 if (node.isVerbose()) {
                     node._debug(" CCHI execDirective " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
@@ -303,7 +313,75 @@ module.exports = function (RED) {
                 });
             }
 
-            // DoorbellEventSource
+            // Device Usage Estimation
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
+            if (node.config.i_device_usage_estimation) {
+                if (node.isVerbose()) node._debug("Alexa.DeviceUsage.Estimation");
+                let powerProfile = {};
+                if (node.config.i_color_controller || node.config.i_color_temperature_controller) {
+                    powerProfile['type'] = 'BRIGHTNESS_COLOR';
+                } else if (node.config.i_brightness_controller) {
+                    powerProfile['type'] = 'BRIGHTNESS';
+                } else if (node.config.i_power_controller) {
+                    powerProfile['type'] = 'POWER';
+                }
+                if (powerProfile['type']) {
+                    powerProfile['standbyWattage'] = {
+                        "value": this.to_float(node.config.standby_wattage, .1),
+                        "units": "WATTS"
+                    };
+                    if (powerProfile['type'] === 'POWER') {
+                        powerProfile['onWattage'] = {
+                            "value": this.to_float(node.config.maximum_wattage, 10),
+                            "units": "WATTS"
+                        };
+                    } else {
+                        powerProfile['maximumWattage'] = {
+                            "value": this.to_float(node.config.maximum_wattage, 9),
+                            "units": "WATTS"
+                        };
+                    }
+                    node.addCapability("Alexa.DeviceUsage.Estimation", undefined,
+                        {
+                            configurations: {
+                                powerProfile: powerProfile
+                            }
+                        });
+                }
+            }
+
+            // Device Usage Meter
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html
+            if (node.config.i_device_usage_meter) {
+                if (node.isVerbose()) node._debug("Alexa.DeviceUsage.Meter");
+                let energy_sources = {};
+                let add_interface = false;
+                if (node.config.electricity_measuring_method && node.config.electricity_unit) {
+                    add_interface = true;
+                    energy_sources['electricity'] = {
+                        unit: node.config.electricity_measuring_method,
+                        measuringMethod: node.config.electricity_unit,
+                        defaultResolution: parseInt(node.config.electricity_default_resolution) || 3600
+                    };
+                }
+                if (node.config.natural_gas_measuring_method && node.config.natural_gas_unit) {
+                    add_interface = true;
+                    energy_sources['naturalGas'] = {
+                        unit: node.config.natural_gas_measuring_method,
+                        measuringMethod: node.config.natural_gas_unit,
+                        defaultResolution: parseInt(node.config.natural_gas_default_resolution) || 3600
+                    };
+                }
+                if (add_interface) {
+                    node.addCapability("Alexa.DeviceUsage.Meter", undefined, {
+                        configurations: {
+                            energySources: energy_sources
+                        }
+                    });
+                }
+            }
+
+            // Doorbell Event Source
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             if (node.config.i_doorbell_event_source) {
                 if (node.isVerbose()) node._debug("Alexa.DoorbellEventSource");
@@ -367,42 +445,6 @@ module.exports = function (RED) {
                     });
             }
 
-            // Estimation
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
-            if (node.config.i_estimation) {
-                if (node.isVerbose()) node._debug("Alexa.DeviceUsage.Estimation");
-                let powerProfile = {};
-                if (node.config.i_color_controller || node.config.i_color_temperature_controller) {
-                    powerProfile['type'] = 'BRIGHTNESS_COLOR';
-                } else if (node.config.i_brightness_controller) {
-                    powerProfile['type'] = 'BRIGHTNESS';
-                } else if (node.config.i_power_controller) {
-                    powerProfile['type'] = 'POWER';
-                }
-                if (powerProfile['type']) {
-                    powerProfile['standbyWattage'] = {
-                        "value": this.to_float(node.config.standby_wattage, .1),
-                        "units": "WATTS"
-                    };
-                    if (powerProfile['type'] === 'POWER') {
-                        powerProfile['onWattage'] = {
-                            "value": this.to_float(node.config.maximum_wattage, 10),
-                            "units": "WATTS"
-                        };
-                    } else {
-                        powerProfile['maximumWattage'] = {
-                            "value": this.to_float(node.config.maximum_wattage, 9),
-                            "units": "WATTS"
-                        };
-                    }
-                    node.addCapability("Alexa.DeviceUsage.Estimation", undefined,
-                        {
-                            configurations: {
-                                powerProfile: powerProfile
-                            }
-                        });
-                }
-            }
             // EventDetectionSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
 
@@ -477,9 +519,6 @@ module.exports = function (RED) {
                 node.media = [];
                 node.addCapability("Alexa.MediaMetadata");
             }
-
-            // Meter
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html
 
             // ModeController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-modecontroller.html
@@ -641,8 +680,38 @@ module.exports = function (RED) {
                     duration: ""
                 };*/
             }
-            // ThermostatController.HVAC.Components	
+            // ThermostatController.HVAC.Components
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
+            if (node.config.i_thermostat_controller_hvac_components) {
+                if (node.isVerbose()) node._debug("Alexa.ThermostatController.HVAC.Components");
+                let properties = {};
+                let configurations = {};
+                let add_interface = false;
+                if (node.config.primary_heater_operation) {
+                    properties['primaryHeaterOperation'] = 'OFF';
+                    configurations['numberOfPrimaryHeaterOperations'] = parseInt(node.config.primary_heater_operation.substr(node.config.primary_heater_operation.length - 1));
+                    add_interface = true;
+                }
+                if (node.config.auxiliary_heater_operation) {
+                    properties['auxiliaryHeaterOperation'] = 'OFF';
+                    add_interface = true;
+                }
+                if (node.config.cooler_operation) {
+                    properties['coolerOperation'] = 'OFF';
+                    configurations['numberOfCoolerOperations'] = parseInt(node.config.cooler_operation.substr(node.config.cooler_operation.length - 1));
+                    add_interface = true;
+                }
+                if (node.config.fan_operation) {
+                    properties['fanOperation'] = 'OFF';
+                    configurations['numberOfFanOperations'] = parseInt(node.config.fan_operation.substr(node.config.fan_operation.length - 1));
+                    add_interface = true;
+                }
+                if (add_interface) {
+                    node.addCapability("ThermostatController.HVAC.Components", properties, {
+                        configuration: configurations
+                    });
+                }
+            }
 
             // ToggleController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
@@ -700,7 +769,6 @@ module.exports = function (RED) {
                 let supported = [];
                 Object.keys(properties_val).forEach(key => {
                     const mapped_key = node.alexa.get_mapped_property(iface, key);
-                    console.log("CCHI TOOOOOOOOOOOOOOOOOOOOOOOOOOOOO TODO mapped_key " + iface + ' ' + key + " . " + mapped_key)
                     node.state[mapped_key] = properties_val[key];
                     supported.push({
                         name: key
@@ -743,6 +811,7 @@ module.exports = function (RED) {
             let send_state_in_out = true;
             let event_payload = {};
             let res_payload = {};
+            let other_data = {};
             cmd_res['event'] = {
                 payload: event_payload
             }
@@ -836,6 +905,18 @@ module.exports = function (RED) {
                         modified = node.setValues({
                             brightness: node.state['colorTemperatureInKelvin'] - 100
                         }, node.state);
+                    }
+                    break;
+                case "Alexa.DeviceUsage.Meter": // DeviceUsage.Meter
+                    if (name === 'ReportMeasurements') {
+                        modified = [];
+                        other_data['correlationToken'] = header['correlationToken'];
+                    } else if (name === 'ReduceResolution') {
+                        modified = [];
+                        other_data['correlationToken'] = header['correlationToken'];
+                    } else if (name === 'InvalidMeasurementError') {
+                        modified = [];
+                        other_data['correlationToken'] = header['correlationToken'];
                     }
                     break;
 
@@ -1122,7 +1203,7 @@ module.exports = function (RED) {
 
 
             if (send_state_in_out && modified !== undefined) {
-                node.sendState(modified, payload, namespace, name);
+                node.sendState(modified, payload, namespace, name, other_data);
             }
 
             if (node.isVerbose()) node._debug("execDirective event_payload " + name + "/" + namespace + " " + JSON.stringify(event_payload));
@@ -1135,7 +1216,7 @@ module.exports = function (RED) {
         //
         //
         //
-        sendState(modified, inputs, namespace, name) {
+        sendState(modified, inputs, namespace, name, other_data) {
             var node = this;
             if (modified === undefined) {
                 modified = [];
@@ -1156,6 +1237,7 @@ module.exports = function (RED) {
             if (namespace) {
                 msg.namespace = namespace;
             }
+            node.alexa.objectMerge(msg, other_data);
             node.send(msg);
             return node.state;
         }

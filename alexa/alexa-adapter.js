@@ -1259,6 +1259,62 @@ module.exports = function (RED) {
         //
         //
         //
+        send_event_gw(endpointId, namespace, name, payload, other_data) {
+            // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
+            // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
+            // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
+            var node = this;
+            return new Promise((resolve, reject) => {
+                if (node.config.verbose) node._debug('send_event_gw ' + endpointId);
+                node.get_access_token('evn')
+                    .then(access_token => {
+                        let msg = {
+                            event: {
+                                header: {
+                                    namespace: namespace,
+                                    name: name,
+                                    messageId: node.tokgen.generate(),
+                                    payloadVersion: "3"
+                                },
+                                endpoint: {
+                                    scope: {
+                                        type: "BearerToken",
+                                        token: access_token
+                                    },
+                                    endpointId: endpointId
+                                },
+                                payload: payload
+                            },
+                            context: {}
+                        };
+                        node.objectMerge(msg, other_data);
+                        if (node.config.verbose) node._debug('send_event_gw msg ' + JSON.stringify(msg));
+                        superagent
+                            .post(node.config.event_endpoint)
+                            .set('Authorization', 'Bearer ' + access_token)
+                            .send(msg)
+                            .end((err, res) => {
+                                if (err) {
+                                    node.error('send_event_gw ' + node.config.event_endpoint + ' err ' + JSON.stringify(err));
+                                    reject(err);
+                                } else {
+                                    if (node.config.verbose) node._debug('send_event_gw res ' + JSON.stringify(res));
+                                    resolve(res);
+                                }
+                            });
+                        if (node.config.verbose) node._debug('send_event_gw sent');
+                    })
+                    .catch(err => {
+                        node.error('send_event_gw get_access_token err ' + JSON.stringify(err));
+                        reject(err);
+                    });
+            });
+        }
+
+        //
+        //
+        //
+        //
         send_change_report(endpointId, changed_property_names, reason, cmd_res, namespace, name) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
