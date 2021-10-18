@@ -34,6 +34,8 @@ const float_values = {
 };
 
 module.exports = function (RED) {
+    const DEFAULT_PAYLOAD_VERSION = '3';
+
     /******************************************************************************************************************
      *
      *
@@ -763,7 +765,7 @@ module.exports = function (RED) {
             let capability = {
                 type: "AlexaInterface",
                 interface: iface,
-                version: "3",
+                version: DEFAULT_PAYLOAD_VERSION,
             };
             if (properties_val) {
                 let supported = [];

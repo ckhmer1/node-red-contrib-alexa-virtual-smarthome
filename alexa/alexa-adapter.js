@@ -87,7 +87,16 @@ module.exports = function (RED) {
         contactDetectionState: ['Alexa.ContactSensor', 'detectionState']
     };
 
-    class AlexaAdapterNode {
+    const DEFAULT_PAYLOAD_VERSION = '3';
+    const PAYLOADS_VERSION = {
+        "Alexa.DeviceUsage.Meter": "1.0"
+    };
+
+    /******************************************************************************************************************
+     *
+     *
+     */
+     class AlexaAdapterNode {
         constructor(config) {
             RED.nodes.createNode(this, config);
             var node = this;
@@ -619,8 +628,8 @@ module.exports = function (RED) {
                 return res.status(401).send('Wrong request');
             }
             const payload_version = header.payloadVersion;
-            if (payload_version !== "3") {
-                node.error("smarthome_post: Wrong request payload_version");
+            if (payload_version !== (PAYLOADS_VERSION[header.namespace] || DEFAULT_PAYLOAD_VERSION)) {
+                node.error("smarthome_post: Wrong request payload_version " + payload_version + " for " + header.namespace);
                 return res.status(401).send('Unsupported payload version');
             }
             if (node.tokens.own.access_token !== scope.token || "BearerToken" !== scope.type) {
@@ -717,15 +726,15 @@ module.exports = function (RED) {
                 if (namespace === "Alexa.Discovery" && name === 'Discover') {
                     let endpoints = [];
                     const discovery = {
-                        "event": {
-                            "header": {
-                                "namespace": "Alexa.Discovery",
-                                "name": "Discover.Response",
-                                "payloadVersion": "3",
-                                "messageId": messageId,
+                        event: {
+                            header: {
+                                namespace: "Alexa.Discovery",
+                                name: "Discover.Response",
+                                payloadVersion: PAYLOADS_VERSION[namespace] || DEFAULT_PAYLOAD_VERSION,
+                                messageId: messageId,
                             },
-                            "payload": {
-                                "endpoints": endpoints
+                            payload: {
+                                endpoints: endpoints
                             }
                         }
                     };
@@ -790,22 +799,22 @@ module.exports = function (RED) {
         get_error_response(error_type, error_message, endpointId, messageId) {
             var node = this;
             let error_msg = {
-                "event": {
-                    "header": {
-                        "namespace": "Alexa",
-                        "name": "ErrorResponse",
-                        "messageId": messageId || node.tokgen.generate(),
-                        "payloadVersion": "3"
+                event: {
+                    header: {
+                        namespace: "Alexa",
+                        name: "ErrorResponse",
+                        messageId: messageId || node.tokgen.generate(),
+                        payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION
                     },
-                    "payload": {
-                        "type": error_type || 'INTERNALerror',
-                        "message": error_message || 'Unknown error'
+                    payload: {
+                        type: error_type || 'INTERNALerror',
+                        message: error_message || 'Unknown error'
                     }
                 }
             };
             if (endpointId) {
                 error_msg.event['endpoint'] = {
-                    "endpointId": endpointId
+                    endpointId: endpointId
                 };
             }
             return error_msg;
@@ -948,7 +957,7 @@ module.exports = function (RED) {
                                     namespace: "Alexa.Authorization",
                                     name: "AcceptGrant.Response",
                                     messageId: node.tokgen.generate(),
-                                    payloadVersion: "3"
+                                    payloadVersion: PAYLOADS_VERSION['Alexa.Authorization'] || DEFAULT_PAYLOAD_VERSION
                                 },
                                 payload: {}
                             }
@@ -979,7 +988,7 @@ module.exports = function (RED) {
                         messageId: node.tokgen.generate(),
                         namespace: "Alexa.Authorization",
                         name: "ErrorResponse",
-                        payloadVersion: "3"
+                        payloadVersion: PAYLOADS_VERSION["Alexa.Authorization"] || DEFAULT_PAYLOAD_VERSION
                     },
                     payload: {
                         type: "ACCEPT_GRANT_FAILED",
@@ -1136,7 +1145,7 @@ module.exports = function (RED) {
                         name: "StateReport",
                         messageId: messageId,
                         correlationToken: correlationToken,
-                        payloadVersion: "3",
+                        payloadVersion: PAYLOADS_VERSION["Alexa"] || DEFAULT_PAYLOAD_VERSION,
                     },
                     payload: {},
                     endpoints: endpointId,
@@ -1180,7 +1189,7 @@ module.exports = function (RED) {
                         name: "DeleteReport",
                         correlationToken: correlationToken,
                         messageId: node.tokgen.generate(),
-                        payloadVersion: "3",
+                        payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION,
                     },
                     endpoint: {
                         scope: {
@@ -1219,7 +1228,7 @@ module.exports = function (RED) {
                                 namespace: "Alexa.DoorbellEventSource",
                                 name: "DoorbellPress",
                                 messageId: node.tokgen.generate(),
-                                payloadVersion: "3"
+                                payloadVersion: PAYLOADS_VERSION['Alexa.DoorbellEventSource'] || DEFAULT_PAYLOAD_VERSION
                             },
                             endpoint: {
                                 scope: {
@@ -1274,7 +1283,7 @@ module.exports = function (RED) {
                                     namespace: namespace,
                                     name: name,
                                     messageId: node.tokgen.generate(),
-                                    payloadVersion: "3"
+                                    payloadVersion: PAYLOADS_VERSION[namespace] || DEFAULT_PAYLOAD_VERSION
                                 },
                                 endpoint: {
                                     scope: {
@@ -1399,7 +1408,7 @@ module.exports = function (RED) {
                         name: name || "Response",
                         messageId: node.tokgen.generate(),
                         correlationToken: correlationToken,
-                        payloadVersion: "3"
+                        payloadVersion: PAYLOADS_VERSION[namespace || "Alexa"] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
                         scope: {
@@ -1432,7 +1441,7 @@ module.exports = function (RED) {
                         namespace: "Alexa.Discovery",
                         name: "AddOrUpdateReport",
                         messageId: node.tokgen.generate(),
-                        payloadVersion: "3"
+                        payloadVersion: PAYLOADS_VERSION['Alexa.Discovery'] || DEFAULT_PAYLOAD_VERSION
                     },
                     payload: {
                         endpoints: [
@@ -1633,7 +1642,7 @@ module.exports = function (RED) {
                         namespace: namespace || "Alexa",
                         name: name || "ChangeReport",
                         messageId: messageId || node.tokgen.generate(),
-                        payloadVersion: "3"
+                        payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
                         scope: {
@@ -1666,7 +1675,7 @@ module.exports = function (RED) {
                         namespace: namespace || "Alexa.MediaMetadata",
                         name: name || "MediaCreatedOrUpdated",
                         messageId: messageId || node.tokgen.generate(),
-                        payloadVersion: "3"
+                        payloadVersion: PAYLOADS_VERSION[namespace || "Alexa.MediaMetadata"] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
                         scope: {
@@ -1701,7 +1710,7 @@ module.exports = function (RED) {
                         namespace: namespace || "Alexa.MediaMetadata",
                         name: name || "MediaDeleted",
                         messageId: messageId || node.tokgen.generate(),
-                        payloadVersion: "3"
+                        payloadVersion: PAYLOADS_VERSION['Alexa.MediaMetadata'] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
                         scope: {
@@ -1737,7 +1746,7 @@ module.exports = function (RED) {
                                 namespace: "Alexa",
                                 name: "StateReport",
                                 messageId: messageId,
-                                payloadVersion: "3",
+                                payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION,
                             },
                             endpoint: {
                                 endpoints: endpointId,
