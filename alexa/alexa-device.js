@@ -214,7 +214,7 @@ module.exports = function (RED) {
                 }
             } else {
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
-                const modified = node.setValues(msg.payload, node.state);
+                const modified = node.setValues(msg.payload || {}, node.state);
                 if (node.isVerbose()) node._debug("CCHI " + node.id + " modified " + JSON.stringify(modified));
                 if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
                 if (modified.length > 0) {

@@ -102,21 +102,21 @@
             "XBOX"
         ],
         "i_automation_management": true,
-        "i_brightness_controller": false,
-        "i_camera_stream_controller": false,
-        "i_channel_controller": false,
-        "i_color_controller": false,
-        "i_color_temperature_controller": false,
-        "i_contact_sensor": false,
-        "i_doorbell_event_source": false,
-        "i_endpoint_health": false,
-        "i_equalizer_controller": false,
-        "i_device_usage_estimation": false,
-        "i_event_detection_sensor": false,
-        "i_input_controller": false,
+        "i_brightness_controller": true,
+        "i_camera_stream_controller": true,
+        "i_channel_controller": true,
+        "i_color_controller": true,
+        "i_color_temperature_controller": true,
+        "i_contact_sensor": true,
+        "i_doorbell_event_source": true,
+        "i_endpoint_health": true,
+        "i_equalizer_controller": true,
+        "i_device_usage_estimation": true,
+        "i_event_detection_sensor": true,
+        "i_input_controller": true,
         "i_inventory_level_sensor": true,
         "i_inventory_usage_sensor": true,
-        "i_keypad_controller": false,
+        "i_keypad_controller": true,
         "a_kc_keys": [
             "UP",
             "DOWN",
@@ -130,13 +130,13 @@
             "INFO",
             "MORE"
         ],
-        "i_lock_controller": false,
-        "i_media_metadata": false,
-        "i_meter": true,
+        "i_lock_controller": true,
+        "i_media_metadata": true,
+        "i_device_usage_meter": true,
         "i_mode_controller": true,
-        "i_motion_sensor": false,
-        "i_percentage_controller": false,
-        "i_playback_controller": false,
+        "i_motion_sensor": true,
+        "i_percentage_controller": true,
+        "i_playback_controller": true,
         "a_playback_modes": [
             "Play",
             "Pause",
@@ -152,11 +152,11 @@
         "i_range_controller": true,
         "i_rtc_session_controller": false,
         "i_scene_controller": true,
-        "i_security_panel_controller": false,
-        "i_speaker": false,
-        "i_step_speaker": false,
-        "i_temperature_sensor": false,
-        "i_thermostat_controller": false,
+        "i_security_panel_controller": true,
+        "i_speaker": true,
+        "i_step_speaker": true,
+        "i_temperature_sensor": true,
+        "i_thermostat_controller": true,
         "a_target_setpoint": true,
         "a_lower_setpoint": true,
         "a_upper_setpoint": true,
@@ -236,11 +236,22 @@
             "1.2.3.4",
             "5.6.7.8"
         ],
+        "primary_heater_operation": "3",
+        "auxiliary_heater_operation": true,
+        "cooler_operation": "2",
+        "fan_operation": "1",
+        "electricity_measuring_method": "MEASURED",
+        "electricity_unit": "MILLIWATT_HOUR",
+        "electricity_default_resolution": "3600",
+        "natural_gas_measuring_method": "ESTIMATED",
+        "natural_gas_unit": "CUBIC_FOOT",
+        "natural_gas_default_resolution": "7200",
         "x": 410,
         "y": 380,
         "wires": [
             [
-                "21a10626.9a490a"
+                "21a10626.9a490a",
+                "a1e3c3f6.df955"
             ]
         ]
     },
@@ -257,7 +268,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 770,
+        "x": 790,
         "y": 380,
         "wires": []
     },
@@ -690,7 +701,6 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": true,
         "i_equalizer_controller": "",
-        "i_device_usage_estimation": "",
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -699,7 +709,7 @@
         "a_kc_keys": [],
         "i_lock_controller": "",
         "i_media_metadata": "",
-        "i_meter": "",
+        "i_device_usage_meter": true,
         "i_mode_controller": "",
         "i_motion_sensor": true,
         "i_percentage_controller": "",
@@ -735,7 +745,17 @@
         "pin_code": "",
         "exit_delay": "",
         "mac_addresses": [],
-        "x": 540,
+        "primary_heater_operation": "",
+        "auxiliary_heater_operation": false,
+        "cooler_operation": "",
+        "fan_operation": "",
+        "electricity_measuring_method": "ESTIMATED",
+        "electricity_unit": "MILLIWATT_HOUR",
+        "electricity_default_resolution": "3601",
+        "natural_gas_measuring_method": "MEASURED",
+        "natural_gas_unit": "CUBIC_FOOT",
+        "natural_gas_default_resolution": "3600",
+        "x": 620,
         "y": 200,
         "wires": [
             [
@@ -778,7 +798,6 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": "",
         "i_equalizer_controller": "",
-        "i_device_usage_estimation": "",
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -787,7 +806,6 @@
         "a_kc_keys": [],
         "i_lock_controller": "",
         "i_media_metadata": "",
-        "i_meter": "",
         "i_mode_controller": "",
         "i_motion_sensor": true,
         "i_percentage_controller": "",
@@ -822,7 +840,7 @@
         "alarms": [],
         "pin_code": "",
         "exit_delay": "",
-        "x": 540,
+        "x": 620,
         "y": 260,
         "wires": [
             [
@@ -923,7 +941,6 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": "",
         "i_equalizer_controller": "",
-        "i_device_usage_estimation": "",
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -932,7 +949,6 @@
         "a_kc_keys": [],
         "i_lock_controller": "",
         "i_media_metadata": "",
-        "i_meter": "",
         "i_mode_controller": "",
         "i_motion_sensor": true,
         "i_percentage_controller": "",
@@ -967,7 +983,7 @@
         "alarms": [],
         "pin_code": "",
         "exit_delay": "",
-        "x": 540,
+        "x": 620,
         "y": 320,
         "wires": [
             [
@@ -979,7 +995,7 @@
         "id": "fd2d1fc9.a6156",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
-        "name": "contact DETECTED",
+        "name": "CONTACT",
         "props": [
             {
                 "p": "payload"
@@ -992,8 +1008,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 380,
-        "y": 140,
+        "x": 440,
+        "y": 100,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1004,7 +1020,7 @@
         "id": "480e2450.ff5bec",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
-        "name": "contact NOT_DETECTED",
+        "name": "NO CONTACT",
         "props": [
             {
                 "p": "payload"
@@ -1017,8 +1033,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 390,
-        "y": 100,
+        "x": 420,
+        "y": 60,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1182,6 +1198,20 @@
                 "pt": "msg",
                 "to": "Atza|access_token-own",
                 "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.directive.header.correlationToken",
+                "pt": "msg",
+                "to": "$now()",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload.directive.header.messageId",
+                "pt": "msg",
+                "to": "$now()",
+                "tot": "jsonata"
             }
         ],
         "action": "",
@@ -1580,6 +1610,319 @@
         "wires": [
             [
                 "a5519ad.8c21468"
+            ]
+        ]
+    },
+    {
+        "id": "82c928de.3dbd58",
+        "type": "alexa-device",
+        "z": "5cc6ca02.0e2a64",
+        "alexa": "a2728c12.4058f",
+        "name": "Termostato Bagno",
+        "display_categories": [],
+        "topic": "",
+        "a_inputs": [
+            "BLURAY",
+            "CABLE",
+            "CD",
+            "DVD",
+            "GAME",
+            "IPOD",
+            "PHONO",
+            "PLAYSTATION",
+            "SATELLITE",
+            "SMARTCAST",
+            "TUNER",
+            "TV",
+            "XBOX"
+        ],
+        "i_automation_management": "",
+        "i_brightness_controller": "",
+        "i_camera_stream_controller": "",
+        "i_channel_controller": "",
+        "i_color_controller": "",
+        "i_color_temperature_controller": "",
+        "i_contact_sensor": "",
+        "i_doorbell_event_source": "",
+        "i_endpoint_health": "",
+        "i_equalizer_controller": "",
+        "i_event_detection_sensor": "",
+        "i_input_controller": "",
+        "i_inventory_level_sensor": "",
+        "i_inventory_usage_sensor": "",
+        "i_keypad_controller": "",
+        "a_kc_keys": [],
+        "i_lock_controller": "",
+        "i_media_metadata": "",
+        "i_mode_controller": "",
+        "i_motion_sensor": "",
+        "i_percentage_controller": "",
+        "i_playback_controller": "",
+        "a_playback_modes": [],
+        "i_power_controller": "",
+        "i_power_level_controller": "",
+        "i_range_controller": "",
+        "i_rtc_session_controller": "",
+        "i_scene_controller": "",
+        "i_security_panel_controller": "",
+        "i_speaker": "",
+        "i_step_speaker": "",
+        "i_temperature_sensor": true,
+        "i_thermostat_controller": true,
+        "a_target_setpoint": false,
+        "a_lower_setpoint": false,
+        "a_upper_setpoint": false,
+        "a_modes": [],
+        "a_supports_scheduling": false,
+        "i_thermostat_controller_hvac_components": true,
+        "i_toggle_controller": "",
+        "i_wake_on_lan_controller": "",
+        "camera_stream_configurations": [],
+        "bands": [],
+        "modes": [],
+        "band_range_min": -6,
+        "band_range_max": 6,
+        "standby_wattage": "",
+        "maximum_wattage": "",
+        "arm_state": [],
+        "alarms": [],
+        "pin_code": "",
+        "exit_delay": "",
+        "mac_addresses": [],
+        "primary_heater_operation": "3",
+        "auxiliary_heater_operation": true,
+        "cooler_operation": "2",
+        "fan_operation": "1",
+        "x": 610,
+        "y": 480,
+        "wires": [
+            [
+                "21a10626.9a490a"
+            ]
+        ]
+    },
+    {
+        "id": "d8a70c1d.4c9bf",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "getState",
+        "x": 420,
+        "y": 480,
+        "wires": [
+            [
+                "82c928de.3dbd58"
+            ]
+        ]
+    },
+    {
+        "id": "49b3845e.e00f2c",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "ReportMeasurements",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.DeviceUsage.Meter\",\"name\":\"ReportMeasurements\",\"messageId\":\"2021-10-15T13:53:07.584Z\",\"correlationToken\":\"2021-10-15T13:53:07.584Z\",\"payloadVersion\":\"1.0\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"},\"endpointId\":\"58c096a.8fa0d68\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "a1e3c3f6.df955",
+        "type": "switch",
+        "z": "5cc6ca02.0e2a64",
+        "name": "ReportMeasurements",
+        "property": "name",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ReportMeasurements",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 600,
+        "y": 440,
+        "wires": [
+            [
+                "f94cd64.0beae28"
+            ]
+        ]
+    },
+    {
+        "id": "f94cd64.0beae28",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "name": "TODO ReportMeasurements",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "a8c174cb.2e0218",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "ReduceResolution",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.DeviceUsage.Meter\",\"name\":\"ReduceResolution\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"1.0\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"limit\":7200,\"duration\":\"PT6H\"}}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "1f4376dd.4a50f9",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "InvalidMeasurementError",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.DeviceUsage.Meter\",\"name\":\"InvalidMeasurementError\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"1.0\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"electricity\":{\"errorCode\":\"NEGATIVE_VALUE\",\"timeOfError\":\"2020-07-05T12:00:00Z\"}}}}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 140,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "27f5ad34.1f4312",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "MeasurementsReport",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "correlationToken",
+                "v": "$now()",
+                "vt": "jsonata"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "MeasurementsReport",
+        "payload": "{\"electricityIntervals\":[{\"usage\":113.2,\"start\":\"2020-07-05T08:00:00Z\",\"end\":\"2020-07-05T09:00:00Z\"},{\"usage\":101.1,\"start\":\"2020-07-05T09:00:00Z\",\"end\":\"2020-07-05T10:00:00Z\"},{\"usage\":0,\"start\":\"2020-07-05T10:00:00Z\",\"end\":\"2020-07-05T10:51:30Z\"},{\"usage\":127.3,\"start\":\"2020-07-05T11:02:30Z\",\"end\":\"2020-07-05T12:00:00Z\"}]}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 140,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "7cae27d9.a5a6a8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "MOTION",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"motionDetectionState\":\"DETECTED\"}",
+        "payloadType": "json",
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "d8f22efa.dde0a"
+            ]
+        ]
+    },
+    {
+        "id": "e061e9ed.eb06c8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "NO MOTION",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"motionDetectionState\":\"NOT_DETECTED\"}",
+        "payloadType": "json",
+        "x": 430,
+        "y": 140,
+        "wires": [
+            [
+                "d8f22efa.dde0a"
             ]
         ]
     }
