@@ -15,47 +15,186 @@
     <title>Test</title>
 
     <script>
-        const url = "alexa_smarthome_url";
-        const data = {
-            "directive": {
-                "header": {
-                    "namespace": "Test",
-                    "name": "Test",
-                    "messageId": "1234567890",
-                    "payloadVersion": "3"
+        let page_url;
+        let api_url = "alexa_smarthome_url";
+        const test_data = {
+            directive: {
+                header: {
+                    namespace: "Test",
+                    name: "Test",
+                    messageId: "1234567890",
+                    payloadVersion: "3"
                 },
-                "payload": {
-                    "grant": {
-                        "type": "OAuth2.AuthorizationCode",
-                        "code": "Test"
+                payload: {
+                    grant: {
+                        type: "OAuth2.AuthorizationCode",
+                        code: "Test"
                     },
-                    "grantee": {
-                        "type": "BearerToken",
-                        "token": "Test"
+                    grantee: {
+                        type: "BearerToken",
+                        token: "Test"
                     }
                 }
             }
         };
-        function test_success(data) {
+        var xhr = new XMLHttpRequest();
+        function test_success(elmId, data) {
             if (typeof data !== "string") {
                 data = JSON.stringify(data);
             }
-            document.getElementById('test_res').innerHTML = data;
+            document.getElementById(elmId).innerHTML = data;
         }
-        function test_smarthome_post(url) {
+        function test_oauth_get(url, go_on) {
+            // GET OAUTH
+            test_success('oauth_get', "Waiting");
+            test_success('oauth_post', "Pending");
+            test_success('token_post', "Pending");
+            test_success('smarthome_post', "Pending");
+            let client_id = $('#client_id').val();
+            let scope = $('#scope').val();
+            let state = $('#state').val();
+            let redirect_uri = url;
+            $.ajax({
+                type: 'GET',
+                url: url + "oauth?response_type=code" +
+                    "&client_id=" + encodeURIComponent(client_id) +
+                    "&scope=" + encodeURIComponent(scope) +
+                    "&state=" + encodeURIComponent(state) +
+                    "&redirect_uri=" + encodeURIComponent(redirect_uri),
+                success: function (data) {
+                    test_success('oauth_get', 'OK ');
+                    if (go_on) test_oauth_post(url);
+                },
+                error: function (xhr, status) {
+                    if (page_url.startsWith('http://') && url.startsWith('https://')) {
+                        test_oauth_get('http' + url.substring(5), go_on);
+                    } else {
+                        test_success('oauth_get', "ERROR: " + xhr.responseText);
+                    }
+                }
+            });
+        }
+        function test_oauth_post(url) {
+            // POST OAUTH
+            let client_id = $('#client_id').val();
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let state = $('#state').val();
+            let scope = $('#scope').val();
+            let redirect_uri = url + "oauth?redirect_uri=redirect_uri&response_type=code&client_id=" + encodeURIComponent(client_id) +
+                "&scope=" + encodeURIComponent(scope);
             $.ajax({
                 type: 'POST',
-                url: url,
-                data: JSON.stringify(data),
-                success: test_success,
+                url: url + "oauth",
+                data: {
+                    client_id: client_id,
+                    redirect_uri: redirect_uri,
+                    username: username,
+                    password: password,
+                    response_type: 'code',
+                    state: state,
+                    scope: scope
+                },
+                xhr: function () {
+                    return xhr;
+                },
+                success: function (data, status, xhr1) {
+                    const params = new URLSearchParams(xhr.responseURL);
+                    const code = params.get('code');
+                    if (code) {
+                        test_success('oauth_post', 'OK ');
+                        test_token_post(url, code);
+                    } else {
+                        test_success('oauth_post', 'ERROR invalid login and password');
+                    }
+                },
+                error: function (xhr1, status, errorThrown) {
+                    test_success('oauth_post', "ERROR: " + xhr.responseText || 'Unknown');
+                }
+            });
+        }
+        function test_token_post(url, code) {
+            // TOKEN OAUTH
+            let client_id = $('#client_id').val();
+            let client_secret = $('#client_secret').val();
+            let redirect_uri = url + "oauth?response_type=code&client_id=" + encodeURIComponent(client_id) + "&state=state";
+            $.ajax({
+                type: 'POST',
+                url: url + "token",
+                data: { client_id: client_id, client_secret: client_secret, grant_type: "authorization_code", code: code, redirect_uri: redirect_uri },
+                success: function (data) {
+                    let access_token = data['access_token'];
+                    if (access_token) {
+                        test_success('token_post', 'OK ');
+                        test_smarthome_post(url, access_token);
+                    } else {
+                        test_success('token_post', 'ERROR: missin access token ');
+                    }
+                },
                 error: function (xhr, status) {
-                    test_success("ERROR");
+                    test_success('token_post', "ERROR: " + xhr.responseText);
+                }
+            });
+        }
+        function test_smarthome_post(url, code, data) {
+            // SMARTHOME OAUTH
+            $.ajax({
+                type: 'POST',
+                url: url + "smarthome",
+                data: JSON.stringify(data || {
+                    directive: {
+                        header: {
+                            namespace: "Alexa.Discovery",
+                            name: "Discover",
+                            messageId: "<message id>",
+                            payloadVersion: "3"
+                        },
+                        payload: {
+                            scope: {
+                                type: "BearerToken",
+                                token: code
+                            }
+                        }
+                    }
+                }),
+                headers: { authorization: "Bearer " + code },
+                success: function (data) {
+                    test_success('smarthome_post', 'OK ');
+                    test_success('smarthome_result', JSON.stringify(data));
+                },
+                error: function (xhr, status) {
+                    test_success('smarthome_post', "ERROR: " + xhr.responseText);
                 },
                 contentType: "application/json",
                 dataType: 'json'
             });
         }
-        test_smarthome_post(url);
+        function startTest() {
+            test_oauth_get(api_url + '/', true);
+        }
+        function test_smarthome_post_test(url) {
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: JSON.stringify(test_data),
+                success: function (data) {
+                    test_success('test_res', data);
+                },
+                error: function (xhr, status) {
+                    if (page_url.startsWith('http://') && url.startsWith('https://')) {
+                        test_smarthome_post_test('http' + url.substring(5));
+                    } else {
+                        test_success('test_res', "ERROR");
+                    }
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function (event) {
+            page_url = window.location.href.split('?')[0];
+            test_smarthome_post_test(api_url + '/smarthome');
+        });
     </script>
 </head>
 
@@ -67,7 +206,54 @@
         <div>
             <b>Url: </b><span id="url_res">alexa_smarthome_url</span>
         </div>
-        <b>Post: </b><span id="test_res">Waiting</span><BR />
+        <b>Post: </b><span id="test_res">Waiting</span><BR /><BR />
+
+        <form action="javascript:startTest()">
+
+            <div class="field">
+                <input type="text" name="scope" id="scope" autocomplete="off" autocapitalize="none" value="smart_home"
+                    placeholder=" ">
+                <label for="scope">Scope</label>
+            </div>
+
+            <div class="field">
+                <input type="text" name="state" id="state" autocomplete="off" autocapitalize="none"
+                    value="!&quot;£$%&/()&euro;" placeholder=" ">
+                <label for="state">State</label>
+            </div>
+
+            <div class="field">
+                <input type="text" name="client_id" id="client_id" autocomplete="off" autocapitalize="none"
+                    value="client_id" placeholder=" ">
+                <label for="client_id">Client ID</label>
+            </div>
+
+            <div class="field">
+                <input type="text" name="client_secret" id="client_secret" autocomplete="off" autocapitalize="none"
+                    value="client_secret" placeholder=" ">
+                <label for="client_secret">Client Secret</label>
+            </div>
+
+            <div class="field">
+                <input type="text" name="username" id="username" autocomplete="off" autocapitalize="none"
+                    value="username" placeholder=" ">
+                <label for="username">Username</label>
+            </div>
+
+            <div class="field">
+                <input type="password" name="password" id="password" placeholder=" " value="password">
+                <label for="password">Password</label>
+            </div>
+
+            <button id="login-button">Test</button>
+        </form>
+
+        <br />
+        <b>GET oauth: </b><span id="oauth_get">Not started</span><BR />
+        <b>POST oauth: </b><span id="oauth_post">Not started</span><BR />
+        <b>POST token: </b><span id="token_post">Not started</span><BR />
+        <b>POST smarthome: </b><span id="smarthome_post">Not started</span><BR />
+        <BR /><span id="smarthome_result"></span><BR />
     </div>
 </body>
 

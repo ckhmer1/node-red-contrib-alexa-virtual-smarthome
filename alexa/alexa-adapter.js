@@ -96,7 +96,7 @@ module.exports = function (RED) {
      *
      *
      */
-     class AlexaAdapterNode {
+    class AlexaAdapterNode {
         constructor(config) {
             RED.nodes.createNode(this, config);
             var node = this;
@@ -119,7 +119,7 @@ module.exports = function (RED) {
             var node = this;
             node.http_path = config.http_path || '';
             node.http_port = config.port || '';
-            node.http_root = path.join('/', node.http_path.trim());
+            node.http_root = node.Path_join('/', node.http_path.trim());
             node.http_server = RED.httpNode || RED.httpAdmin;
             node.app = node.http_server;
             node.user_dir = RED.settings.userDir || '.';
@@ -214,17 +214,17 @@ module.exports = function (RED) {
             let urlencodedParser = express.urlencoded({ extended: false })
             let jsonParser = express.json()
 
-            node.app.get(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
-            node.app.post(path.join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
-            node.app.post(path.join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
+            node.app.get(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
+            node.app.post(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
+            node.app.post(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
             if (node.config.verbose) {
-                node.app.get(path.join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
-                node.app.get(path.join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
+                node.app.get(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
+                node.app.get(node.Path_join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
             }
             if (node.config.msg_check) {
-                node.app.post(path.join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post_verify(req, res); });
+                node.app.post(node.Path_join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post_verify(req, res); });
             } else {
-                node.app.post(path.join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post(req, res); });
+                node.app.post(node.Path_join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post(req, res); });
             }
             if (node.config.verbose) node._debug("setup listen path " + node.http_root);
         }
@@ -251,8 +251,8 @@ module.exports = function (RED) {
             var node = this;
             if (node._httpNodeRoot !== false && node.app._router) {
                 if (node.config.verbose) node._debug("Removing url");
-                var get_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
-                var post_urls = [path.join(node.http_root, OAUTH_PATH), path.join(node.http_root, TOKEN_PATH), path.join(node.http_root, SMART_HOME_PATH)];
+                var get_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
+                var post_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
                 var options_urls = [];
                 var all_urls = [];
 
@@ -330,7 +330,7 @@ module.exports = function (RED) {
                         .then(pres => {
                             if (node.config.verbose) node._debug("get_user_profile CCHI pres " + JSON.stringify(pres));
                             if (node.config.emails.includes(pres.email)) {
-                                const oauth_redirect_uri = 'https://' + path.join(req.get('Host'), node.http_root, OAUTH_PATH);
+                                const oauth_redirect_uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, OAUTH_PATH);
                                 if (node.config.verbose) node._debug('oauth_get CCHI oauth_redirect_uri ' + JSON.stringify(oauth_redirect_uri));
                                 const state = node.tokgen.generate();
                                 node.login_with_amazon = { // TODO REMOVE
@@ -359,23 +359,23 @@ module.exports = function (RED) {
             const redirect_uri = req.query.redirect_uri || '';
             const error = req.query.error || '';
             if (client_id !== node.credentials.your_client_id) {
-                node.error("Wrong client id " + client_id);
+                node.error("oauth_get: Wrong client id " + client_id);
                 return res.status(500).send('Wrong client id');
             }
             if (response_type !== "code") {
-                node.error("Wrong response type " + response_type);
+                node.error("oauth_get: Wrong response type " + response_type);
                 return res.status(500).send('Wrong response type');
             }
             if (state.trim().length === 0) {
-                node.error("Missing state " + state);
+                node.error("oauth_get: Missing state " + state);
                 return res.status(500).send('Wrong state');
             }
             if (scope !== node.config.scope) {
-                node.error("Wrong scope " + scope);
+                node.error("oauth_get: Wrong scope " + scope);
                 return res.status(500).send('Wrong scope');
             }
             if (redirect_uri === undefined || redirect_uri.trim().length === 0) {
-                node.error("Wrong redirect uri " + redirect_uri);
+                node.error("oauth_get: Wrong redirect uri " + redirect_uri);
                 return res.status(500).send('Wrong redirect uri');
             }
             node.skill_link_req.client_id = req.query.client_id;
@@ -383,8 +383,8 @@ module.exports = function (RED) {
             node.skill_link_req.state = req.query.state;
             node.skill_link_req.scope = req.query.scope;
             node.skill_link_req.redirect_uri = req.query.redirect_uri;
-            node.skill_link_req.token_uri = 'https://' + req.get('Host') + path.join(node.http_root, TOKEN_PATH);
-            node.skill_link_req.oauth_uri = 'https://' + req.get('Host') + path.join(node.http_root, OAUTH_PATH);
+            node.skill_link_req.token_uri = 'https://' + req.get('Host') + node.Path_join(node.http_root, TOKEN_PATH);
+            node.skill_link_req.oauth_uri = 'https://' + req.get('Host') + node.Path_join(node.http_root, OAUTH_PATH);
             node.show_login_page(res);
         }
 
@@ -403,53 +403,60 @@ module.exports = function (RED) {
             const state = req.body.state || '';
             const scope = req.body.scope || '';
             const redirect_uri = req.body.redirect_uri || '';
-            if (node.config.verbose) node.error('oauth_post username' + username);
+            if (node.config.verbose) node.error('oauth_post username ' + username);
             if (node.config.login_with_amazon && (username || password)) {
-                node.error("Login with username is not enabled");
+                node.error("oauth_post: Login with username is not enabled");
                 return res.status(500).send('Wrong request');
             }
             if (client_id === undefined || client_id.trim().length === 0) {
-                node.error("Wrong client id " + client_id);
+                node.error("oauth_post: Wrong client id " + client_id);
                 return res.status(500).send('Wrong client id');
             }
             if (response_type !== "code") {
-                node.error("Wrong response type " + response_type);
+                node.error("oauth_post: Wrong response type " + response_type);
                 return res.status(500).send('Wrong response type');
             }
             if (state === undefined || state.trim().length === 0) {
-                node.error("Wrong state " + state);
+                node.error("oauth_post: Wrong state " + state);
                 return res.status(500).send('Wrong state');
             }
             if (scope === undefined || state.trim().scope === 0) {
-                node.error("Wrong scope " + scope);
+                node.error("oauth_post: Wrong scope " + scope);
                 return res.status(500).send('Wrong scope');
             }
             if (redirect_uri === undefined || redirect_uri.trim().length === 0) {
-                node.error("Wrong redirect uri " + redirect_uri);
+                node.error("oauth_post: Wrong redirect uri " + redirect_uri);
                 return res.status(500).send('Wrong redirect uri');
             }
             if (username !== node.credentials.username || password !== node.credentials.password.replace(/\\/g, "")) {
                 // Redirect to login with error
                 if (username !== node.credentials.username) {
-                    node.error('oauth_post: invalid username ' + username);
+                    node.error('oauth_post: oauth_post: invalid username ' + username);
                     node.error('oauth_post: invalid username CCHI ' + node.credentials.username);
                 }
                 if (password !== node.credentials.password) {
-                    node.error('oauth_post: invalid password ' + password);
+                    node.error('oauth_post: oauth_post: invalid password ' + password);
                     node.error('oauth_post: invalid password CCHI ' + node.credentials.password.replace(/\\/g, ""));
                 }
                 return node.redirect_to_login_page(res, true);
                 /*return res.redirect(util.format(
                     '%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&scope=%s&error=invalid_user',
-                    path.join(node.http_root, OAUTH_PATH), client_id, encodeURIComponent(redirect_uri), state, scope));*/
+                    node.Path_join(node.http_root, OAUTH_PATH), client_id, encodeURIComponent(redirect_uri), state, scope));*/
             }
             node.auth_code = {
                 code: node.tokgen.generate(),
                 expire_at: Date.now() + 3600 * 1000,
                 redirect_uri: redirect_uri,
             }
-            if (node.config.verbose) node._debug("oauth_post: redirect to " + util.format('%s?state=%s&code=%s', redirect_uri, state, 'XXXXX'));
-            return res.redirect(util.format('%s?state=%s&code=%s', redirect_uri, state, node.auth_code.code));
+            let sep;
+            if (redirect_uri.includes('?')) {
+                sep = '&';
+            }
+            else {
+                sep = '?';
+            }
+            if (node.config.verbose) node._debug("oauth_post: redirect to " + util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), 'XXXXX'));
+            return res.redirect(util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), encodeURIComponent(node.auth_code.code)));
         }
 
         //
@@ -459,7 +466,7 @@ module.exports = function (RED) {
         token_get(req, res) {
             var node = this;
             if (node.config.verbose) node._debug('token_get');
-            const uri = 'https://' + path.join(req.get('Host'), node.http_root, TOKEN_PATH);
+            const uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, TOKEN_PATH);
             res.status(200).send(uri);
         }
 
@@ -555,8 +562,8 @@ module.exports = function (RED) {
         smarthome_get(req, res) {
             var node = this;
             if (node.config.verbose) node._debug('smarthome_get');
-            const uri = 'https://' + path.join(req.get('Host'), node.http_root, SMART_HOME_PATH);
-            // res.status(200).send(uri);
+            const uri = 'https://' + node.Path_join(req.get('Host'), node.http_root);
+            // res.status(200).send(node.Path_join(uri, SMART_HOME_PATH));
             node.show_test_page(res, uri);
         }
 
@@ -1069,7 +1076,7 @@ module.exports = function (RED) {
             if (node.config.verbose) node._debug('redirect_to_login_page');
             return res.redirect(util.format(
                 '%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&scope=%s%s',
-                path.join(node.http_root, OAUTH_PATH), encodeURIComponent(node.skill_link_req.client_id), encodeURIComponent(node.skill_link_req.redirect_uri),
+                node.Path_join(node.http_root, OAUTH_PATH), encodeURIComponent(node.skill_link_req.client_id), encodeURIComponent(node.skill_link_req.redirect_uri),
                 node.skill_link_req.state, node.skill_link_req.scope, err ? '&error=invalid_user' : ''));
         }
 
@@ -2041,7 +2048,6 @@ module.exports = function (RED) {
             });
         }
 
-
         //
         //
         //
@@ -2062,6 +2068,27 @@ module.exports = function (RED) {
                 });
             }
         }
+
+        //
+        //
+        //
+        Path_join() {
+            let full_path = '';
+            for (var i = 0; i < arguments.length; i++) {
+                let ipath = arguments[i];
+                let fpe = full_path.endsWith('/');
+                let ips = ipath.startsWith('/');
+                if (fpe && ips) {
+                    full_path += ipath.substring(1);
+                } else if (!fpe && !ips) {
+                    full_path += '/' + ipath;
+                } else {
+                    full_path += ipath;
+                }
+            }
+            return full_path;
+        }
+
     }
 
     //
