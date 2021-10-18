@@ -195,6 +195,7 @@ module.exports = function (RED) {
                     node.error("setup Tokens load error " + err);
                 })
 
+            node.UnregisterUrl();
             if (node.http_port.trim()) {
                 if (node.config.verbose) node._debug("setup listen port " + node.http_port);
                 node.app = express();
@@ -210,7 +211,6 @@ module.exports = function (RED) {
             } else {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
             }
-            node.UnregisterUrl();
             let urlencodedParser = express.urlencoded({ extended: false })
             let jsonParser = express.json()
 
@@ -287,11 +287,13 @@ module.exports = function (RED) {
         shutdown(removed, done) {
             var node = this;
             if (node.config.verbose) node._debug("(on-close)");
-            if (node.app != node.http_server) {
-                if (node.config.verbose) node._debug("Stopping server");
-                node.http_server.stop();
-            }
             node.UnregisterUrl();
+            if (node.http_server != (RED.httpNode || RED.httpAdmin)) {
+                if (node.config.verbose) node._debug("Stopping server");
+                node.http_server.stop(function(err, grace) {
+                    if (node.config.verbose) node._debug("Server stopped " + grace + " " + err);
+                });
+            }
             if (removed) {
                 // this node has been deleted
                 if (node.config.verbose) node._debug("shutdown: removed");

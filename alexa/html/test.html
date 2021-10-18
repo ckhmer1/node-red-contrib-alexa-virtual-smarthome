@@ -62,7 +62,7 @@
                     "&state=" + encodeURIComponent(state) +
                     "&redirect_uri=" + encodeURIComponent(redirect_uri),
                 success: function (data) {
-                    test_success('oauth_get', 'OK ');
+                    test_success('oauth_get', 'OK');
                     if (go_on) test_oauth_post(url);
                 },
                 error: function (xhr, status) {
@@ -101,8 +101,13 @@
                 success: function (data, status, xhr1) {
                     const params = new URLSearchParams(xhr.responseURL);
                     const code = params.get('code');
+                    const return_state = params.get('state');
                     if (code) {
-                        test_success('oauth_post', 'OK ');
+                        if (state === return_state) {
+                            test_success('oauth_post', 'OK');
+                        } else {
+                            test_success('oauth_post', 'STATE Error');
+                        }
                         test_token_post(url, code);
                     } else {
                         test_success('oauth_post', 'ERROR invalid login and password');
@@ -125,7 +130,7 @@
                 success: function (data) {
                     let access_token = data['access_token'];
                     if (access_token) {
-                        test_success('token_post', 'OK ');
+                        test_success('token_post', 'OK');
                         test_smarthome_post(url, access_token);
                     } else {
                         test_success('token_post', 'ERROR: missin access token ');
@@ -159,7 +164,7 @@
                 }),
                 headers: { authorization: "Bearer " + code },
                 success: function (data) {
-                    test_success('smarthome_post', 'OK ');
+                    test_success('smarthome_post', 'OK');
                     test_success('smarthome_result', JSON.stringify(data));
                 },
                 error: function (xhr, status) {
