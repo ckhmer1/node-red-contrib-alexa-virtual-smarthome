@@ -33,7 +33,7 @@
         label: function () {
             return this.name.trim().length > 0 ? this.name : this._('alexa-adapter.name');
         },
-        paletteLabel: function() {
+        paletteLabel: function () {
             return this._("alexa-adapter.name");
         },
         oneditprepare: function () {
@@ -86,8 +86,8 @@
             var node = this;
             // emails
             var emails = $("#node-input-alexa-adapter-emails-container").editableList('items');
-            node.emails= [];
-            emails.each(function(i) {
+            node.emails = [];
+            emails.each(function (i) {
                 var email = $(this);
                 var name = email.find(".node-input-alexa-adapter-emails-property-name").val();
                 node.emails.push(name);
@@ -130,7 +130,7 @@
 
     <div class="form-row">
         <input type="checkbox" id="node-config-input-login_with_amazon" style="display:inline-block; width:20px; vertical-align:baseline;">
-        <span data-i18n="alexa-adapter.label.login_with_amazon">
+        <span data-i18n="alexa-adapter.label.login_with_amazon"></span>
     </div>
 
     <div class="form-row red-ui-editableList-border" id="local-login" style="background: #fbfbfb; padding: 5px;">
@@ -232,14 +232,14 @@
     <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-config-input-msg_check" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-adapter.label.msg_check">
+            <span data-i18n="alexa-adapter.label.msg_check"></span>
         </div>
     </div>
 
     <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-config-input-verbose" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-adapter.label.verbose">
+            <span data-i18n="alexa-adapter.label.verbose"></span>
         </div>
     </div>
 
