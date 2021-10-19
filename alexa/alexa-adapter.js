@@ -60,7 +60,6 @@ module.exports = function (RED) {
     const helmet = require('helmet');
     const morgan = require('morgan');
     const cors = require('cors');
-    const bodyParser = require('body-parser')
     const superagent = require('superagent');
     const stoppable = require('stoppable');
     const http = require('http');
@@ -123,6 +122,7 @@ module.exports = function (RED) {
             node.http_server = RED.httpNode || RED.httpAdmin;
             node.app = node.http_server;
             node.user_dir = RED.settings.userDir || '.';
+            node.handler = null;
             node.tokgen = new TokenGenerator(256, TokenGenerator.BASE58);
             node.auth_code = undefined;
             node.devices = {};
@@ -288,11 +288,15 @@ module.exports = function (RED) {
             var node = this;
             if (node.config.verbose) node._debug("(on-close)");
             node.UnregisterUrl();
-            if (node.http_server != (RED.httpNode || RED.httpAdmin)) {
+            if (node.handler) {
                 if (node.config.verbose) node._debug("Stopping server");
-                node.http_server.stop(function(err, grace) {
+                node.http_server.stop(function (err, grace) {
                     if (node.config.verbose) node._debug("Server stopped " + grace + " " + err);
                 });
+                node.handler.close(() => {
+                    if (node.config.verbose) node._debug("Server stopped");
+                });
+                node.handler = null;
             }
             if (removed) {
                 // this node has been deleted
