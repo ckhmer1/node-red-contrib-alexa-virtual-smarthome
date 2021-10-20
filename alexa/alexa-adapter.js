@@ -1160,12 +1160,15 @@ module.exports = function (RED) {
                         correlationToken: correlationToken,
                         payloadVersion: PAYLOADS_VERSION["Alexa"] || DEFAULT_PAYLOAD_VERSION,
                     },
-                    payload: {},
-                    endpoints: endpointId,
-                    scope: {
-                        "type": "BearerToken",
-                        "token": access_token
+                    endpoint: {
+                        scope: {
+                            type: "BearerToken",
+                            token: access_token
+                        },
+                        endpointId: endpointId,
+                        cookie: {}
                     },
+                    payload: {},
                 },
                 context: {
                     properties: node.devices[endpointId].getProperties()
@@ -1662,8 +1665,7 @@ module.exports = function (RED) {
                             type: "BearerToken",
                             token: oauth2_bearer_token
                         },
-                        endpointId: endpointId,
-                        cookie: {}
+                        endpointId: endpointId
                     },
                     payload: payload
                 },
@@ -1748,7 +1750,7 @@ module.exports = function (RED) {
         //
         //
         //
-        get_state(endpointId) {
+        /*get_state(endpointId) {
             var node = this;
             const messageId = node.tokgen.generate();
             if (endpointId) {
@@ -1764,8 +1766,8 @@ module.exports = function (RED) {
                             endpoint: {
                                 endpoints: endpointId,
                                 scope: {
-                                    "type": "BearerToken",
-                                    "token": node.tokens.evn.access_token
+                                    type: "BearerToken",
+                                    token: node.tokens.evn.access_token
                                 },
                             },
                             payload: {},
@@ -1779,7 +1781,7 @@ module.exports = function (RED) {
             } else {
                 // TODO all states??
             }
-        }
+        }*/
 
         //
         //
@@ -2015,9 +2017,13 @@ module.exports = function (RED) {
                             return resolve(defaultValue);
                         }
                         if (node.config.verbose) node._debug('loadJson: data loaded');
-                        const json = JSON.parse(data);
-                        if (node.config.verbose) node._debug('loadJson: json = ' + JSON.stringify(json));
-                        return resolve(json);
+                        try {
+                            const json = JSON.parse(data);
+                            if (node.config.verbose) node._debug('loadJson: json = ' + JSON.stringify(json));
+                            return resolve(json);
+                        } catch (err) {
+                            node.error("loadJson " + tag + ' error ' + err.stack);
+                        }
                     });
             });
         }
