@@ -779,7 +779,8 @@ module.exports = function (RED) {
                 capability['properties'] = {
                     supported: supported,
                     proactivelyReported: true,
-                    retrievable: true
+                    retrievable: true,
+                    nonControllable: false
                 };
             }
             return capability;

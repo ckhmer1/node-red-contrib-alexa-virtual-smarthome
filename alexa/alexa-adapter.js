@@ -61,6 +61,13 @@ module.exports = function (RED) {
     const morgan = require('morgan');
     const cors = require('cors');
     const superagent = require('superagent');
+    const Throttle = require('superagent-throttle');
+    const throttle = new Throttle({
+        active: true,     // set false to pause queue
+        rate: 10,         // how many requests can be sent every `ratePer`
+        ratePer: 1000,    // number of ms in which `rate` requests may be sent
+        concurrent: 2     // how many requests can be sent concurrently
+    });
     const stoppable = require('stoppable');
     const http = require('http');
     const { SkillRequestSignatureVerifier, TimestampVerifier } = require('ask-sdk-express-adapter');
@@ -786,6 +793,7 @@ module.exports = function (RED) {
                         if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
+                            .use(throttle.plugin())
                             .set('Authorization', 'Bearer ' + access_token)
                             .send(error_msg)
                             .end((err, res) => {
@@ -1264,6 +1272,7 @@ module.exports = function (RED) {
                     if (node.config.verbose) node._debug('send_doorbell_press ' + JSON.stringify(state));
                     superagent
                         .post(node.config.event_endpoint)
+                        .use(throttle.plugin())
                         .set('Authorization', 'Bearer ' + access_token)
                         .send(state)
                         .end((err, res) => {
@@ -1316,6 +1325,7 @@ module.exports = function (RED) {
                         if (node.config.verbose) node._debug('send_event_gw msg ' + JSON.stringify(msg));
                         superagent
                             .post(node.config.event_endpoint)
+                            .use(throttle.plugin())
                             .set('Authorization', 'Bearer ' + access_token)
                             .send(msg)
                             .end((err, res) => {
@@ -1361,6 +1371,7 @@ module.exports = function (RED) {
                         if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
+                            .use(throttle.plugin())
                             .set('Authorization', 'Bearer ' + access_token)
                             .send(state)
                             .end((err, res) => {
@@ -1394,6 +1405,7 @@ module.exports = function (RED) {
                     if (node.config.verbose) node._debug('send_delete_report report ' + JSON.stringify(report));
                     superagent
                         .post(node.config.event_endpoint)
+                        .use(throttle.plugin())
                         .set('Authorization', 'Bearer ' + access_token)
                         .send(report)
                         .end((err, res) => {
@@ -1492,6 +1504,7 @@ module.exports = function (RED) {
                     if (node.config.verbose) node._debug('send_add_or_update_report to event_endpoint ' + node.config.event_endpoint);
                     superagent
                         .post(node.config.event_endpoint)
+                        .use(throttle.plugin())
                         .set('Authorization', 'Bearer ' + access_token)
                         .send(state)
                         .end((err, res) => {
@@ -1530,6 +1543,7 @@ module.exports = function (RED) {
                             if (node.config.verbose) node._debug('send_media_created_or_updated to event_endpoint ' + node.config.event_endpoint);
                             superagent
                                 .post(node.config.event_endpoint)
+                                .use(throttle.plugin())
                                 .set('Authorization', 'Bearer ' + access_token)
                                 .send(msg)
                                 .end((err, res) => {
@@ -1573,6 +1587,7 @@ module.exports = function (RED) {
                         if (node.config.verbose) node._debug('send_media_deleted to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
+                            .use(throttle.plugin())
                             .set('Authorization', 'Bearer ' + access_token)
                             .send(msg)
                             .end((err, res) => {
