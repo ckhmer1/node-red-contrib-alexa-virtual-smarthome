@@ -65,7 +65,7 @@ module.exports = function (RED) {
     const throttle = new Throttle({
         active: true,     // set false to pause queue
         rate: 10,         // how many requests can be sent every `ratePer`
-        ratePer: 1000,    // number of ms in which `rate` requests may be sent
+        ratePer: 5000,    // number of ms in which `rate` requests may be sent
         concurrent: 2     // how many requests can be sent concurrently
     });
     const stoppable = require('stoppable');
@@ -1139,12 +1139,18 @@ module.exports = function (RED) {
         //
         //
         //
-        get_id_from_name(names) {
+        get_devices_id_name(names, topics) {
             var node = this;
             let id_names = {};
+            if (names === undefined) {
+                names = [];
+            }
+            if (topics === undefined) {
+                topics = [];
+            }
             Object.keys(node.devices).forEach(function (key) {
                 const device = node.devices[key];
-                if (names.includes(device.config.name)) {
+                if (names.includes(device.config.name) || topics.includes(device.config.topic)) {
                     id_names[key] = device.config.name;
                 }
             });

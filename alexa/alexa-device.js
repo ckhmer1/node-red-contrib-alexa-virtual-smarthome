@@ -175,24 +175,28 @@ module.exports = function (RED) {
                 const media_id_removed = media_to_remove.map(m => m.id);
                 if (media_id_removed.length > 0) node.alexa.send_media_deleted(node.id, media_id_removed);
             } else if (topic === 'SETSECURITYDEVICENAMESINERROR') {
-                const names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
+                const topics = typeof msg.payload === 'string' ? [] : (Array.isArray(msg.payload || []) ? [] : msg.payload.topics);
+                const names = typeof msg.payload === 'string' ? [msg.payload] : (Array.isArray(msg.payload || []) ? msg.payload || [] : msg.payload.names);
                 node.security_device_names_in_error = [];
-                for (const [id, name] of Object.entries(node.alexa.get_id_from_name(msg.payload))) {
+                for (const [id, name] of Object.entries(node.alexa.get_devices_id_name(names, topics))) {
                     node.security_device_names_in_error.push(name);
                 }
                 node._debug("CCHI " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
             } else if (topic === 'ADDSECURITYDEVICENAMESINERROR') {
-                let a_names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
-                a_names.forEach(name => node.security_device_names_in_error.push(name));
-                a_names = node.security_device_names_in_error;
+                const a_topics = typeof msg.payload === 'string' ? [] : (Array.isArray(msg.payload || []) ? [] : msg.payload.topics);
+                let a_names = typeof msg.payload === 'string' ? [msg.payload] : (Array.isArray(msg.payload || []) ? msg.payload || [] : msg.payload.names);
+                node.security_device_names_in_error.forEach(name => a_names.push(name));
                 node.security_device_names_in_error = [];
-                for (const [id, name] of Object.entries(node.alexa.get_id_from_name(msg.payload))) {
+                for (const [id, name] of Object.entries(node.alexa.get_devices_id_name(a_names, a_topics))) {
                     node.security_device_names_in_error.push(name);
                 }
                 node._debug("CCHI " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
             } else if (topic === 'DELSECURITYDEVICENAMESINERROR') {
-                const r_names = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
-                node.security_device_names_in_error = node.security_device_names_in_error.filter(name => !r_names.includes(name));
+                const r_topics = typeof msg.payload === 'string' ? [] : (Array.isArray(msg.payload || []) ? [] : msg.payload.topics);
+                let r_names = typeof msg.payload === 'string' ? [msg.payload] : (Array.isArray(msg.payload || []) ? msg.payload || [] : msg.payload.names);
+                for (const [id, name] of Object.entries(node.alexa.get_devices_id_name(r_names, r_topics))) {
+                    node.security_device_names_in_error = node.security_device_names_in_error.filter(i_name => i_name != name);
+                }
                 node._debug("CCHI2 " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
             } else if (topic === 'MEASUREMENTSREPORT') {
                 let other_data = {};
@@ -1081,7 +1085,7 @@ module.exports = function (RED) {
                             node._debug("CCHI event_payload security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
                             if (node.security_device_names_in_error.length > 0) {
                                 let security_device_in_error = [];
-                                for (const [id, name] of Object.entries(node.alexa.get_id_from_name(node.security_device_names_in_error))) {
+                                for (const [id, name] of Object.entries(node.alexa.get_devices_id_name(node.security_device_names_in_error))) {
                                     security_device_in_error.push({
                                         friendlyName: name,
                                         endpointId: id
