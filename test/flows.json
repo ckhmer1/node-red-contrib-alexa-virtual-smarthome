@@ -675,7 +675,7 @@
         "display_categories": [
             "CONTACT_SENSOR"
         ],
-        "topic": "",
+        "topic": "finestra/cucina",
         "a_inputs": [
             "BLURAY",
             "CABLE",
@@ -701,6 +701,7 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": true,
         "i_equalizer_controller": "",
+        "i_device_usage_estimation": false,
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -772,7 +773,7 @@
         "display_categories": [
             "CONTACT_SENSOR"
         ],
-        "topic": "",
+        "topic": "finestra/bagno",
         "a_inputs": [
             "BLURAY",
             "CABLE",
@@ -798,6 +799,7 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": "",
         "i_equalizer_controller": "",
+        "i_device_usage_estimation": false,
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -806,6 +808,7 @@
         "a_kc_keys": [],
         "i_lock_controller": "",
         "i_media_metadata": "",
+        "i_device_usage_meter": false,
         "i_mode_controller": "",
         "i_motion_sensor": true,
         "i_percentage_controller": "",
@@ -840,6 +843,15 @@
         "alarms": [],
         "pin_code": "",
         "exit_delay": "",
+        "mac_addresses": [],
+        "primary_heater_operation": "",
+        "auxiliary_heater_operation": false,
+        "cooler_operation": "",
+        "fan_operation": "",
+        "electricity_measuring_method": "",
+        "electricity_default_resolution": "",
+        "natural_gas_measuring_method": "",
+        "natural_gas_default_resolution": "",
         "x": 620,
         "y": 260,
         "wires": [
@@ -915,7 +927,7 @@
         "display_categories": [
             "CONTACT_SENSOR"
         ],
-        "topic": "",
+        "topic": "finestra/salotto",
         "a_inputs": [
             "BLURAY",
             "CABLE",
@@ -941,6 +953,7 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": "",
         "i_equalizer_controller": "",
+        "i_device_usage_estimation": false,
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -949,6 +962,7 @@
         "a_kc_keys": [],
         "i_lock_controller": "",
         "i_media_metadata": "",
+        "i_device_usage_meter": false,
         "i_mode_controller": "",
         "i_motion_sensor": true,
         "i_percentage_controller": "",
@@ -983,6 +997,15 @@
         "alarms": [],
         "pin_code": "",
         "exit_delay": "",
+        "mac_addresses": [],
+        "primary_heater_operation": "",
+        "auxiliary_heater_operation": false,
+        "cooler_operation": "",
+        "fan_operation": "",
+        "electricity_measuring_method": "",
+        "electricity_default_resolution": "",
+        "natural_gas_measuring_method": "",
+        "natural_gas_default_resolution": "",
         "x": 620,
         "y": 320,
         "wires": [
@@ -1127,9 +1150,9 @@
         "filename": "alexa-tokens_a2728c12.4058f.json",
         "appendNewline": true,
         "createDir": false,
-        "overwriteFile": "false",
+        "overwriteFile": "true",
         "encoding": "none",
-        "x": 650,
+        "x": 690,
         "y": 300,
         "wires": [
             [
@@ -1149,12 +1172,12 @@
         ],
         "repeat": "",
         "crontab": "",
-        "once": false,
+        "once": true,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"own\":{\"access_token\":\"Atza|access_token-own\",\"refresh_token\":\"Atzr|refresh_token-own\",\"expire_at\":2633687638936},\"lwa\":{\"access_token\":\"Atza|access_token-lwa\",\"refresh_token\":\"Atzr|refresh_token-lwa\",\"expire_at\":2630610982765},\"evn\":{\"access_token\":\"Atza|access_token-evn\",\"refresh_token\":\"Atzr|refresh_token-evn\",\"expire_at\":2633691954758}}",
+        "payload": "{\"own\":{\"access_token\":\"Atza|access_token-own\",\"refresh_token\":\"Atzr|refresh_token-own\",\"expire_at\":9633687638936},\"lwa\":{\"access_token\":\"Atza|access_token-lwa\",\"refresh_token\":\"Atzr|refresh_token-lwa\",\"expire_at\":9630610982765},\"evn\":{\"access_token\":\"Atza|access_token-evn\",\"refresh_token\":\"Atzr|refresh_token-evn\",\"expire_at\":9633691954758}}",
         "payloadType": "json",
-        "x": 530,
+        "x": 540,
         "y": 300,
         "wires": [
             [
@@ -1167,7 +1190,7 @@
         "type": "debug",
         "z": "5a2248b8.76ba18",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -1175,7 +1198,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 770,
+        "x": 830,
         "y": 300,
         "wires": []
     },
@@ -1620,7 +1643,7 @@
         "alexa": "a2728c12.4058f",
         "name": "Termostato Bagno",
         "display_categories": [],
-        "topic": "",
+        "topic": "termostato/bagno",
         "a_inputs": [
             "BLURAY",
             "CABLE",
@@ -1646,6 +1669,7 @@
         "i_doorbell_event_source": "",
         "i_endpoint_health": "",
         "i_equalizer_controller": "",
+        "i_device_usage_estimation": false,
         "i_event_detection_sensor": "",
         "i_input_controller": "",
         "i_inventory_level_sensor": "",
@@ -1654,6 +1678,7 @@
         "a_kc_keys": [],
         "i_lock_controller": "",
         "i_media_metadata": "",
+        "i_device_usage_meter": false,
         "i_mode_controller": "",
         "i_motion_sensor": "",
         "i_percentage_controller": "",
@@ -1693,6 +1718,10 @@
         "auxiliary_heater_operation": true,
         "cooler_operation": "2",
         "fan_operation": "1",
+        "electricity_measuring_method": "",
+        "electricity_default_resolution": "",
+        "natural_gas_measuring_method": "",
+        "natural_gas_default_resolution": "",
         "x": 610,
         "y": 480,
         "wires": [
@@ -1923,6 +1952,143 @@
         "wires": [
             [
                 "d8f22efa.dde0a"
+            ]
+        ]
+    },
+    {
+        "id": "4617b8a8.a32098",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "ReportState",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa\",\"name\":\"ReportState\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "3d89936.316a66c",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Discovery",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.Discovery\",\"name\":\"Discover\",\"messageId\":\"<message id>\",\"payloadVersion\":\"3\"},\"payload\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"Atza|access_token-own\"}}}}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 60,
+        "wires": [
+            [
+                "c638080f.631628"
+            ]
+        ]
+    },
+    {
+        "id": "3951b16c.54e59e",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "SetSecurityDeviceNamesInError",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SetSecurityDeviceNamesInError",
+        "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/cucina\"]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 820,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "6a3057c5.262958",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "AddSecurityDeviceNamesInError",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "AddSecurityDeviceNamesInError",
+        "payload": "{\"names\":[\"Finestra Cucina\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 860,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "9db4695e.b998a8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "DelSecurityDeviceNamesInError",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "DelSecurityDeviceNamesInError",
+        "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 900,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
             ]
         ]
     }

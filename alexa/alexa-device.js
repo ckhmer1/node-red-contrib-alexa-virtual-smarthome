@@ -1334,6 +1334,16 @@ module.exports = function (RED) {
                     });
                 }
             }
+            // LockController
+            if (node.config.i_lock_controller) {
+                properties.push({
+                    namespace: "Alexa.LockController",
+                    name: "lockState",
+                    value: node.state['lockState'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
             // MotionSensor
             if (node.config.i_motion_sensor) {
                 properties.push({
