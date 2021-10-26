@@ -1462,13 +1462,18 @@ module.exports = function (RED) {
             let text = '';
             let fill = 'blue';
             let shape = 'dot';
+            if (node.state.connectivity.value !== undefined) {
+                if (node.state.connectivity.value === 'OK') {
+                    fill = 'green';
+                } else {
+                    fill = 'red';
+                }
+            }
             if (node.state.powerState !== undefined) {
                 if (node.state.powerState === 'ON') {
                     text = 'ON';
-                    fill = 'green';
                 } else {
                     text = 'OFF';
-                    fill = 'red';
                 }
             }
             if (node.state.powerLevel !== undefined) {
