@@ -270,6 +270,9 @@ This is the "real" device node, configure the following info:
 * "Display categories": the display categories. See [Display categories](https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html#display-categories) for more info.
 * "Interfaces": the interfaces supported by the device. See [Interfaces](https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html) for more info.
 
+Example flow:
+        See the flow used for the tests [here](test/flows.json)
+
 ## Troubleshooting
 
 This is a checklist for the config:

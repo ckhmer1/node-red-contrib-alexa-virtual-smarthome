@@ -400,8 +400,11 @@ module.exports = function (RED) {
             if (node.config.i_endpoint_health) {
                 if (node.isVerbose()) node._debug("Alexa.EndpointHealth");
                 node.addCapability("Alexa.EndpointHealth", {
-                    connectivity: 'OK' // UNREACHABLE
+                    connectivity: {
+                        "value": "OK"
+                    } // UNREACHABLE
                 });
+                // TODO battery, radioDiagnostics, networkThroughput
             }
 
             // EqualizerController
@@ -457,7 +460,10 @@ module.exports = function (RED) {
             if (node.config.i_event_detection_sensor) {
                 if (node.isVerbose()) node._debug("Alexa.EventDetectionSensor");
                 node.addCapability("Alexa.EventDetectionSensor", {
-                    humanPresenceDetectionState: 'NOT_DETECTED' // DETECTED
+                    humanPresenceDetectionState: {
+                        value: 'NOT_DETECTED'
+                    } // DETECTED
+                    // TODO detectionMethods, media: { "type": "ALEXA.MEDIAMETADATA", "id": "<media metadata id>" }
                 },
                     {
                         configuration: {
@@ -639,8 +645,8 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.TemperatureSensor");
                 node.addCapability("Alexa.TemperatureSensor", {
                     temperature: {
-                        "value": 19.9,
-                        "scale": "CELSIUS" // FAHRENHEIT KELVIN
+                        value: 19.9,
+                        scale: "CELSIUS" // FAHRENHEIT KELVIN
                     }
                 });
             }
@@ -652,20 +658,20 @@ module.exports = function (RED) {
                 let properties = {};
                 if (node.config.a_target_setpoint) {
                     properties.targetSetpoint = {
-                        "value": 20.1,
-                        "scale": "CELSIUS"
+                        value: 20.1,
+                        scale: "CELSIUS"
                     };
                 }
                 if (node.config.a_lower_setpoint) {
                     properties.lowerSetpoint = {
-                        "value": 20.1,
-                        "scale": "CELSIUS"
+                        value: 20.1,
+                        scale: "CELSIUS"
                     };
                 }
                 if (node.config.a_upper_setpoint) {
                     properties.upperSetpoint = {
-                        "value": 20.1,
-                        "scale": "CELSIUS"
+                        value: 20.1,
+                        scale: "CELSIUS"
                     };
                 }
                 if (node.config.a_modes.length > 1) {
@@ -1513,7 +1519,7 @@ module.exports = function (RED) {
                 text += node.state.contactDetectionState === 'DETECTED' ? ' CONTACT' : ' NO CONTACT';
             }
             if (node.state.connectivity !== undefined) {
-                if (node.state.connectivity === 'UNREACHABLE') {
+                if (node.state.connectivity.value === 'UNREACHABLE') {
                     fill = 'red';
                 } else if (fill !== 'red') {
                     fill = 'green';

@@ -246,8 +246,8 @@
         "natural_gas_measuring_method": "ESTIMATED",
         "natural_gas_unit": "CUBIC_FOOT",
         "natural_gas_default_resolution": "7200",
-        "x": 410,
-        "y": 380,
+        "x": 490,
+        "y": 920,
         "wires": [
             [
                 "21a10626.9a490a",
@@ -268,8 +268,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 790,
-        "y": 380,
+        "x": 1030,
+        "y": 920,
         "wires": []
     },
     {
@@ -293,8 +293,8 @@
         "topic": "reportState",
         "payload": "reportState",
         "payloadType": "str",
-        "x": 180,
-        "y": 380,
+        "x": 260,
+        "y": 1660,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -322,8 +322,8 @@
         "topic": "SetMedia",
         "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 210,
-        "y": 300,
+        "x": 290,
+        "y": 1580,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -351,8 +351,8 @@
         "topic": "SetMedia",
         "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 210,
-        "y": 340,
+        "x": 290,
+        "y": 1620,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -380,8 +380,8 @@
         "topic": "AddOrUpdateMedia",
         "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 180,
-        "y": 420,
+        "x": 260,
+        "y": 1700,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -409,8 +409,8 @@
         "topic": "AddOrUpdateMedia",
         "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 180,
-        "y": 460,
+        "x": 260,
+        "y": 1740,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -438,8 +438,8 @@
         "topic": "SetMedia",
         "payload": "[]",
         "payloadType": "json",
-        "x": 220,
-        "y": 260,
+        "x": 300,
+        "y": 1540,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -467,8 +467,8 @@
         "topic": "RemoveMedia",
         "payload": "1",
         "payloadType": "str",
-        "x": 200,
-        "y": 500,
+        "x": 280,
+        "y": 1780,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -496,8 +496,8 @@
         "topic": "RemoveMedia",
         "payload": "2",
         "payloadType": "str",
-        "x": 200,
-        "y": 540,
+        "x": 280,
+        "y": 1820,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -525,8 +525,8 @@
         "topic": "RemoveMedia",
         "payload": "3",
         "payloadType": "str",
-        "x": 200,
-        "y": 580,
+        "x": 280,
+        "y": 1860,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -537,7 +537,7 @@
         "id": "adb9c6e69e992eb0",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
-        "name": "cameraStreams",
+        "name": "Camera Streams",
         "props": [
             {
                 "p": "payload"
@@ -554,7 +554,7 @@
         "topic": "cameraStreams",
         "payload": "{\"cameraStreams\":[{\"uri\":\"https://pizza.dynu.net/hls/bbb.m3u8\",\"expirationTime\":\"2022-02-03T16:20:50.52Z\",\"idleTimeoutSeconds\":30,\"protocol\":\"HLS\",\"resolution\":{\"width\":1920,\"height\":1080},\"authorizationType\":\"NONE\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\"}],\"imageUri\":\"https://upload.wikimedia.org/wikipedia/commons/f/fb/Veduta_di_Paestum_2010.jpg\"}",
         "payloadType": "json",
-        "x": 200,
+        "x": 270,
         "y": 220,
         "wires": [
             [
@@ -578,8 +578,8 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "getState",
-        "x": 220,
-        "y": 180,
+        "x": 300,
+        "y": 20,
         "wires": [
             [
                 "58c096a.8fa0d68",
@@ -604,8 +604,8 @@
         "topic": "",
         "payload": "{\"powerState\": \"ON\"}",
         "payloadType": "json",
-        "x": 190,
-        "y": 620,
+        "x": 270,
+        "y": 2300,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -629,8 +629,8 @@
         "topic": "",
         "payload": "{\"powerState\": \"OFF\"}",
         "payloadType": "json",
-        "x": 180,
-        "y": 660,
+        "x": 260,
+        "y": 2340,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -658,8 +658,8 @@
         "topic": "SetSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
         "payloadType": "json",
-        "x": 150,
-        "y": 700,
+        "x": 230,
+        "y": 2580,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -756,8 +756,8 @@
         "natural_gas_measuring_method": "MEASURED",
         "natural_gas_unit": "CUBIC_FOOT",
         "natural_gas_default_resolution": "3600",
-        "x": 620,
-        "y": 200,
+        "x": 720,
+        "y": 540,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -852,8 +852,8 @@
         "electricity_default_resolution": "",
         "natural_gas_measuring_method": "",
         "natural_gas_default_resolution": "",
-        "x": 620,
-        "y": 260,
+        "x": 720,
+        "y": 600,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -881,8 +881,8 @@
         "topic": "AddSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Salotto\",\"Finestra Bagno\"]",
         "payloadType": "json",
-        "x": 150,
-        "y": 740,
+        "x": 230,
+        "y": 2620,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -910,8 +910,8 @@
         "topic": "DelSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
         "payloadType": "json",
-        "x": 150,
-        "y": 780,
+        "x": 230,
+        "y": 2660,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -1006,8 +1006,8 @@
         "electricity_default_resolution": "",
         "natural_gas_measuring_method": "",
         "natural_gas_default_resolution": "",
-        "x": 620,
-        "y": 320,
+        "x": 720,
+        "y": 660,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -1031,8 +1031,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 440,
-        "y": 100,
+        "x": 520,
+        "y": 540,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1056,8 +1056,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 420,
-        "y": 60,
+        "x": 500,
+        "y": 500,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1722,8 +1722,8 @@
         "electricity_default_resolution": "",
         "natural_gas_measuring_method": "",
         "natural_gas_default_resolution": "",
-        "x": 610,
-        "y": 480,
+        "x": 730,
+        "y": 720,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -1746,8 +1746,8 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "getState",
-        "x": 420,
-        "y": 480,
+        "x": 520,
+        "y": 720,
         "wires": [
             [
                 "82c928de.3dbd58"
@@ -1796,8 +1796,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 600,
-        "y": 440,
+        "x": 680,
+        "y": 980,
         "wires": [
             [
                 "f94cd64.0beae28"
@@ -1817,8 +1817,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 880,
-        "y": 440,
+        "x": 960,
+        "y": 980,
         "wires": []
     },
     {
@@ -1897,8 +1897,8 @@
         "topic": "MeasurementsReport",
         "payload": "{\"electricityIntervals\":[{\"usage\":113.2,\"start\":\"2020-07-05T08:00:00Z\",\"end\":\"2020-07-05T09:00:00Z\"},{\"usage\":101.1,\"start\":\"2020-07-05T09:00:00Z\",\"end\":\"2020-07-05T10:00:00Z\"},{\"usage\":0,\"start\":\"2020-07-05T10:00:00Z\",\"end\":\"2020-07-05T10:51:30Z\"},{\"usage\":127.3,\"start\":\"2020-07-05T11:02:30Z\",\"end\":\"2020-07-05T12:00:00Z\"}]}",
         "payloadType": "json",
-        "x": 180,
-        "y": 140,
+        "x": 260,
+        "y": 1940,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -1922,8 +1922,8 @@
         "topic": "",
         "payload": "{\"motionDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 440,
-        "y": 180,
+        "x": 520,
+        "y": 620,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1947,8 +1947,8 @@
         "topic": "",
         "payload": "{\"motionDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 430,
-        "y": 140,
+        "x": 510,
+        "y": 580,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -2026,8 +2026,8 @@
         "topic": "SetSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/cucina\"]}",
         "payloadType": "json",
-        "x": 150,
-        "y": 820,
+        "x": 230,
+        "y": 2700,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2055,8 +2055,8 @@
         "topic": "AddSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
         "payloadType": "json",
-        "x": 150,
-        "y": 860,
+        "x": 230,
+        "y": 2740,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2084,12 +2084,1231 @@
         "topic": "DelSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
         "payloadType": "json",
-        "x": 150,
+        "x": 230,
+        "y": 2780,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "3baa9e9c1a44b53f",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "LOCKED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"lockState\":\"LOCKED\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 1380,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "92fafdddd4cf37f3",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "UNLOCKED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"lockState\":\"UNLOCKED\"}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 1420,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "c382bf21aad8eb9f",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "JAMMED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"lockState\":\"JAMMED\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 1460,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "cab4aa22.443468",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":10}",
+        "payloadType": "json",
+        "x": 280,
+        "y": 100,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "9de9977a.487a18",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"brightness\":100}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 140,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "306f0d3e.f70672",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Brightness Controller",
+        "info": "",
+        "x": 260,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "9273677f.aee948",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " CameraStream Controller",
+        "info": "",
+        "x": 250,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "6f8125ef.9c0dac",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Channel Controller",
+        "info": "",
+        "x": 270,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "83f9395b.2243d8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "RAI 1 HD",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"channel\":{\"number\":\"501\",\"callSign\":\"RAI 1 HD\",\"affiliateCallSign\":\"RAI\"}}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 300,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "dff4fc93.be06d",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "RAI 2 HD",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"channel\":{\"number\":\"502\",\"callSign\":\"RAI 2 HD\",\"affiliateCallSign\":\"RAI\"}}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 340,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "cde8bab8.9b5aa8",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Color Controller",
+        "info": "",
+        "x": 280,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "29adead8.48e6e6",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Color 1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"color\":{\"hue\":350.5,\"saturation\":0.7138,\"brightness\":0.6524}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 420,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "ec67799c.060658",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Color 2",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"color\":{\"hue\":300.5,\"saturation\":0.7138,\"brightness\":0.6524}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 460,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "11f70d37.12c223",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Color Temperature Controller",
+        "info": "",
+        "x": 240,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "77d14032.a2922",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Warm white",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemperatureInKelvin\": 2000}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 540,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "c929af2f.4716",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Cool white",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"colorTemperatureInKelvin\": 7000}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 580,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "36726572.107d0a",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Contact Sensor",
+        "info": "",
+        "x": 280,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "180c111e.e99b1f",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "NO CONTACT",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"contactDetectionState\":\"NOT_DETECTED\"}",
+        "payloadType": "json",
+        "x": 280,
+        "y": 660,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "68dda98.e3b5158",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "CONTACT",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"contactDetectionState\":\"DETECTED\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 700,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "e9c54ab7.9b2768",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Doorbell Event Source",
+        "info": "",
+        "x": 260,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "dd0e809548f57a03",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "DoorbellPress",
+        "payload": "PHYSICAL_INTERACTION",
+        "payloadType": "str",
+        "x": 240,
+        "y": 780,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "c552d8fc.9b6878",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Endpoint Health ",
+        "info": "",
+        "x": 280,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "7b4384a6.a7db5c",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "OK",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"connectivity\":{\"value\":\"OK\"}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 860,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "ead38007.67e8c",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "UNREACHABLE",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"connectivity\":{\"value\":\"UNREACHABLE\",\"reason\":\"WIFI_BAD_PASSWORD\"}}",
+        "payloadType": "json",
+        "x": 280,
         "y": 900,
         "wires": [
             [
                 "58c096a.8fa0d68"
             ]
         ]
+    },
+    {
+        "id": "60f724b3.1d89ac",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Equalizer Controller ",
+        "info": "",
+        "x": 270,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "41fcd33a.96a9bc",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Bands/Mode",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"bands\":[{\"name\":\"BASS\",\"value\":0},{\"name\":\"MIDRANGE\",\"value\":3},{\"name\":\"TREBLE\",\"value\":1}],\"mode\":\"MOVIE\"}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 980,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "eda80bce.9fab18",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Estimation ",
+        "info": "No State or directives",
+        "x": 300,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "a086ec2c.a8db8",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Event Detection Sensor ",
+        "info": "",
+        "x": 260,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "73ab523a.84b5bc",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "MOTION",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"motionDetectionState\":\"DETECTED\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 2060,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "bfa3967b.84f308",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "NO MOTION",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"motionDetectionState\":\"NOT_DETECTED\"}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 2020,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "2879d69c.f96e8a",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Input Controller ",
+        "info": "",
+        "x": 280,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "55feda92.2430b4",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "HDMI 1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":\"HDMI 1\"}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 1220,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "83bb6486.85fe28",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "HDMI 2",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"input\":\"HDMI 2\"}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 1260,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "a99493.299aeb7",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Keypad Controller ",
+        "info": "No properties",
+        "x": 270,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "b9dbecec.b3ed9",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Lock Controller ",
+        "info": "",
+        "x": 280,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "d46b9113.9e008",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Media Metadata ",
+        "info": "",
+        "x": 280,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "80f7a8c7.9e82f8",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Deviceusage meter ",
+        "info": "",
+        "x": 270,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "1c5be69d.0e7c59",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Motion Sensor ",
+        "info": "",
+        "x": 290,
+        "y": 1980,
+        "wires": []
+    },
+    {
+        "id": "779d74bb.18b6fc",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "DETECTED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"humanPresenceDetectionState\":\"DETECTED\",\"detectionMethods\":[\"VIDEO\"],\"media\":{\"type\":\"ALEXA.MEDIAMETADATA\",\"id\":\"<media metadata id>\"}}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 1100,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "ee82d7e6.758628",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "NOT_DETECTED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"humanPresenceDetectionState\": \"NOT_DETECTED\"}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 1140,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "2e31a003.c70b2",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Percentage Controller ",
+        "info": "",
+        "x": 260,
+        "y": 2100,
+        "wires": []
+    },
+    {
+        "id": "64ba3f5c.8b689",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"percentage\": 75}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 2140,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "a4ce7d38.9653c",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"percentage\": 37}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 2180,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "fcbf55f0.6b3148",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Playback Controller ",
+        "info": "No states",
+        "x": 270,
+        "y": 2220,
+        "wires": []
+    },
+    {
+        "id": "5bebba2.0cf7c44",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Power Controller ",
+        "info": "",
+        "x": 280,
+        "y": 2260,
+        "wires": []
+    },
+    {
+        "id": "d11ae58c.f18268",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " PowerLevel Controller ",
+        "info": "",
+        "x": 260,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "c8c6df8c.fa17b",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"powerLevel \": -10}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 2420,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "c5687d55.80e6d",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"powerLevel \": 50}",
+        "payloadType": "json",
+        "x": 270,
+        "y": 2460,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "3c2a9ba6.ff33d4",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Scene Controller ",
+        "info": "No state",
+        "x": 280,
+        "y": 2500,
+        "wires": []
+    },
+    {
+        "id": "1d5215dd.918aca",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": " Security Panel Controller ",
+        "info": "",
+        "x": 250,
+        "y": 2540,
+        "wires": []
+    },
+    {
+        "id": "9159c2ce.8fd48",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "DISARMED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"armState\": \"DISARMED\"}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 2820,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "ca3f1d72.35a3b",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "ARMED_AWAY",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"armState\":\"ARMED_AWAY\",\"burglaryAlarm\":{\"value\":\"OK\"},\"carbonMonoxideAlarm\":{\"value\":\"OK\"},\"fireAlarm\":{\"value\":\"OK\"},\"waterAlarm\":{\"value\":\"OK\"}}",
+        "payloadType": "json",
+        "x": 280,
+        "y": 2860,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "ec76ffd4.f31f9",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Speaker ",
+        "info": "",
+        "x": 300,
+        "y": 2900,
+        "wires": []
+    },
+    {
+        "id": "2e8ab8f2.57d388",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"volume\": 10}",
+        "payloadType": "json",
+        "x": 290,
+        "y": 2940,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "fe0207cc.71b9e8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"volume\":50,\"muted\":true}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 2980,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "c5e54dcd.6550f",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Step Speaker ",
+        "info": "No state",
+        "x": 290,
+        "y": 3020,
+        "wires": []
+    },
+    {
+        "id": "a892bda1.3101d",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Temperature Sensor ",
+        "info": "",
+        "x": 270,
+        "y": 3060,
+        "wires": []
+    },
+    {
+        "id": "d34611ba.1d20b",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "19.9°C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\":{\"value\":19.9,\"scale\":\"CELSIUS\"}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3100,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "cf4dfb7b.f35ca8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "29.9°C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\":{\"value\":29.9,\"scale\":\"CELSIUS\"}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3140,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "6c7c2d6a.7730a4",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Thermostat Controller ",
+        "info": "",
+        "x": 260,
+        "y": 3180,
+        "wires": []
+    },
+    {
+        "id": "d2bc142f.d3f1f8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "T 19.9°C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"targetSetpoint\":{\"value\":19.9,\"scale\":\"CELSIUS\"},\"thermostatMode\":\"HEAT\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 3220,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "b40e27a.f80c3d8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "T 19.9°C - 21.9°C",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"lowerSetpoint\":{\"value\":19.9,\"scale\":\"CELSIUS\"},\"upperSetpoint\":{\"value\":19.9,\"scale\":\"CELSIUS\"},\"thermostatMode\":\"HEAT\"}",
+        "payloadType": "json",
+        "x": 280,
+        "y": 3260,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "6bd6da53.ff5ed4",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Thermostat Controller HVAC",
+        "info": "",
+        "x": 240,
+        "y": 3300,
+        "wires": []
+    },
+    {
+        "id": "f02eef9d.59fa5",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"primaryHeaterOperation\":\"STAGE_1\",\"auxiliaryHeaterOperation\":\"OFF\",\"coolerOperation\":\"STAGE_2\",\"fanOperation\":\"STAGE_3\"}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3340,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "8d816526.d58108",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"primaryHeaterOperation\":\"STAGE_3\",\"auxiliaryHeaterOperation\":\"ON\",\"coolerOperation\":\"STAGE_1\",\"fanOperation\":\"STAGE_2\"}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3380,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "8c5aa077.138ed",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Wake On LAN Controller ",
+        "info": "No state",
+        "x": 250,
+        "y": 3420,
+        "wires": []
     }
 ]
