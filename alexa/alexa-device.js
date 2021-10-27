@@ -34,7 +34,19 @@ const float_values = {
 };
 
 module.exports = function (RED) {
+    "use strict";
+
     const DEFAULT_PAYLOAD_VERSION = '3';
+    const Formats = {
+        BOOL: 1,
+        INT: 2,
+        FLOAT: 4,
+        STRING: 8,
+        OBJECT: 16,
+        ARRAY: 32,
+        MANDATORY: 128,
+        COPY_OBJECT: 256,
+    };
 
     /******************************************************************************************************************
      *
@@ -48,6 +60,7 @@ module.exports = function (RED) {
             node.YES = RED._("alexa-device.label.YES");
             node.NO = RED._("alexa-device.label.NO");
             node.state = {};
+            node.state_types = {};
 
             node.alexa = RED.nodes.getNode(node.config.alexa);
 
@@ -232,6 +245,7 @@ module.exports = function (RED) {
 
         setupCapabilities() {
             var node = this;
+            let state_types = node.state_types;
             node.capabilities = [];
             node.endpoint = node.getEndpoint();
 
@@ -247,6 +261,11 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.BrightnessController", {
                     brightness: 50
                 });
+                state_types['brightness'] = {
+                    type: Formats.INT,
+                    nin: 0,
+                    max: 100
+                };
             }
             // CameraStreamController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html
@@ -287,6 +306,26 @@ module.exports = function (RED) {
                         affiliateCallSign: ""
                     }
                 });
+                // TODO one of channel or channelMetadata must be filled
+                state_types['channel'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        number: {
+                            type: Formats.INT,
+                            min: 0
+                        },
+                        callSign: Formats.STRING,
+                        affiliateCallSign: Formats.STRING,
+                        uri: Formats.STRING,
+                    },
+                };
+                state_types['channelMetadata'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        name: Formats.STRING,
+                        image: Formats.STRING,
+                    }
+                };
             }
             // ColorController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colorcontroller.html
@@ -299,6 +338,26 @@ module.exports = function (RED) {
                         brightness: 0.6524
                     }
                 });
+                state_types['color'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        hue: {
+                            type: Formats.FLOAT,
+                            min: 0,
+                            max: 360
+                        },
+                        saturation: {
+                            type: Formats.FLOAT,
+                            min: 0,
+                            max: 1
+                        },
+                        brightness: {
+                            type: Formats.FLOAT,
+                            min: 0,
+                            max: 1
+                        },
+                    }
+                };
             }
 
             // ColorTemperatureController
@@ -308,6 +367,11 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.ColorTemperatureController", {
                     colorTemperatureInKelvin: 5500
                 });
+                state_types['colorTemperatureInKelvin'] = {
+                    type: Formats.INT,
+                    nin: 1000,
+                    max: 10000
+                };
             }
 
             // ContactSensor
@@ -317,6 +381,10 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.ContactSensor", {
                     detectionState: 'NOT_DETECTED'
                 });
+                state_types['contactDetectionState'] = {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: ['NOT_DETECTED', 'DETECTED'],
+                };
             }
 
             // Device Usage Estimation
@@ -401,15 +469,160 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.EndpointHealth");
                 node.addCapability("Alexa.EndpointHealth", {
                     connectivity: {
-                        "value": "OK"
+                        value: "OK"
                     } // UNREACHABLE
                 });
                 // TODO battery, radioDiagnostics, networkThroughput
+                state_types['connectivity'] = {
+                    type: Formats.OBJECT + Formats.MANDATORY,
+                    attributes: {
+                        value: {
+                            type: Formats.STRING + Formats.MANDATORY,
+                            values: ['OK', 'UNREACHABLE'],
+                        },
+                        reason: {
+                            type: Formats.STRING,
+                            values: ['WIFI_BAD_PASSWORD',
+                                'WIFI_AP_NOT_FOUND',
+                                'WIFI_ROUTER_UNREACHABLE',
+                                'WIFI_AP_CHANNEL_QUALITY_LOW',
+                                'INTERNET_UNREACHABLE',
+                                'CAPTIVE_PORTAL_CHECK_FAILED',
+                                'UNKNOWN'
+                            ],
+                        }
+                    }
+                };
+                state_types['battery '] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        health: {
+                            type: Formats.OBJECT + Formats.MANDATORY,
+                            attributes: {
+                                state: {
+                                    type: Formats.STRING,
+                                    values: ['OK', 'WARNING', 'CRITICAL'],
+                                },
+                                reasons: {
+                                    type: Formats.STRING + Formats.ARRAY,
+                                    values: [
+                                        'COLD',
+                                        'DEAD',
+                                        'OVERHEATED',
+                                        'OVER_VOLTAGE',
+                                        'NO_BATTERY',
+                                        'LOW_CHARGE',
+                                        'UNKNOWN'
+                                    ]
+                                }
+                            }
+                        },
+                        chargingHealth: {
+                            type: Formats.OBJECT,
+                            attributes: {
+                                state: {
+                                    type: Formats.STRING,
+                                    values: ['OK', 'WARNING', 'CRITICAL'],
+                                },
+                                reasons: {
+                                    type: Formats.STRING + Formats.ARRAY,
+                                    values: [
+                                        'LOW_POWER',
+                                        'INCOMPATIBLE_CHARGER',
+                                        'UNKNOWN'
+                                    ],
+                                }
+                            }
+                        },
+                        levelPercentage: {
+                            type: Formats.INT,
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                };
+                state_types['radioDiagnostics '] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        radioType: {
+                            type: Formats.STRING,
+                            values: ['WIFI', 'BLUETOOTH'],
+                        },
+                        signalStrength: {
+                            type: Formats.OBJECT,
+                            attributes: {
+                                quality: {
+                                    type: Formats.STRING,
+                                    values: ['GOOD', 'FAIR', 'POOR']
+                                },
+                                rssiInDBM: {
+                                    type: Formats.INT,
+                                    min: -1000,
+                                    max: 1000,
+                                }
+                            }
+                        },
+                        signalToNoiseRatio: {
+                            type: Formats.OBJECT,
+                            attributes: {
+                                quality: {
+                                    type: Formats.STRING,
+                                    values: ['GOOD', 'FAIR', 'POOR']
+                                },
+                                snrInDB: {
+                                    type: Formats.INT,
+                                    min: 0,
+                                    max: 1000,
+                                }
+                            }
+                        }
+                    }
+                };
+                state_types['radioDiagnostics'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        quality: {
+                            type: Formats.STRING,
+                            values: ['GOOD', 'FAIR', 'POOR']
+                        },
+                        rssiInDBM: {
+                            type: Formats.INT,
+                            min: -1000,
+                            max: 1000,
+                        }
+                    }
+                }
+                state_types['signalToNoiseRatio'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        quality: {
+                            type: Formats.STRING,
+                            values: ['GOOD', 'FAIR', 'POOR']
+                        },
+                        snrInDB: {
+                            type: Formats.INT,
+                            min: 0,
+                            max: 1000,
+                        }
+                    }
+                };
+                state_types['networkThroughput '] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        quality: {
+                            type: Formats.STRING,
+                            values: ['GOOD', 'FAIR', 'POOR']
+                        },
+                        bitsPerSecond: {
+                            type: Formats.INT,
+                            min: 0,
+                        }
+                    }
+                };
             }
 
             // EqualizerController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html
-
             if (node.config.i_equalizer_controller) {
                 if (node.isVerbose()) node._debug("Alexa.EqualizerController");
                 let properties = {};
@@ -417,6 +630,7 @@ module.exports = function (RED) {
                 if (node.config.bands.length > 0) {
                     let bands_supported = [];
                     let bands_value = [];
+                    let attributes = [];
                     node.config.bands.forEach(band => {
                         bands_supported.push({
                             name: band
@@ -425,6 +639,11 @@ module.exports = function (RED) {
                             name: band,
                             value: 0
                         });
+                        attributes[band] = {
+                            type: Formats.INT + Formats.MANDATORY,
+                            min: node.to_int(node.config.band_range_min, 0),
+                            max: node.to_int(node.config.band_range_max, 10),
+                        };
                     });
                     properties['bands'] = bands_value;
                     configurations['bands'] = {
@@ -434,6 +653,10 @@ module.exports = function (RED) {
                             maximum: node.to_int(node.config.band_range_max, 6)
                         }
                     }
+                    state_types['bands'] = {
+                        type: Formats.OBJECT,
+                        attributes: attributes,
+                    };
                 }
                 if (node.config.modes.length > 0) {
                     properties['mode'] = node.config.modes[0];
@@ -446,7 +669,10 @@ module.exports = function (RED) {
                     configurations['modes'] = {
                         supported: modes_supported
                     }
-
+                    state_types['mode'] = {
+                        type: Formats.STRING,
+                        values: node.config.modes
+                    };
                 }
                 node.addCapability("Alexa.EqualizerController", properties,
                     {
@@ -456,7 +682,6 @@ module.exports = function (RED) {
 
             // EventDetectionSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
-
             if (node.config.i_event_detection_sensor) {
                 if (node.isVerbose()) node._debug("Alexa.EventDetectionSensor");
                 node.addCapability("Alexa.EventDetectionSensor", {
@@ -479,6 +704,33 @@ module.exports = function (RED) {
                             }
                         }
                     });
+                state_types['humanPresenceDetectionState'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        value: {
+                            type: Formats.STRING,
+                            values: ['DETECTED', 'NOT_DETECTED'],
+                        },
+                        detectionMethods: {
+                            type: Formats.STRING + Formats.ARRAY,
+                            values: ['AUDIO', 'VIDEO'],
+                        },
+                        media: {
+                            type: Formats.OBJECT,
+                            attributes: {
+                                type: {
+                                    type: Formats.STRING,
+                                    values: ['ALEXA.MEDIAMETADATA']
+                                },
+                                id: {
+                                    type: Formats.STRING,
+                                    // TODO is_valid: a valid media id
+                                }
+                            }
+
+                        },
+                    }
+                };
             }
 
             // InputController
@@ -499,6 +751,10 @@ module.exports = function (RED) {
                         inputs: inputs
                     }
                 );
+                state_types['input'] = {
+                    type: Formats.STRING,
+                    value: node.config.a_inputs,
+                };
             }
             // InventoryLevelSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventorylevelsensor.html
@@ -522,6 +778,10 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.LockController", {
                     lockState: 'LOCKED' // UNLOCKED JAMMED
                 });
+                state_types['lockState'] = {
+                    type: Formats.STRING,
+                    lockState: ['LOCKED', 'UNLOCKED', 'JAMMED'],
+                };
             }
 
             // MediaMetadata
@@ -542,7 +802,12 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.MotionSensor", {
                     detectionState: 'NOT_DETECTED' // DETECTED
                 });
+                state_types['motionDetectionState'] = {
+                    type: Formats.STRING,
+                    values: ['DETECTED', 'NOT_DETECTED'],
+                };
             }
+
             // PercentageController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-percentagecontroller.html
             if (node.config.i_percentage_controller) {
@@ -550,7 +815,13 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.PercentageController", {
                     percentage: 0
                 });
+                state_types['percentage'] = {
+                    type: Formats.INT,
+                    min: 0,
+                    max: 100,
+                };
             }
+
             // PlaybackController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackcontroller.html
             if (node.config.i_playback_controller) {
@@ -559,6 +830,7 @@ module.exports = function (RED) {
                     supportedOperations: node.config.a_playback_modes
                 });
             }
+
             // PowerController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html
             if (node.config.i_power_controller) {
@@ -566,7 +838,12 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.PowerController", {
                     powerState: 'OFF'
                 });
+                state_types['powerState'] = {
+                    type: Formats.STRING,
+                    lockState: ['ON', 'OFF'],
+                };
             }
+
             // PowerLevelController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powerlevelcontroller.html
             if (node.config.i_power_level_controller) {
@@ -574,6 +851,11 @@ module.exports = function (RED) {
                 node.addCapability("Alexa.PowerLevelController", {
                     powerLevel: 50
                 });
+                state_types['powerLevel'] = {
+                    type: Formats.INT,
+                    min: 0,
+                    max: 100,
+                };
             }
 
             // RangeController
@@ -606,9 +888,22 @@ module.exports = function (RED) {
                         properties_value['armState'] = arm_state.includes('DISARMED') ? 'DISARMED' : arm_state[0];
                         configuration['supportedArmStates'] = arm_state.map(state => ({ "value": state }));
                     }
+                    state_types['armState'] = {
+                        type: Formats.STRING,
+                        values: ['DISARMED', 'ARMED_AWAY', 'ARMED_STAY', 'ARMED_NIGHT'],
+                    };
                     alarms.forEach(alarm => {
                         properties_value[alarm] = {
                             value: "OK"
+                        };
+                        state_types[alarm] = {
+                            type: Formats.OBJECT,
+                            attributes: {
+                                value: {
+                                    type: Formats.STRING,
+                                    values: ['OK', 'ALARM'],
+                                }
+                            }
                         };
                     });
                     if (pin_code.trim().length === 4) {
@@ -630,6 +925,14 @@ module.exports = function (RED) {
                     volume: 50,
                     muted: false
                 });
+                state_types['volume'] = {
+                    type: Formats.INT,
+                    min: 0,
+                    max: 100,
+                };
+                state_types['muted'] = {
+                    type: Formats.BOOL,
+                };
             }
 
             // StepSpeaker
@@ -649,6 +952,18 @@ module.exports = function (RED) {
                         scale: "CELSIUS" // FAHRENHEIT KELVIN
                     }
                 });
+                state_types['temperature'] = {
+                    type: Formats.OBJECT,
+                    attributes: {
+                        value: {
+                            type: Formats.FLOAT,
+                        },
+                        scale: {
+                            type: Formats.STRING,
+                            values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
+                        }
+                    }
+                };
             }
 
             // ThermostatController
@@ -661,11 +976,35 @@ module.exports = function (RED) {
                         value: 20.1,
                         scale: "CELSIUS"
                     };
+                    state_types['targetSetpoint'] = {
+                        type: Formats.OBJECT,
+                        attributes: {
+                            value: {
+                                type: Formats.FLOAT,
+                            },
+                            scale: {
+                                type: Formats.STRING,
+                                values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
+                            }
+                        }
+                    };
                 }
                 if (node.config.a_lower_setpoint) {
                     properties.lowerSetpoint = {
                         value: 20.1,
                         scale: "CELSIUS"
+                    };
+                    state_types['lowerSetpoint'] = {
+                        type: Formats.OBJECT,
+                        attributes: {
+                            value: {
+                                type: Formats.FLOAT,
+                            },
+                            scale: {
+                                type: Formats.STRING,
+                                values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
+                            }
+                        }
                     };
                 }
                 if (node.config.a_upper_setpoint) {
@@ -673,9 +1012,26 @@ module.exports = function (RED) {
                         value: 20.1,
                         scale: "CELSIUS"
                     };
+                    state_types['upperSetpoint'] = {
+                        type: Formats.OBJECT,
+                        attributes: {
+                            value: {
+                                type: Formats.FLOAT,
+                            },
+                            scale: {
+                                type: Formats.STRING,
+                                values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
+                            }
+                        }
+                    };
+                    // TODO exclusive attributes
                 }
                 if (node.config.a_modes.length > 1) {
                     properties.thermostatMode = node.config.a_modes.includes('OFF') ? 'OFF' : node.config.a_modes[0];
+                    state_types['thermostatMode'] = {
+                        type: Formats.OBJECT,
+                        values: node.config.a_modes,
+                    };
                 }
                 node.addCapability("Alexa.ThermostatController",
                     properties,
@@ -692,6 +1048,7 @@ module.exports = function (RED) {
                     duration: ""
                 };*/
             }
+
             // ThermostatController.HVAC.Components
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
             if (node.config.i_thermostat_controller_hvac_components) {
@@ -703,20 +1060,36 @@ module.exports = function (RED) {
                     properties['primaryHeaterOperation'] = 'OFF';
                     configurations['numberOfPrimaryHeaterOperations'] = parseInt(node.config.primary_heater_operation.substr(node.config.primary_heater_operation.length - 1));
                     add_interface = true;
+                    state_types['primaryHeaterOperation'] = {
+                        type: Formats.STRING,
+                        values: ['OFF', 'STAGE_1', 'STAGE_2', 'STAGE_3'].slice(0, 1 + configurations['numberOfPrimaryHeaterOperations']),
+                    };
                 }
                 if (node.config.auxiliary_heater_operation) {
                     properties['auxiliaryHeaterOperation'] = 'OFF';
                     add_interface = true;
+                    state_types['auxiliaryHeaterOperation'] = {
+                        type: Formats.STRING,
+                        values: ['ON', 'OFF'],
+                    };
                 }
                 if (node.config.cooler_operation) {
                     properties['coolerOperation'] = 'OFF';
                     configurations['numberOfCoolerOperations'] = parseInt(node.config.cooler_operation.substr(node.config.cooler_operation.length - 1));
                     add_interface = true;
+                    state_types['coolerOperation'] = {
+                        type: Formats.STRING,
+                        values: ['OFF', 'STAGE_1', 'STAGE_2', 'STAGE_3'].slice(0, 1 + configurations['numberOfCoolerOperations']),
+                    };
                 }
                 if (node.config.fan_operation) {
                     properties['fanOperation'] = 'OFF';
                     configurations['numberOfFanOperations'] = parseInt(node.config.fan_operation.substr(node.config.fan_operation.length - 1));
                     add_interface = true;
+                    state_types['fanOperation'] = {
+                        type: Formats.STRING,
+                        values: ['OFF', 'STAGE_1', 'STAGE_2', 'STAGE_3'].slice(0, 1 + configurations['numberOfFanOperations']),
+                    };
                 }
                 if (add_interface) {
                     node.addCapability("ThermostatController.HVAC.Components", properties, {
@@ -741,9 +1114,11 @@ module.exports = function (RED) {
                 }
             }
 
+            if (node.isVerbose()) node._debug("name " + JSON.stringify(node.name));
             if (node.isVerbose()) node._debug("capabilities " + JSON.stringify(node.capabilities));
             if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()));
             if (node.isVerbose()) node._debug("states " + JSON.stringify(node.state));
+            if (node.isVerbose()) node._debug("state_types " + JSON.stringify(node.state_types));
         }
 
         getEndpoint() {

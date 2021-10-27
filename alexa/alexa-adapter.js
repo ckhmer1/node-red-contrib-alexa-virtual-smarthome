@@ -52,6 +52,7 @@ Due to that last step, the authorization server is sometimes also called a token
 
 module.exports = function (RED) {
     "use strict";
+
     const path = require('path');
     const fs = require('fs');
     const util = require('util');
