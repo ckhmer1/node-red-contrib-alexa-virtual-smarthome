@@ -48,6 +48,15 @@ module.exports = function (RED) {
         COPY_OBJECT: 256,
     };
 
+    const EXCLUSIVE_STATES = {
+        color: ['colorTemperatureInKelvin'],
+        colorTemperatureInKelvin: ['color'],
+        lowerSetpoint: ['targetSetpoint'],
+        upperSetpoint: ['targetSetpoint'],
+        targetSetpoint: ['lowerSetpoint', 'upperSetpoint'],
+    };
+
+
     /******************************************************************************************************************
      *
      *
@@ -1921,7 +1930,7 @@ module.exports = function (RED) {
             let modified = false;
             Object.keys(me.state_types).forEach(function (key) {
                 if (new_states.hasOwnProperty(key)) {
-                    if (me.setState(key, new_states[key], me.states, me.state_types[key], me.exclusive_states[key] || {})) {
+                    if (me.setState(key, new_states[key], me.states, me.state_types[key], EXCLUSIVE_STATES[key] || {})) {
                         me._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified = true;
                     }
