@@ -215,7 +215,7 @@ module.exports = function (RED) {
                     node.alexa.send_doorbell_press(node.id, msg.payload || '');
                 });
             } else if (topic === 'CAMERASTREAMS') {
-                node.updateState(msg.payload || {}, node.cameraStreams, CAMERASTREAMS_STATE_TYPE,  {});
+                node.updateState(msg.payload || {}, node.cameraStreams, CAMERASTREAMS_STATE_TYPE, {});
                 // node.cameraStreams = msg.payload;
                 if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
             } else if (topic === 'SETMEDIA') {
@@ -422,7 +422,8 @@ module.exports = function (RED) {
                             min: 0,
                             max: 1
                         },
-                    }
+                    },
+                    exclusive_states: ['colorTemperatureInKelvin']
                 };
             }
 
@@ -436,7 +437,8 @@ module.exports = function (RED) {
                 state_types['colorTemperatureInKelvin'] = {
                     type: Formats.INT,
                     min: 1000,
-                    max: 10000
+                    max: 10000,
+                    exclusive_states: ['color']
                 };
             }
 
@@ -1052,7 +1054,8 @@ module.exports = function (RED) {
                                 type: Formats.STRING,
                                 values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
                             }
-                        }
+                        },
+                        exclusive_states: ['lowerSetpoint', 'upperSetpoint']
                     };
                 }
                 if (node.config.a_lower_setpoint) {
@@ -1070,7 +1073,8 @@ module.exports = function (RED) {
                                 type: Formats.STRING,
                                 values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
                             }
-                        }
+                        },
+                        exclusive_states: ['targetSetpoint']
                     };
                 }
                 if (node.config.a_upper_setpoint) {
@@ -1088,9 +1092,9 @@ module.exports = function (RED) {
                                 type: Formats.STRING,
                                 values: ['CELSIUS', 'FAHRENHEIT', 'KELVIN'],
                             }
-                        }
+                        },
+                        exclusive_states: ['targetSetpoint']
                     };
-                    // TODO exclusive attributes
                 }
                 if (node.config.a_modes.length > 1) {
                     properties.thermostatMode = node.config.a_modes.includes('OFF') ? 'OFF' : node.config.a_modes[0];
@@ -2116,13 +2120,13 @@ module.exports = function (RED) {
         //
         //
         //
-        updateState(new_states, current_state, state_types, exclusive_state) {
+        updateState(new_states, current_state, state_types, exclusive_states) {
             const node = this;
             let modified = [];
             Object.keys(state_types).forEach(key => {
                 if (new_states.hasOwnProperty(key)) {
                     console.log("CCHI found key " + key);
-                    if (node.setState(key, new_states[key], current_state, state_types[key], exclusive_state[key] || {})) {
+                    if (node.setState(key, new_states[key], current_state, state_types[key], exclusive_states[key] || {})) {
                         node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified.push(key);
                     }
@@ -2285,7 +2289,7 @@ module.exports = function (RED) {
                 }
                 // checks array
                 if (!(state_type.type & Formats.OBJECT)) {
-                   let new_arr = [];
+                    let new_arr = [];
                     let old_arr = Array.isArray(old_state) ? old_state : [];
                     const allowed_values = ar_statstate_typee_values.values;
                     value.forEach((elm, idx) => {
@@ -2308,7 +2312,7 @@ module.exports = function (RED) {
                     });
                     state[key] = new_arr;
                 } else {
-                     // structure check
+                    // structure check
                     let new_arr = [];
                     let old_arr = Array.isArray(old_state) ? old_state : [];
                     let key_id = state_type.key_id || undefined;
