@@ -582,8 +582,7 @@
         "y": 20,
         "wires": [
             [
-                "58c096a.8fa0d68",
-                "d8f22efa.dde0a"
+                "58c096a.8fa0d68"
             ]
         ]
     },
@@ -2175,16 +2174,20 @@
         "props": [
             {
                 "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
             }
         ],
         "repeat": "",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "",
-        "payload": "{\"brightness\":10}",
-        "payloadType": "json",
-        "x": 280,
+        "topic": "brightness",
+        "payload": "10",
+        "payloadType": "num",
+        "x": 270,
         "y": 100,
         "wires": [
             [
@@ -2541,7 +2544,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"connectivity\":{\"value\":\"OK\"}}",
+        "payload": "{\"connectivity\":{\"value\":\"OK\",\"reason\":null}}",
         "payloadType": "json",
         "x": 310,
         "y": 860,
@@ -2946,7 +2949,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"powerLevel \": -10}",
+        "payload": "{\"powerLevel\": 10}",
         "payloadType": "json",
         "x": 270,
         "y": 2420,
@@ -2971,7 +2974,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"powerLevel \": 50}",
+        "payload": "{\"powerLevel\": 50}",
         "payloadType": "json",
         "x": 270,
         "y": 2460,
@@ -3310,5 +3313,29 @@
         "x": 250,
         "y": 3420,
         "wires": []
+    },
+    {
+        "id": "eef7ac27.8e6af",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "getState",
+        "x": 520,
+        "y": 460,
+        "wires": [
+            [
+                "d8f22efa.dde0a"
+            ]
+        ]
     }
 ]

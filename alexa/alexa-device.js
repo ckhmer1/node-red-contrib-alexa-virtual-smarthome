@@ -42,7 +42,8 @@ module.exports = function (RED) {
         INT: 2,
         FLOAT: 4,
         STRING: 8,
-        PRIMITIVE: 15,
+        DATETIME: 16,
+        PRIMITIVE: 31,
         OBJECT: 32,
         ARRAY: 64,
         MANDATORY: 128,
@@ -56,6 +57,48 @@ module.exports = function (RED) {
         upperSetpoint: ['targetSetpoint'],
         targetSetpoint: ['lowerSetpoint', 'upperSetpoint'],
     };
+
+    const CAMERASTREAMS_STATE_TYPE = {
+        cameraStreams: {
+            type: Formats.OBJECT | Formats.ARRAY,
+            attributes: {
+                uri: Formats.STRING,
+                expirationTime: Formats.DATETIME,
+                idleTimeoutSeconds: {
+                    type: Formats.INT,
+                    min: 0
+                },
+                protocol: {
+                    type: Formats.STRING,
+                    values: ['HLS', 'RTSP'],
+                    resolution: {
+                        type: Formats.OBJECT,
+                        attributes: {
+                            width: Formats.INT,
+                            height: {
+                                type: Formats.INT,
+                                min: 480,
+                                max: 1080
+                            }
+                        }
+                    },
+                    authorizationType: {
+                        type: Formats.STRING,
+                        values: ['NONE', 'BASIC', 'DIGEST'],
+                    },
+                    videoCodec: {
+                        type: Formats.STRING,
+                        values: ['H264', 'MPEG2', 'MJPEG', 'JPG']
+                    },
+                    audioCodec: {
+                        type: Formats.STRING,
+                        values: ['AAC', 'G711', 'NONE']
+                    }
+                }
+            }
+        },
+        imageUri: Formats.STRING
+    }
 
 
     /******************************************************************************************************************
@@ -96,7 +139,6 @@ module.exports = function (RED) {
             });
 
             node.on('close', function (removed, done) {
-                if (node.isVerbose()) node._debug("(on-close) " + node.config.name);
                 node.onClose(removed, done);
             });
             node.updateStatusIcon();
@@ -124,7 +166,8 @@ module.exports = function (RED) {
         //
         //
         onClose(removed, done) {
-            var node = this;
+            const node = this;
+            if (node.isVerbose()) node._debug("(on-close) " + node.config.name);
             node.alexa.deregister(node, removed);
             // TODO if removed, send remove event?
 
@@ -138,7 +181,7 @@ module.exports = function (RED) {
         //
         //
         onInput(msg) {
-            var node = this;
+            const node = this;
             const topicArr = String(msg.topic || '').split('/');
             const topic = topicArr[topicArr.length - 1].toUpperCase();
             if (node.isVerbose()) node._debug("onInput " + topic);
@@ -151,10 +194,10 @@ module.exports = function (RED) {
                 })
                 // node.sendState([], {}, undefined, "getState");
             } else if (topic === 'GETALLSTATES') {
-                let states = node.alexa.get_all_states();
+                let state = node.alexa.get_all_states();
                 node.send({
                     topic: "getAllStates",
-                    payload: states
+                    payload: state
                 })
             } else if (topic === 'GETNAMES') {
                 let names = node.alexa.get_all_names();
@@ -172,7 +215,8 @@ module.exports = function (RED) {
                     node.alexa.send_doorbell_press(node.id, msg.payload || '');
                 });
             } else if (topic === 'CAMERASTREAMS') {
-                node.cameraStreams = msg.payload;
+                node.updateState(msg.payload || {}, node.cameraStreams, CAMERASTREAMS_STATE_TYPE,  {});
+                // node.cameraStreams = msg.payload;
                 if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
             } else if (topic === 'SETMEDIA') {
                 const media_to_set = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
@@ -240,8 +284,20 @@ module.exports = function (RED) {
                     node._debug("CCHI event_payload " + node.id + " event_payload " + JSON.stringify(event_payload));
                 }
             } else {
+                let msg1 = msg;
+                Object.keys(node.state_types).forEach(function (key) {
+                    if (topic == key.toUpperCase()) {
+                        msg1 = {
+                            payload: {}
+                        };
+                        msg1.payload[key] = msg.payload;
+                        node._debug(".input: found state " + key);
+                    }
+                });
+
                 if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
-                const modified = node.setValues(msg.payload || {}, node.state);
+                // const modified = node.setValues(msg1.payload || {}, node.state);
+                const modified = node.updateState(msg1.payload || {}, node.state, node.state_types, EXCLUSIVE_STATES);
                 if (node.isVerbose()) node._debug("CCHI " + node.id + " modified " + JSON.stringify(modified));
                 if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
                 if (modified.length > 0) {
@@ -273,7 +329,7 @@ module.exports = function (RED) {
                 });
                 state_types['brightness'] = {
                     type: Formats.INT,
-                    nin: 0,
+                    min: 0,
                     max: 100
                 };
             }
@@ -281,7 +337,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html
             if (node.config.i_camera_stream_controller) {
                 if (node.isVerbose()) node._debug("Alexa.CameraStreamController");
-                node.cameraStreams = [];
+                node.cameraStreams = {};
                 let camera_stream_configurations = [];
                 node.config.camera_stream_configurations.forEach(c => {
                     let r = [];
@@ -379,7 +435,7 @@ module.exports = function (RED) {
                 });
                 state_types['colorTemperatureInKelvin'] = {
                     type: Formats.INT,
-                    nin: 1000,
+                    min: 1000,
                     max: 10000
                 };
             }
@@ -1127,7 +1183,7 @@ module.exports = function (RED) {
             if (node.isVerbose()) node._debug("name " + JSON.stringify(node.name));
             if (node.isVerbose()) node._debug("capabilities " + JSON.stringify(node.capabilities));
             if (node.isVerbose()) node._debug("properties " + JSON.stringify(node.getProperties()));
-            if (node.isVerbose()) node._debug("states " + JSON.stringify(node.state));
+            if (node.isVerbose()) node._debug("state " + JSON.stringify(node.state));
             if (node.isVerbose()) node._debug("state_types " + JSON.stringify(node.state_types));
         }
 
@@ -1650,6 +1706,8 @@ module.exports = function (RED) {
             const uncertainty = 500;
             let properties = [];
             const time_of_sample = (new Date()).toISOString();
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-automationmanagement.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-brightnesscontroller.html
             // BrightnessController
             if (node.config.i_brightness_controller) {
                 properties.push({
@@ -1660,18 +1718,29 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
-            // ColorTemperatureController
-            if (node.config.i_color_temperature_controller) {
-                if (node.state['colorTemperatureInKelvin'] !== undefined) {
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-channelcontroller.html
+            if (node.config.i_channel_controller) {
+                if (node.state['channel'] !== undefined) {
                     properties.push({
-                        namespace: "Alexa.ColorTemperatureController",
-                        name: "colorTemperatureInKelvin",
-                        value: node.state['colorTemperatureInKelvin'],
+                        namespace: "Alexa.ChannelController",
+                        name: "channel",
+                        value: node.state['channel'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (node.state['channelMetadata'] !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ChannelController",
+                        name: "channelMetadata",
+                        value: node.state['channelMetadata'],
                         timeOfSample: time_of_sample,
                         uncertaintyInMilliseconds: uncertainty,
                     });
                 }
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colorcontroller.html
             // ColorController
             if (node.config.i_color_controller) {
                 if (node.state['color'] !== undefined) {
@@ -1684,6 +1753,20 @@ module.exports = function (RED) {
                     });
                 }
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colortemperaturecontroller.html
+            // ColorTemperatureController
+            if (node.config.i_color_temperature_controller) {
+                if (node.state['colorTemperatureInKelvin'] !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ColorTemperatureController",
+                        name: "colorTemperatureInKelvin",
+                        value: node.state['colorTemperatureInKelvin'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-contactsensor.html
             // ContactSensor
             if (node.config.i_contact_sensor) {
                 properties.push({
@@ -1694,6 +1777,8 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-endpointhealth.html
             // EndpointHealth
             if (node.config.i_endpoint_health) {
                 properties.push({
@@ -1704,6 +1789,7 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html
             // EqualizerController
             if (node.config.i_equalizer_controller) {
                 if (typeof node.state['bands'] === 'object') {
@@ -1725,6 +1811,32 @@ module.exports = function (RED) {
                     });
                 }
             }
+
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
+            if (node.config.i_event_detection_sensor) {
+                properties.push({
+                    namespace: "Alexa.EventDetectionSensor",
+                    name: "humanPresenceDetectionState",
+                    value: node.state['inhumanPresenceDetectionStateput'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html
+            if (node.config.i_input_controller) {
+                properties.push({
+                    namespace: "Alexa.InputController",
+                    name: "input",
+                    value: node.state['input'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventorylevelsensor.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventoryusagesensor.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-keypadcontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-lockcontroller.html
             // LockController
             if (node.config.i_lock_controller) {
                 properties.push({
@@ -1735,6 +1847,10 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-modecontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-motionsensor.html
             // MotionSensor
             if (node.config.i_motion_sensor) {
                 properties.push({
@@ -1745,6 +1861,7 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-percentagecontroller.html
             // PercentageController
             if (node.config.i_percentage_controller) {
                 properties.push({
@@ -1755,6 +1872,34 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackcontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html
+            // PowerController
+            if (node.config.i_power_controller || node.config.i_wake_on_lan_controller) {
+                properties.push({
+                    namespace: "Alexa.PowerController",
+                    name: "powerState",
+                    value: node.state['powerState'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powerlevelcontroller.html
+            if (node.config.i_power_level_controller) {
+                properties.push({
+                    namespace: "Alexa.PowerLevelController",
+                    name: "powerLevel",
+                    value: node.state['powerLevel'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rangecontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rtcsessioncontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-scenecontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html
             // SecurityPanelController
             if (node.config.i_security_panel_controller) {
                 if (node.state['armState']) {
@@ -1776,16 +1921,19 @@ module.exports = function (RED) {
                     });
                 });
             }
-            // PowerController
-            if (node.config.i_power_controller || node.config.i_wake_on_lan_controller) {
+
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-speaker.html
+            if (node.config.i_speaker) {
                 properties.push({
-                    namespace: "Alexa.PowerController",
-                    name: "powerState",
-                    value: node.state['powerState'],
+                    namespace: "Alexa.Speaker",
+                    name: "volume",
+                    value: node.state['volume'],
                     timeOfSample: time_of_sample,
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-stepspeaker.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-temperaturesensor.html
             // TemperatureSensor
             if (node.config.i_temperature_sensor) {
                 properties.push({
@@ -1796,6 +1944,7 @@ module.exports = function (RED) {
                     uncertaintyInMilliseconds: uncertainty,
                 });
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller.html
             // ThermostatController
             if (node.config.i_thermostat_controller) {
                 if (node.state.targetSetpoint !== undefined) {
@@ -1835,6 +1984,47 @@ module.exports = function (RED) {
                     });
                 }
             }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
+            if (node.config.i_thermostat_controller_hvac_components) {
+                if (node.state.primaryHeaterOperation !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ThermostatController.HVAC.Components",
+                        name: "primaryHeaterOperation",
+                        value: node.state['primaryHeaterOperation'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (node.state.auxiliaryHeaterOperation !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ThermostatController.HVAC.Components",
+                        name: "auxiliaryHeaterOperation",
+                        value: node.state['auxiliaryHeaterOperation'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (node.state.primaryHeaterOperation !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ThermostatController.HVAC.Components",
+                        name: "coolerOperation",
+                        value: node.state['coolerOperation'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (node.state.primaryHeaterOperation !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ThermostatController.HVAC.Components",
+                        name: "fanOperation",
+                        value: node.state['fanOperation'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
             return properties;
         }
 
@@ -1926,18 +2116,20 @@ module.exports = function (RED) {
         //
         //
         //
-        updateState(new_states) {
+        updateState(new_states, current_state, state_types, exclusive_state) {
             const node = this;
-            let modified = false;
-            Object.keys(node.state_types).forEach(function (key) {
+            let modified = [];
+            Object.keys(state_types).forEach(key => {
                 if (new_states.hasOwnProperty(key)) {
-                    if (node.setState(key, new_states[key], node.states, node.state_types[key], EXCLUSIVE_STATES[key] || {})) {
-                        node._debug('.updateState: set "' + key + '" to ' + JSON.stringify(new_states[key]));
-                        modified = true;
+                    console.log("CCHI found key " + key);
+                    if (node.setState(key, new_states[key], current_state, state_types[key], exclusive_state[key] || {})) {
+                        node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                        modified.push(key);
                     }
+                    console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
                 }
             });
-            node._debug('.updateState: new State ' + modified + ' ' + JSON.stringify(node.states));
+            node._debug('updateState new State modified ' + JSON.stringify(modified) + ' state ' + JSON.stringify(current_state));
             return modified;
         }
 
@@ -1956,7 +2148,7 @@ module.exports = function (RED) {
                     if (node.setState(key, new_obj[key], cur_obj, state_values[key] || {}, exclusive_states[key] || {})) {
                         differs = true;
                     }
-                } else if (!(state_values[key].type & formats.MANDATORY)) {
+                } else if (!(state_values[key].type & Formats.MANDATORY)) {
                     delete cur_obj[key];
                 }
             });
@@ -1997,6 +2189,9 @@ module.exports = function (RED) {
 
                         return fval;
 
+                    case Formats.DATETIME:
+                        return value;
+
                     default:
                         let val = parseInt(value)
 
@@ -2009,11 +2204,15 @@ module.exports = function (RED) {
             } else if (typeof value === 'number') {
                 switch (format) {
                     case Formats.BOOL:
-                        let val = (value > 0)
+                        let val = (value != 0)
                         return val;
 
                     case Formats.STRING:
                         return value.toString();
+
+                    case Formats.DATETIME:
+                        let dval = new Date(value);
+                        return dval.toISOString();
 
                     default:
                         return value;
@@ -2052,10 +2251,10 @@ module.exports = function (RED) {
         //
         //
         //
-        setState(key, value, states, state_type, exclusive_states) {
+        setState(key, value, state, state_type, exclusive_states) {
             const node = this;
             let differs = false;
-            let old_state = typeof states === 'object' ? states[key] : {};
+            let old_state = typeof state === 'object' ? state[key] : {};
             let new_state = undefined;
             let exclusive_states_arr = [];
             if (Array.isArray(exclusive_states)) {
@@ -2064,24 +2263,29 @@ module.exports = function (RED) {
             }
             if (typeof state_type === 'number') {
                 state_type = {
-                    type: this.state
+                    type: state_type
                 };
             }
+            console.log("CCHI ---> setState key " + JSON.stringify(key) +
+                " v " + JSON.stringify(value) +
+                " ov " + JSON.stringify(old_state) +
+                " st " + JSON.stringify(state_type) +
+                " ex " + JSON.stringify(exclusive_states));
 
-        if (value == null) {
-            if (state_type.type & Formats.MANDATORY) {
-                RED.log.error("key " + key + " is mandatory.");
-            } else if (states.hasOwnProperty(key)) {
-                delete states[key];
-                differs = true;
-            }
-        } else if (state_type.type & Formats.ARRAY) {
+            if (value == null) {
+                if (state_type.type & Formats.MANDATORY) {
+                    RED.log.error("key " + key + " is mandatory.");
+                } else if (state.hasOwnProperty(key)) {
+                    delete state[key];
+                    differs = true;
+                }
+            } else if (state_type.type & Formats.ARRAY) {
                 if (!Array.isArray(value)) {
                     value = [value];
                 }
                 // checks array
                 if (!(state_type.type & Formats.OBJECT)) {
-                    let new_arr = [];
+                   let new_arr = [];
                     let old_arr = Array.isArray(old_state) ? old_state : [];
                     const allowed_values = ar_statstate_typee_values.values;
                     value.forEach((elm, idx) => {
@@ -2102,16 +2306,16 @@ module.exports = function (RED) {
                             differs = true;
                         }
                     });
-                    states[key] = new_arr;
+                    state[key] = new_arr;
                 } else {
-                    // structure check
+                     // structure check
                     let new_arr = [];
                     let old_arr = Array.isArray(old_state) ? old_state : [];
                     let key_id = state_type.key_id || undefined;
-                    let add_if_missing = state_type.add_if_missing || false;
+                    let add_if_missing = typeof state_type.add_if_missing === 'boolean' ? state_type.add_if_missing : true;
                     let remove_if_no_data = !(state_type.type & Formats.MANDATORY);
                     let is_valid_key;
-                    let replace_all = state_type.replace_all || false;
+                    let replace_all = state_type.replace_all || key_id === undefined;
                     if (typeof state_type.is_valid_key === 'function') {
                         is_valid_key = state_type.is_valid_key;
                     } else {
@@ -2169,21 +2373,22 @@ module.exports = function (RED) {
                     if (replace_all && new_arr.length != old_arr.length) {
                         differs = true;
                     }
-                    states[key] = replace_all ? new_arr : old_arr;
-                    if (remove_if_no_data && states[key].length === 0) {
-                        delete states[key];
+                    state[key] = replace_all ? new_arr : old_arr;
+                    if (remove_if_no_data && state[key].length === 0) {
+                        delete state[key];
                     }
                 }
             } else if (state_type.type & Formats.OBJECT) {
                 if (Array.isArray(value)) {
                     RED.log.error('key "' + key + '" must be an object.');
                 } else {
-                    if (states[key] === undefined) {
-                        states[key] = {};
-                        old_state = states[key];
+                    if (state[key] === undefined) {
+                        state[key] = {};
+                        old_state = state[key];
                     }
                     let mandatory_to_delete = [];
                     Object.keys(state_type.attributes).forEach(function (ikey) {
+                        console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
                         if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
                             if (typeof old_state[ikey] == 'undefined') {
                                 old_state[ikey] = {};
@@ -2191,28 +2396,34 @@ module.exports = function (RED) {
                             if (node.setState(ikey, value[ikey], old_state, state_type.attributes[ikey], exclusive_states[ikey] || {})) {
                                 differs = true;
                             }
-                        } else if (typeof state_type.attributes[ikey] === 'number' && !(state_type.attributes[ikey] & formats.MANDATORY)) {
-                            if (typeof states[ikey] != 'undefined') {
-                                differs = true;
-                            }
-                            delete states[ikey];
                         } else {
-                            mandatory_to_delete.push(ikey);
+                            const a_state_type = typeof state_type.attributes[ikey] === 'number' ? state_type.attributes[ikey] : state_type.attributes[ikey].type;
+                            console.log("a_state " + JSON.stringify(a_state_type));
+                            if (a_state_type & Formats.MANDATORY) {
+                                mandatory_to_delete.push(ikey);
+                            } else {
+                                if (typeof state[ikey] != 'undefined') {
+                                    differs = true;
+                                }
+                                delete state[key][ikey];
+                                console.log("Deleted " + ikey + " " + JSON.stringify(state[key]));
+                            }
                         }
                     });
                     mandatory_to_delete.forEach(ikey => {
+                        console.log("try removing " + ikey);
                         const e_states = exclusive_states[ikey] || [];
                         let exclusive_state_found = false;
                         e_states.forEach(e_state => {
-                            if (typeof states[e_state] !== 'undefined') {
+                            if (typeof state[e_state] !== 'undefined') {
                                 exclusive_state_found = false;
                             }
                         });
                         if (!exclusive_state_found) {
-                            if (typeof states[ikey] != 'undefined') {
+                            if (typeof state[ikey] != 'undefined') {
                                 differs = true;
                             }
-                            delete states[ikey];
+                            delete state[ikey];
                         } else {
                             RED.log.error('key "' + key + '.' + ikey + '" is mandatory.');
                         }
@@ -2230,24 +2441,29 @@ module.exports = function (RED) {
                         }
                     });
                 }
-            } else if (state_type.type & Formats.FLOAT) {
-                new_state = formats.FormatValue(formats.Formats.FLOAT, key, value, state_type.default_value);
-            } else if (state_type.type & Formats.INT) {
-                new_state = formats.FormatValue(formats.Formats.INT, key, value, state_type.default_value);
-            } else if (state_type.type & Formats.STRING) {
-                new_state = formats.FormatValue(formats.Formats.STRING, key, value, state_type.default_value);
-            } else if (state_type.type & Formats.BOOL) {
-                new_state = formats.FormatValue(formats.Formats.BOOL, key, value, state_type.default_value);
-            }
-            if (!(state_type.type & (Formats.OBJECT | Formats.ARRAY))) {
-                if (new_state !== undefined) {
-                    differs = old_state !== new_state;
-                    states[key] = new_state;
+            } else {
+                new_state = node.formatValue(key, value, state_type.type & Formats.PRIMITIVE, state_type.default_value);
+                console.log("CCHI checking new_state " + key + " " + new_state + " type " + JSON.stringify(state_type));
+                if (state_type.min !== undefined && new_state < state_type.min) {
+                    RED.log.error('key "' + key + '" must be greather or equal than ' + state_type.min);
+                    new_state = undefined;
+                } else if (state_type.max !== undefined && new_state > state_type.max) {
+                    RED.log.error('key "' + key + '" must be lower or equal than ' + state_type.max);
+                    new_state = undefined;
+                } else if (Array.isArray(state_type.values) && !state_type.values.includes(new_state)) {
+                    RED.log.error('key "' + key + '" must be one of ' + JSON.stringify(state_type.values));
+                    new_state = undefined;
                 }
             }
-            if (differs) {
-                exclusive_states_arr.forEach(rkey => delete states[rkey]);
+            if (new_state !== undefined && !(state_type.type & (Formats.OBJECT | Formats.ARRAY))) {
+                console.log("CCHI Update state for " + key + " to " + new_state);
+                differs = old_state !== new_state;
+                state[key] = new_state;
             }
+            if (differs) {
+                exclusive_states_arr.forEach(rkey => delete state[rkey]);
+            }
+            console.log("CCHI END ----> " + key + " = " + JSON.stringify(state[key]));
             return differs;
         }
 
