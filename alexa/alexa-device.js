@@ -108,7 +108,7 @@ module.exports = function (RED) {
     class AlexaDeviceNode {
         constructor(config) {
             RED.nodes.createNode(this, config);
-            var node = this;
+            const node = this;
             node.config = config;
             node.YES = RED._("alexa-device.label.YES");
             node.NO = RED._("alexa-device.label.NO");
@@ -228,6 +228,7 @@ module.exports = function (RED) {
                 const media_id_to_add = node.media.map(m => m.id);
                 if (node.media) node.alexa.send_media_created_or_updated(node.id, node.media);
                 if (media_id_to_remove.length > 0) node.alexa.send_media_deleted(node.id, media_id_to_remove);
+                if (node.isVerbose()) node._debug("CCHI media " + node.id + " " + JSON.stringify(node.media));
             } else if (topic === 'ADDORUPDATEMEDIA') {
                 const media_to_add = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                 const media_id_to_add = media_to_add.map(m => m.id);
@@ -236,12 +237,14 @@ module.exports = function (RED) {
                 node.media = node.media.filter(m => !existing_media_id_to_update.includes(m.id)); // Remove old media to update
                 media_to_add.forEach(m => node.media.push(m));
                 if (media_to_add) node.alexa.send_media_created_or_updated(node.id, media_to_add);
+                if (node.isVerbose()) node._debug("CCHI media " + node.id + " " + JSON.stringify(node.media));
             } else if (topic === 'REMOVEMEDIA') {
                 const media_id_to_remove = Array.isArray(msg.payload) ? msg.payload : [msg.payload];
                 const media_to_remove = node.media.filter(m => media_id_to_remove.includes(m.id));
                 node.media = node.media.filter(m => !media_id_to_remove.includes(m.id));
                 const media_id_removed = media_to_remove.map(m => m.id);
                 if (media_id_removed.length > 0) node.alexa.send_media_deleted(node.id, media_id_removed);
+                if (node.isVerbose()) node._debug("CCHI media " + node.id + " " + JSON.stringify(node.media));
             } else if (topic === 'SETSECURITYDEVICENAMESINERROR') {
                 const topics = typeof msg.payload === 'string' ? [] : (Array.isArray(msg.payload || []) ? [] : msg.payload.topics);
                 const names = typeof msg.payload === 'string' ? [msg.payload] : (Array.isArray(msg.payload || []) ? msg.payload || [] : msg.payload.names);
@@ -311,7 +314,7 @@ module.exports = function (RED) {
         }
 
         setupCapabilities() {
-            var node = this;
+            const node = this;
             let state_types = node.state_types;
             node.capabilities = [];
             node.endpoint = node.getEndpoint();
@@ -708,11 +711,6 @@ module.exports = function (RED) {
                             name: band,
                             value: 0
                         });
-                        attributes[band] = {
-                            type: Formats.INT + Formats.MANDATORY,
-                            min: node.to_int(node.config.band_range_min, 0),
-                            max: node.to_int(node.config.band_range_max, 10),
-                        };
                     });
                     properties['bands'] = bands_value;
                     configurations['bands'] = {
@@ -723,8 +721,18 @@ module.exports = function (RED) {
                         }
                     }
                     state_types['bands'] = {
-                        type: Formats.OBJECT,
-                        attributes: attributes,
+                        type: Formats.OBJECT + Formats.ARRAY,
+                        attributes: {
+                            name: {
+                                type: Formats.STRING,
+                                values: node.config.bands
+                            },
+                            value: {
+                                type: Formats.INT + Formats.MANDATORY,
+                                min: node.to_int(node.config.band_range_min, 0),
+                                max: node.to_int(node.config.band_range_max, 10),
+                            }
+                        },
                     };
                 }
                 if (node.config.modes.length > 0) {
@@ -1193,7 +1201,7 @@ module.exports = function (RED) {
         }
 
         getEndpoint() {
-            var node = this;
+            const node = this;
             let endpoint = {
                 "endpointId": node.config.id,
                 "manufacturerName": "Node-RED",
@@ -1217,7 +1225,7 @@ module.exports = function (RED) {
         //
         //
         getCapability(iface, properties_val) {
-            var node = this;
+            const node = this;
             let capability = {
                 type: "AlexaInterface",
                 interface: iface,
@@ -1247,7 +1255,7 @@ module.exports = function (RED) {
         //
         //
         addCapability(iface, properties_val, attributes) {
-            var node = this;
+            const node = this;
             let capability = node.getCapability(iface, properties_val);
             if (attributes !== undefined) {
                 Object.assign(capability, attributes);
@@ -1262,7 +1270,7 @@ module.exports = function (RED) {
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
         execDirective(header, payload, cmd_res) { // Directive
-            var node = this;
+            const node = this;
             const namespace = header['namespace']
             const name = header['name']
             if (node.isVerbose()) node._debug("execDirective state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
@@ -1676,7 +1684,7 @@ module.exports = function (RED) {
         //
         //
         sendState(modified, inputs, namespace, name, other_data) {
-            var node = this;
+            const node = this;
             if (modified === undefined) {
                 modified = [];
             }
@@ -1707,7 +1715,7 @@ module.exports = function (RED) {
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
         getProperties() {
-            var node = this;
+            const node = this;
             const uncertainty = 500;
             let properties = [];
             const time_of_sample = (new Date()).toISOString();
@@ -2474,7 +2482,7 @@ module.exports = function (RED) {
         //
         //
         setValues(from_object, to_object) {
-            var node = this;
+            const node = this;
             let differs = [];
             Object.keys(to_object).forEach(function (key) {
                 if (from_object.hasOwnProperty(key)) {
@@ -2492,7 +2500,7 @@ module.exports = function (RED) {
         //
         //
         setValue(key, value, to_object, float_values) {
-            var node = this;
+            const node = this;
             let differs = false;
             const old_value = to_object[key];
             const val_type = typeof old_value;

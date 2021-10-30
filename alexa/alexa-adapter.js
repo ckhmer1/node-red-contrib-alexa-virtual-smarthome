@@ -106,7 +106,7 @@ module.exports = function (RED) {
     class AlexaAdapterNode {
         constructor(config) {
             RED.nodes.createNode(this, config);
-            var node = this;
+            const node = this;
             node.config = config;
             if (node.config.verbose) node._debug("config " + JSON.stringify(config));
             if (node.config.verbose) node._debug("credentials " + JSON.stringify(node.credentials));
@@ -123,7 +123,7 @@ module.exports = function (RED) {
         //
         //
         init(config) {
-            var node = this;
+            const node = this;
             node.http_path = config.http_path || '';
             node.http_port = config.port || '';
             node.http_root = node.Path_join('/', node.http_path.trim());
@@ -149,7 +149,7 @@ module.exports = function (RED) {
         //
         //
         register(device) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("register device id " + device.id + " " + device.type);
             node.devices[device.id] = device;
             process.nextTick(() => {
@@ -162,7 +162,7 @@ module.exports = function (RED) {
         //
         //
         deregister(device, removed) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("deregister device id " + device.id + " removed " + removed);
             if (node.device[device.id]) {
                 delete node.device[device.id];
@@ -193,7 +193,7 @@ module.exports = function (RED) {
         //
         //
         setup() {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("setup server path " + node.http_server.path());
             node.get_tokens()
                 .then(() => {
@@ -256,7 +256,7 @@ module.exports = function (RED) {
         //
         //
         UnregisterUrl() {
-            var node = this;
+            const node = this;
             if (node._httpNodeRoot !== false && node.app._router) {
                 if (node.config.verbose) node._debug("Removing url");
                 var get_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
@@ -293,7 +293,7 @@ module.exports = function (RED) {
         //
         //
         shutdown(removed, done) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("(on-close)");
             node.UnregisterUrl();
             if (node.handler) {
@@ -323,7 +323,7 @@ module.exports = function (RED) {
         //
         //
         oauth_get(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('oauth_get');
             if (node.config.verbose) node._debug('oauth_get CCHI ' + JSON.stringify(req.query));
 
@@ -407,7 +407,7 @@ module.exports = function (RED) {
         //
         //
         oauth_post(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('oauth_post');
             if (node.config.verbose) node._debug('oauth_post CCHI ' + JSON.stringify(req.body));
             const username = req.body.username || '';
@@ -478,7 +478,7 @@ module.exports = function (RED) {
         //
         //
         token_get(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('token_get');
             const uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, TOKEN_PATH);
             res.status(200).send(uri);
@@ -489,7 +489,7 @@ module.exports = function (RED) {
         //
         //
         token_post(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('token_post');
             if (node.config.verbose) node._debug('token_post CCHI ' + JSON.stringify(req.body));
             const grant_type = req.body.grant_type || '';
@@ -574,7 +574,7 @@ module.exports = function (RED) {
         //
         //
         smarthome_get(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('smarthome_get');
             const uri = 'https://' + node.Path_join(req.get('Host'), node.http_root);
             // res.status(200).send(node.Path_join(uri, SMART_HOME_PATH));
@@ -586,7 +586,7 @@ module.exports = function (RED) {
         //
         //
         smarthome_post_verify(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("smarthome_post_verify");
             if (!node.config.verbose) {
                 new SkillRequestSignatureVerifier()
@@ -614,7 +614,7 @@ module.exports = function (RED) {
         //
         //
         smarthome_post(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("smarthome_post");
             if (node.config.verbose) node._debug('smarthome_post CCHI ' + JSON.stringify(req.body));
             if (!node.tokens) {
@@ -781,7 +781,7 @@ module.exports = function (RED) {
         //
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-errorresponse.html
         send_error_response(res, messageId, endpointId, error_type, error_message) {
-            var node = this;
+            const node = this;
             const error_msg = node.get_error_response(error_type, error_message, endpointId, messageId);
             if (node.config.verbose) node._debug("CCHI send_error_response " + JSON.stringify(error_msg));
             if (res) {
@@ -819,7 +819,7 @@ module.exports = function (RED) {
         //
         //
         get_error_response(error_type, error_message, endpointId, messageId) {
-            var node = this;
+            const node = this;
             let error_msg = {
                 event: {
                     header: {
@@ -846,7 +846,7 @@ module.exports = function (RED) {
         //
         //
         show_login_page(res, error) {
-            var node = this;
+            const node = this;
             // Show login page
             fs.readFile(path.join(__dirname, 'html/login.html'), 'utf8', function (err, data) {
                 if (err) {
@@ -877,7 +877,7 @@ module.exports = function (RED) {
         //
         //
         show_test_page(res, url) {
-            var node = this;
+            const node = this;
             // Show login page
             fs.readFile(path.join(__dirname, 'html/test.html'), 'utf8', function (err, data) {
                 if (err) {
@@ -900,7 +900,7 @@ module.exports = function (RED) {
         //
         //
         show_policy_page(res) {
-            var node = this;
+            const node = this;
             // Show login page
             fs.readFile(path.join(__dirname, 'html/policy.html'), 'utf8', function (err, data) {
                 if (err) {
@@ -921,7 +921,7 @@ module.exports = function (RED) {
         //
         //
         get_user_profile(access_token, type) {
-            var node = this;
+            const node = this;
             return new Promise((resolve, reject) => {
                 (access_token ? Promise.resolve({ access_token: access_token }) : node.get_access_token(type || 'lwa'))
                     .then(res => {
@@ -956,7 +956,7 @@ module.exports = function (RED) {
         //
         //
         accept_grant(req, res) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('accept_grant');
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html
             // https://developer.amazon.com/docs/login-with-amazon/web-docs.html
@@ -1002,7 +1002,7 @@ module.exports = function (RED) {
         //
         //
         send_accept_granterror(res, msg) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('send_accept_granterror');
             const error_response = {
                 event: {
@@ -1028,7 +1028,7 @@ module.exports = function (RED) {
         //
         //
         manage_login_with_amazon_access_token(oreq, ores) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('manage_login_with_amazon_access_token');
             // https://developer.amazon.com/docs/login-with-amazon/authorization-code-grant.html
             const code = oreq.query.code || '';
@@ -1087,7 +1087,7 @@ module.exports = function (RED) {
         //
         //
         redirect_to_login_page(res, err) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('redirect_to_login_page');
             return res.redirect(util.format(
                 '%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&scope=%s%s',
@@ -1100,7 +1100,7 @@ module.exports = function (RED) {
         //
         //
         redirect_to_amazon(res, code) {
-            var node = this;
+            const node = this;
             const url = util.format('%s?state=%s&code=%s', node.skill_link_req.redirect_uri, node.skill_link_req.state, code);
             if (node.config.verbose) node._debug('redirect_to_amazon to ' + url);
             return res.redirect(url);
@@ -1111,7 +1111,7 @@ module.exports = function (RED) {
         //
         //
         get_all_states() {
-            var node = this;
+            const node = this;
             let states = {};
             Object.keys(node.devices).forEach(function (key) {
                 const device = node.devices[key];
@@ -1127,7 +1127,7 @@ module.exports = function (RED) {
         //
         //
         get_all_names() {
-            var node = this;
+            const node = this;
             let names = {};
             Object.keys(node.devices).forEach(function (key) {
                 const device = node.devices[key];
@@ -1141,7 +1141,7 @@ module.exports = function (RED) {
         //
         //
         get_devices_id_name(names, topics) {
-            var node = this;
+            const node = this;
             let id_names = {};
             if (names === undefined) {
                 names = [];
@@ -1165,7 +1165,7 @@ module.exports = function (RED) {
         // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-response.html
         get_report_state(endpointId, correlationToken, access_token, messageId) {
-            var node = this;
+            const node = this;
             const state = {
                 event: {
                     header: {
@@ -1199,7 +1199,7 @@ module.exports = function (RED) {
         // 
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
         get_delete_report(endpointIds, correlationToken, access_token) {
-            var node = this;
+            const node = this;
             let endpoints = [];
             if (typeof endpointIds === 'string') {
                 endpoints.push({
@@ -1247,7 +1247,7 @@ module.exports = function (RED) {
         //
         send_doorbell_press(endpointId, cause) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('send_doorbell_press' + cause);
 
             node.get_access_token('evn')
@@ -1304,7 +1304,7 @@ module.exports = function (RED) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
-            var node = this;
+            const node = this;
             return new Promise((resolve, reject) => {
                 if (node.config.verbose) node._debug('send_event_gw ' + endpointId);
                 node.get_access_token('evn')
@@ -1361,7 +1361,7 @@ module.exports = function (RED) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
-            var node = this;
+            const node = this;
             return new Promise((resolve, reject) => {
                 if (node.config.verbose) node._debug('send_change_report ' + endpointId);
                 if (changed_property_names === undefined) {
@@ -1404,7 +1404,7 @@ module.exports = function (RED) {
         //
         send_delete_report(endpointIds, correlationToken) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('send_delete_report ' + JSON.stringify(endpointIds));
             node.get_access_token('evn')
                 .then(access_token => {
@@ -1434,7 +1434,7 @@ module.exports = function (RED) {
         //
         //
         get_response_report(endpointId, correlationToken, access_token, namespace, name) {
-            var node = this;
+            const node = this;
             const properties = node.devices[endpointId].getProperties();
             let response = {
                 event: {
@@ -1467,7 +1467,7 @@ module.exports = function (RED) {
         //
         //
         get_add_or_update_report(endpointId) {
-            var node = this;
+            const node = this;
             const access_token = node.tokens.evn.access_token;
             const endpoint = node.devices[endpointId].getEndpoint();
             const state = {
@@ -1501,7 +1501,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('send_add_or_update_report ' + endpointId);
             node.get_access_token('evn')
                 .then(access_token => {
@@ -1537,7 +1537,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
-            var node = this;
+            const node = this;
             if (media) {
                 if (Array.isArray(media)) {
                     media.forEach(m => node.send_media_created_or_updated(endpointId, m));
@@ -1578,7 +1578,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('send_media_deleted ' + endpointId);
             if (mediaIds === undefined) {
                 mediaIds = [];
@@ -1646,7 +1646,7 @@ module.exports = function (RED) {
         //
         //
         get_change_report(endpointId, namespace, name, messageId, changed_property_names, reason) {
-            var node = this;
+            const node = this;
             let changed_properties = [];
             let unchanged_properties = [];
             let payload = {};
@@ -1703,9 +1703,9 @@ module.exports = function (RED) {
         //
         //
         get_media_created_or_updated(endpointId, media, namespace, name, messageId) {
-            var node = this;
+            const node = this;
             const oauth2_bearer_token = node.tokens.evn.access_token;
-            if (node.config.verbose) node._debug('endpointId ' + endpointId + ' mediaIds ' + JSON.stringify(mediaIds));
+            if (node.config.verbose) node._debug('get_media_created_or_updated endpointId ' + endpointId + ' media ' + JSON.stringify(media));
             const msg = {
                 event: {
                     header: {
@@ -1738,7 +1738,7 @@ module.exports = function (RED) {
         //
         //
         get_media_deleted(endpointId, mediaIds, namespace, name, messageId) {
-            var node = this;
+            const node = this;
             const oauth2_bearer_token = node.tokens.evn.access_token;
             if (node.config.verbose) node._debug('endpointId ' + endpointId + ' mediaIds ' + JSON.stringify(mediaIds));
             const msg = {
@@ -1773,7 +1773,7 @@ module.exports = function (RED) {
         //
         //
         /*get_state(endpointId) {
-            var node = this;
+            const node = this;
             const messageId = node.tokgen.generate();
             if (endpointId) {
                 if (node.devices[endpointId]) {
@@ -1810,7 +1810,7 @@ module.exports = function (RED) {
         //
         //
         get_tokens() {
-            var node = this;
+            const node = this;
             return new Promise((resolve, reject) => {
                 if (node.tokens === undefined) {
                     node.loadJson("tokens", node.tokens_filename, {}, node.user_dir)
@@ -1832,7 +1832,7 @@ module.exports = function (RED) {
         //
         //
         save_tokens() {
-            var node = this;
+            const node = this;
             return new Promise((resolve, reject) => {
                 if (node.tokens) {
                     node.writeJson("tokens", node.tokens_filename, node.tokens, node.user_dir)
@@ -1854,7 +1854,7 @@ module.exports = function (RED) {
         //
         // https://developer.amazon.com/docs/login-with-amazon/authorization-code-grant.html
         get_access_token(type, code) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug("get_access_token " + type);
             return new Promise((resolve, reject) => {
                 node.get_tokens()
@@ -1936,7 +1936,7 @@ module.exports = function (RED) {
         //
         //
         loadJsonSync(text, filename, defaultValue, userDir) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('loadJsonSync: ' + text);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
@@ -1980,7 +1980,7 @@ module.exports = function (RED) {
         //
         //
         writeJsonSync(text, filename, value, userDir) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('writeJsonSync: ' + text);
             if (!filename.startsWith(path.sep)) {
                 filename = path.join(userDir, filename);
@@ -2013,7 +2013,7 @@ module.exports = function (RED) {
         //
         //
         loadJson(tag, filename, defaultValue, userDir) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('loadJson: ' + tag);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
@@ -2055,7 +2055,7 @@ module.exports = function (RED) {
         //
         //
         writeJson(tag, filename, data, userDir) {
-            var node = this;
+            const node = this;
             if (node.config.verbose) node._debug('writeJson: ' + tag);
             if (!filename.startsWith(path.sep)) {
                 filename = path.join(userDir, filename);
@@ -2087,7 +2087,7 @@ module.exports = function (RED) {
         //
         //
         objectMerge(to_object, from_object) {
-            var node = this;
+            const node = this;
             if (from_object) {
                 Object.keys(from_object).forEach(function (key) {
                     if (to_object.hasOwnProperty(key)) {
