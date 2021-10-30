@@ -2483,6 +2483,8 @@ module.exports = function (RED) {
         //
         setValues(from_object, to_object) {
             const node = this;
+            return node.updateState(from_object, node.state, node.state_types, EXCLUSIVE_STATES);
+            /*
             let differs = [];
             Object.keys(to_object).forEach(function (key) {
                 if (from_object.hasOwnProperty(key)) {
@@ -2493,13 +2495,14 @@ module.exports = function (RED) {
             });
             node.updateStatusIcon();
             return differs;
+            */
         }
 
         //
         //
         //
         //
-        setValue(key, value, to_object, float_values) {
+        /*setValue(key, value, to_object, float_values) {
             const node = this;
             let differs = false;
             const old_value = to_object[key];
@@ -2575,7 +2578,8 @@ module.exports = function (RED) {
                 }
             }
             return differs;
-        }
+        }*/
+
         //
         //
         //
