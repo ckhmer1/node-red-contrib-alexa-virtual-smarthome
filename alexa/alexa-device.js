@@ -184,6 +184,7 @@ module.exports = function (RED) {
             const node = this;
             const topicArr = String(msg.topic || '').split('/');
             const topic = topicArr[topicArr.length - 1].toUpperCase();
+            if (node.isVerbose()) node._debug("onInput " + JSON.stringify(msg));
             if (node.isVerbose()) node._debug("onInput " + topic);
             if (topic === 'REPORTSTATE') {
                 node.alexa.send_change_report(node.id).then(() => { });
@@ -1099,7 +1100,7 @@ module.exports = function (RED) {
                 if (node.config.a_modes.length > 1) {
                     properties.thermostatMode = node.config.a_modes.includes('OFF') ? 'OFF' : node.config.a_modes[0];
                     state_types['thermostatMode'] = {
-                        type: Formats.OBJECT,
+                        type: Formats.STRING,
                         values: node.config.a_modes,
                     };
                 }
@@ -2125,12 +2126,12 @@ module.exports = function (RED) {
             let modified = [];
             Object.keys(state_types).forEach(key => {
                 if (new_states.hasOwnProperty(key)) {
-                    console.log("CCHI found key " + key);
+                    // console.log("CCHI found key " + key);
                     if (node.setState(key, new_states[key], current_state, state_types[key], exclusive_states[key] || {})) {
                         node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified.push(key);
                     }
-                    console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
+                    // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
                 }
             });
             node._debug('updateState new State modified ' + JSON.stringify(modified) + ' state ' + JSON.stringify(current_state));
@@ -2260,21 +2261,18 @@ module.exports = function (RED) {
             let differs = false;
             let old_state = typeof state === 'object' ? state[key] : {};
             let new_state = undefined;
-            let exclusive_states_arr = [];
-            if (Array.isArray(exclusive_states)) {
-                exclusive_states_arr = exclusive_states;
-                exclusive_states = {};
-            }
             if (typeof state_type === 'number') {
                 state_type = {
                     type: state_type
                 };
             }
-            console.log("CCHI ---> setState key " + JSON.stringify(key) +
-                " v " + JSON.stringify(value) +
-                " ov " + JSON.stringify(old_state) +
-                " st " + JSON.stringify(state_type) +
-                " ex " + JSON.stringify(exclusive_states));
+            exclusive_states = state_type.exclusive_states || {};
+            let exclusive_states_arr = [];
+            if (Array.isArray(exclusive_states)) {
+                exclusive_states_arr = exclusive_states;
+                exclusive_states = {};
+            }
+            // console.log("CCHI ---> setState key " + JSON.stringify(key) + " v " + JSON.stringify(value) + " ov " + JSON.stringify(old_state) + " st " + JSON.stringify(state_type) + " ex " + JSON.stringify(exclusive_states));
 
             if (value == null) {
                 if (state_type.type & Formats.MANDATORY) {
@@ -2392,7 +2390,7 @@ module.exports = function (RED) {
                     }
                     let mandatory_to_delete = [];
                     Object.keys(state_type.attributes).forEach(function (ikey) {
-                        console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
+                        // console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
                         if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
                             if (typeof old_state[ikey] == 'undefined') {
                                 old_state[ikey] = {};
@@ -2402,7 +2400,7 @@ module.exports = function (RED) {
                             }
                         } else {
                             const a_state_type = typeof state_type.attributes[ikey] === 'number' ? state_type.attributes[ikey] : state_type.attributes[ikey].type;
-                            console.log("a_state " + JSON.stringify(a_state_type));
+                            // console.log("a_state " + JSON.stringify(a_state_type));
                             if (a_state_type & Formats.MANDATORY) {
                                 mandatory_to_delete.push(ikey);
                             } else {
@@ -2410,12 +2408,12 @@ module.exports = function (RED) {
                                     differs = true;
                                 }
                                 delete state[key][ikey];
-                                console.log("Deleted " + ikey + " " + JSON.stringify(state[key]));
+                                // console.log("Deleted " + ikey + " " + JSON.stringify(state[key]));
                             }
                         }
                     });
                     mandatory_to_delete.forEach(ikey => {
-                        console.log("try removing " + ikey);
+                        // console.log("try removing " + ikey);
                         const e_states = exclusive_states[ikey] || [];
                         let exclusive_state_found = false;
                         e_states.forEach(e_state => {
@@ -2447,7 +2445,7 @@ module.exports = function (RED) {
                 }
             } else {
                 new_state = node.formatValue(key, value, state_type.type & Formats.PRIMITIVE, state_type.default_value);
-                console.log("CCHI checking new_state " + key + " " + new_state + " type " + JSON.stringify(state_type));
+                // console.log("CCHI checking new_state " + key + " " + new_state + " type " + JSON.stringify(state_type));
                 if (state_type.min !== undefined && new_state < state_type.min) {
                     RED.log.error('key "' + key + '" must be greather or equal than ' + state_type.min);
                     new_state = undefined;
@@ -2460,14 +2458,14 @@ module.exports = function (RED) {
                 }
             }
             if (new_state !== undefined && !(state_type.type & (Formats.OBJECT | Formats.ARRAY))) {
-                console.log("CCHI Update state for " + key + " to " + new_state);
+                // console.log("CCHI Update state for " + key + " to " + new_state);
                 differs = old_state !== new_state;
                 state[key] = new_state;
             }
             if (differs) {
                 exclusive_states_arr.forEach(rkey => delete state[rkey]);
             }
-            console.log("CCHI END ----> " + key + " = " + JSON.stringify(state[key]));
+            // console.log("CCHI END ----> " + key + " = " + JSON.stringify(state[key]));
             return differs;
         }
 
