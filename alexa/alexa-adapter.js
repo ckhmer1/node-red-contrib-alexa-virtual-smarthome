@@ -797,7 +797,7 @@ module.exports = function (RED) {
                 node.get_access_token('evn')
                     .then(access_token => {
                         if (node.config.verbose) node._debug('send_error_response error_msg ' + JSON.stringify(error_msg));
-                        if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
+                        if (node.config.verbose) node._debug('send_error_response to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
                             .use(throttle.plugin())
@@ -805,17 +805,17 @@ module.exports = function (RED) {
                             .send(error_msg)
                             .end((err, res) => {
                                 if (err) {
-                                    node.error('send_change_report err ' + JSON.stringify(err));
+                                    node.error('send_error_response err ' + JSON.stringify(err));
                                     reject(err);
                                 } else {
-                                    if (node.config.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
+                                    if (node.config.verbose) node._debug('send_error_response res ' + JSON.stringify(res));
                                     resolve(res);
                                 }
                             });
-                        if (node.config.verbose) node._debug('send_change_report sent');
+                        if (node.config.verbose) node._debug('send_error_response sent');
                     })
                     .catch(err => {
-                        node.error('send_change_report get_access_token err ' + JSON.stringify(err));
+                        node.error('send_error_response get_access_token err ' + JSON.stringify(err));
                     });
             }
         }

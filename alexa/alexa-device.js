@@ -1693,13 +1693,13 @@ module.exports = function (RED) {
                         }, node.state);
                         if (modified.length > 0) {
                             modified = [{
-                                ranges: ranges
+                                ranges: [instance]
                             }];
                         }
                     } else if (name === 'AdjustRangeValue') {
                         const range = node.config.ranges.filter(range => range.instance === instance)[0];
-                        const new_value = node.state.ranges[instance] + payload.rangeValueDeltaDefault ? range.precision : payload.rangeValueDelta;
-                        if (new_value >= range.min && new_value <= range.max) {
+                        const new_value = node.state.ranges[instance] + (payload['rangeValueDeltaDefault'] ? node.to_int(range.precision, 1) : payload['rangeValueDelta']);
+                        if (new_value >= node.to_int(range.min, 0) && new_value <= node.to_int(range.max, 100)) {
                             let ranges = {};
                             ranges[instance] = new_value;
                             modified = node.setValues({
@@ -1707,7 +1707,7 @@ module.exports = function (RED) {
                             }, node.state);
                             if (modified.length > 0) {
                                 modified = [{
-                                    ranges: ranges
+                                    ranges: [instance]
                                 }];
                             }
                         } // ELSE TODO send error
@@ -1786,7 +1786,7 @@ module.exports = function (RED) {
                         }, node.state);
                         if (modified.length > 0) {
                             modified = [{
-                                toggles: toggles
+                                toggles: [instance]
                             }];
                         }
                     }
