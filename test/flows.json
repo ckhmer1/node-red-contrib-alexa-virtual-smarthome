@@ -248,12 +248,34 @@
         "natural_gas_default_resolution": "7200",
         "toggles": [
             {
-                "instance": "SampleManufacturer.Fan.Oscillate",
-                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.Oscillate\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotate\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Girar\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"fr-CA\"}}]}"
+                "instance": "GarbageCan.Lid",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Garbage can lid\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Tapa del bote de basura\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Couvercle de poubelle\",\"locale\":\"fr-CA\"}}]}",
+                "semantics": "{\"actionMappings\":[{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Close\"],\"directive\":{\"name\":\"TurnOff\",\"payload\":{}}},{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Open\"],\"directive\":{\"name\":\"TurnOn\",\"payload\":{}}}],\"stateMappings\":[{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Closed\"],\"value\":\"OFF\"},{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Open\"],\"value\":\"ON\"}]}"
             },
             {
-                "instance": "SampleManufacturer.Fan.Oscillate12",
-                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.Oscillate\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotate\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Girar\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"fr-CA\"}}]}"
+                "instance": "Oven.OvenLight",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Oven light\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Luz del horno\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Lumière du four\",\"locale\":\"fr-CA\"}}]}",
+                "semantics": ""
+            }
+        ],
+        "ranges": [
+            {
+                "instance": "Fan.Speed",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.FanSpeed\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Speed\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Velocidad\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Vitesse\",\"locale\":\"fr-CA\"}}]}",
+                "semantics": "",
+                "presets": "[{\"rangeValue\":10,\"presetResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Maximum\"}},{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.High\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Highest\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Fast\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Alta\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Élevée\",\"locale\":\"fr-CA\"}}]}},{\"rangeValue\":1,\"presetResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Minimum\"}},{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Low\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Lowest\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Slow\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Baja\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Faible\",\"locale\":\"fr-CA\"}}]}}]",
+                "min": "1",
+                "max": "10",
+                "precision": "1"
+            },
+            {
+                "instance": "Blind.Lift",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.Opening\"}}]}",
+                "semantics": "",
+                "presets": "{\"actionMappings\":[{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Close\"],\"directive\":{\"name\":\"SetRangeValue\",\"payload\":{\"rangeValue\":0}}},{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Open\"],\"directive\":{\"name\":\"SetRangeValue\",\"payload\":{\"rangeValue\":100}}},{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Lower\"],\"directive\":{\"name\":\"AdjustRangeValue\",\"payload\":{\"rangeValueDelta\":-10,\"rangeValueDeltaDefault\":false}}},{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Raise\"],\"directive\":{\"name\":\"AdjustRangeValue\",\"payload\":{\"rangeValueDelta\":10,\"rangeValueDeltaDefault\":false}}}],\"stateMappings\":[{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Closed\"],\"value\":0},{\"@type\":\"StatesToRange\",\"states\":[\"Alexa.States.Open\"],\"range\":{\"minimumValue\":1,\"maximumValue\":100}}]}",
+                "min": "0",
+                "max": "100",
+                "precision": "1"
             }
         ],
         "x": 490,
@@ -765,6 +787,7 @@
         "natural_gas_measuring_method": "MEASURED",
         "natural_gas_unit": "CUBIC_FOOT",
         "natural_gas_default_resolution": "3600",
+        "toggles": [],
         "x": 720,
         "y": 620,
         "wires": [
@@ -3477,7 +3500,7 @@
         "id": "980ecf1f.e300d",
         "type": "inject",
         "z": "5a2248b8.76ba18",
-        "name": "TurnOn Oscillate",
+        "name": "TurnOn OvenLight",
         "props": [
             {
                 "p": "payload"
@@ -3488,9 +3511,9 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ToggleController\",\"name\":\"TurnOn\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"SampleManufacturer.Fan.Oscillate\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ToggleController\",\"name\":\"TurnOn\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"Oven.OvenLight\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
         "payloadType": "json",
-        "x": 180,
+        "x": 170,
         "y": 920,
         "wires": [
             [
@@ -3502,7 +3525,7 @@
         "id": "d311681b.4ca248",
         "type": "inject",
         "z": "5a2248b8.76ba18",
-        "name": "TurnOff Oscillate",
+        "name": "TurnOff OvenLight",
         "props": [
             {
                 "p": "payload"
@@ -3513,9 +3536,9 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ToggleController\",\"name\":\"TurnOff\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"SampleManufacturer.Fan.Oscillate\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ToggleController\",\"name\":\"TurnOff\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"Oven.OvenLight\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
         "payloadType": "json",
-        "x": 180,
+        "x": 170,
         "y": 960,
         "wires": [
             [
@@ -3548,7 +3571,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"toggles\":{\"SampleManufacturer.Fan.Oscillate\":\"ON\",\"SampleManufacturer.Fan.Oscillate12\":\"ON\"}}",
+        "payload": "{\"toggles\":{\"Oven.OvenLight\":\"ON\",\"GarbageCan.Lid\":\"ON\"}}",
         "payloadType": "json",
         "x": 310,
         "y": 3580,
@@ -3577,7 +3600,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "toggles",
-        "payload": "{\"SampleManufacturer.Fan.Oscillate\":\"OFF\",\"SampleManufacturer.Fan.Oscillate12\":\"OFF\"}",
+        "payload": "{\"Oven.OvenLight\":\"OFF\",\"GarbageCan.Lid\":\"OFF\"}",
         "payloadType": "json",
         "x": 300,
         "y": 3620,
@@ -3602,7 +3625,7 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"toggles\":{\"SampleManufacturer.Fan.Oscillate\":\"ON\",\"SampleManufacturer.Fan.Oscillate12\":\"OFF\"}}",
+        "payload": "{\"toggles\":{\"Oven.OvenLight\":\"ON\",\"GarbageCan.Lid\":\"OFF\"}}",
         "payloadType": "json",
         "x": 300,
         "y": 3660,
@@ -3631,13 +3654,206 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "toggles",
-        "payload": "{\"SampleManufacturer.Fan.Oscillate\":\"OFF\",\"SampleManufacturer.Fan.Oscillate12\":\"ON\"}",
+        "payload": "{\"Oven.OvenLight\":\"OFF\",\"GarbageCan.Lid\":\"ON\"}",
         "payloadType": "json",
         "x": 300,
         "y": 3700,
         "wires": [
             [
                 "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "8054833d.35339",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Ranges",
+        "info": "",
+        "x": 310,
+        "y": 3740,
+        "wires": []
+    },
+    {
+        "id": "6e77b600.a2f9f8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "2 3",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"ranges\":{\"Fan.Speed\":2,\"Blind.Lift\":3}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3780,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "1c967ac1.b40265",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "4 5",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "ranges",
+        "payload": "{\"Fan.Speed\":4,\"Blind.Lift\":5}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3820,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "815e9477.295ff8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": ". 6",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"ranges\":{\"Blind.Lift\":6}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3860,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "5def2bf1.11e864",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "7",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "ranges",
+        "payload": "{\"Fan.Speed\":7}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3900,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "4b562d3b.de6604",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Blind.Lift 9",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.RangeController\",\"name\":\"SetRangeValue\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"Blind.Lift\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"rangeValue\":0}}}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1000,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "1ae14fca.c8a96",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Fan.Speed",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.RangeController\",\"name\":\"AdjustRangeValue \",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"Fan.Speed\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"rangeValueDeltaDefault\":true}}}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 1040,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "5a34aff1.6897d",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Fan.Speed -1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.RangeController\",\"name\":\"AdjustRangeValue \",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"Fan.Speed\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"rangeValueDeltaDefault\":false,\"rangeValueDelta\":-1}}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1080,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
             ]
         ]
     }

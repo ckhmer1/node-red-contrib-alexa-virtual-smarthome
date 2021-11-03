@@ -14,6 +14,9 @@
         }
         function isIngeterNumber(v) {
             if (v === undefined) return true;
+            if (typeof v === "number") {
+                v = v.toString();
+            }
             if (v.trim().length === 0) {
                 return true;
             }
@@ -26,6 +29,9 @@
         }
         function isPositiveNumber(v) {
             if (v === undefined) return true;
+            if (typeof v === "number") {
+                v = v.toString();
+            }
             if (v.trim().length === 0) {
                 return true;
             }
@@ -33,6 +39,9 @@
         }
         function isValidPinCODE(v) {
             if (v === undefined) return true;
+            if (typeof v === "number") {
+                v = v.toString();
+            }
             if (v.trim().length === 0) {
                 return true;
             }
@@ -40,6 +49,9 @@
         }
         function isPositiveNumber255(v) {
             if (v === undefined) return true;
+            if (typeof v === "number") {
+                v = v.toString();
+            }
             if (v.trim().length === 0) {
                 return true;
             }
@@ -169,7 +181,10 @@
                         let toggles_dict = {};
                         for (var i = 0; i < toggles.length; i++) {
                             var t = toggles[i];
-                            if (t.instance.trim() || t.capability_resources.trim()) {
+                            if (t.instance.trim() || t.capability_resources.trim() || t.semantics.trim()) {
+                                if (!t.instance.trim()) {
+                                    return false;
+                                }
                                 if (toggles_dict.hasOwnProperty(t.instance.trim())) {
                                     return false;
                                 }
@@ -191,6 +206,86 @@
                         return true;
                     }
                 },
+                ranges: {
+                    value: [], required: false, validate: function (ranges) {
+                        if (!ranges || ranges.length === 0) { return true }
+                        let ranges_dict = {};
+                        for (var i = 0; i < ranges.length; i++) {
+                            var r = ranges[i];
+                            if (r.instance.trim() || r.capability_resources.trim() || r.semantics.trim() || r.min.trim() || r.max.trim() || r.precision.trim() || r.presets.trim()) {
+                                if (r.instance.trim()) {
+                                    if (ranges_dict.hasOwnProperty(r.instance.trim())) {
+                                        console.log("Ranges instance " + r.instance.trim() + " already used.");
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                                let min = 0;
+                                let max = 100;
+                                let precision = 1;
+                                if (r.min.trim()) {
+                                    if (isIngeterNumber(r.min)) {
+                                        min = parseInt(r.min);
+                                    } else {
+                                        console.log("Ranges min is not a number");
+                                        return false;
+                                    }
+                                }
+                                if (r.max.trim()) {
+                                    if (isIngeterNumber(r.max)) {
+                                        max = parseInt(r.max);
+                                    } else {
+                                        console.log("Ranges max is not a number");
+                                        return false;
+                                    }
+                                }
+                                if (r.precision.trim()) {
+                                    if (isIngeterNumber(r.precision)) {
+                                        precision = parseInt(r.precision);
+                                    } else {
+                                        console.log("Ranges precision is not a number");
+                                        return false;
+                                    }
+                                }
+
+                                if (max < min) {
+                                    console.log("Ranges min is greather than max");
+                                    return false;
+                                }
+
+                                if (r.capability_resources.trim()) {
+                                    try {
+                                        JSON.parse(r.capability_resources);
+                                    } catch (e) {
+                                        console.log("Ranges capability resources is not valid");
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                                if (r.semantics.trim()) {
+                                    try {
+                                        JSON.parse(r.semantics);
+                                    } catch (e) {
+                                        console.log("Ranges semantics is not valid");
+                                        return false;
+                                    }
+                                }
+                                if (r.presets.trim()) {
+                                    try {
+                                        JSON.parse(r.presets);
+                                    } catch (e) {
+                                        console.log("Ranges presets is not valid");
+                                        return false;
+                                    }
+                                }
+                                ranges_dict[r.instance.trim()] = 1;
+                            }
+                        }
+                        return true;
+                    }
+                }
             },
             inputs: 1,
             outputs: 1,
@@ -221,6 +316,14 @@
                 var JPG = this._("alexa-device.label.JPG");
                 var G711 = this._("alexa-device.label.G711");
                 var AAC = this._("alexa-device.label.AAC");
+                var MAC_address_i18n = this._("alexa-device.placeholder.MAC_address");
+                var instance_i18n = this._("alexa-device.placeholder.instance");
+                var capability_resources_i18n = this._("alexa-device.placeholder.capability_resources");
+                var semantics_i18n = this._("alexa-device.placeholder.semantics");
+                var range_min_i18n = this._("alexa-device.placeholder.range_min");
+                var range_max_i18n = this._("alexa-device.placeholder.range_max");
+                var precision_i18n = this._("alexa-device.placeholder.precision");
+                var presets_i18n = this._("alexa-device.placeholder.presets");
 
                 // Camera Stream Configurations
                 $('#node-input-camera_stream_configuration-container').css('min-height', '150px').css('min-width', '450px').editableList({
@@ -380,7 +483,6 @@
                 }
 
                 // MAC Address
-                var MAC_address_i18n = this._("alexa-device.placeholder.MAC_address");
                 $('#node-input-mac_address-container').css('min-height', '150px').css('min-width', '450px').editableList({
                     addItem: function (container, i, opt) {
                         var mac_address = opt;
@@ -412,9 +514,6 @@
                 }
 
                 // Toggles
-                var instance_i18n = this._("alexa-device.placeholder.instance");
-                var capability_resources_i18n = this._("alexa-device.placeholder.capability_resources");
-                var semantics_i18n = this._("alexa-device.placeholder.semantics");
                 $('#node-input-toggle-container').css('min-height', '150px').css('min-width', '450px').editableList({
                     addItem: function (container, i, opt) {
                         var toggle = opt;
@@ -427,23 +526,23 @@
                         });
                         let fragment = document.createDocumentFragment();
                         var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
-                        var row1_1 = $('<div/>', {style:"margin-top: 4px; width:auto;"}).appendTo(row1);
-                        var row1_2 = $('<div/>', {style:"margin-top: 4px; width:auto;"}).appendTo(row1);
-                        var row1_3 = $('<div/>', {style:"margin-top: 4px; width:auto;"}).appendTo(row1);
+                        var row1_1 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1);
+                        var row1_2 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1);
+                        var row1_3 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1);
 
-                        var propertyInstance = $('<input/>', { class: "node-input-toggle-property-instance", type: "text", style:"width:auto;" })
+                        var propertyInstance = $('<input/>', { class: "node-input-toggle-property-instance", type: "text", style: "width:auto;" })
                             .attr("placeholder", instance_i18n)
                             .appendTo(row1_1);
                         propertyInstance.val(toggle.instance);
-                        var propertycapabilityResources = $('<input/>', { class: "node-input-toggle-property-capability_resources", type: "text", style:"width:auto;" })
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-toggle-property-capability_resources", type: "text", style: "width:auto;" })
                             .attr("placeholder", capability_resources_i18n)
                             .appendTo(row1_2)
-                            .typedInput({ default: 'json', types:['json'] });
+                            .typedInput({ default: 'json', types: ['json'] });
                         propertycapabilityResources.typedInput('value', toggle.capability_resources);
-                        var propertySemantics = $('<input/>', { class: "node-input-toggle-property-semantics", type: "text", style:"width:auto;" })
+                        var propertySemantics = $('<input/>', { class: "node-input-toggle-property-semantics", type: "text", style: "width:auto;" })
                             .attr("placeholder", semantics_i18n)
                             .appendTo(row1_3)
-                            .typedInput({ default: 'json', types:['json'] });
+                            .typedInput({ default: toggle.semantics ? 'json' : 'str', types: ['str', 'json'] });
                         propertySemantics.typedInput('value', toggle.semantics);
 
                         container[0].appendChild(fragment);
@@ -457,6 +556,91 @@
                 for (var i = 0; i < this.toggles.length; i++) {
                     var toggle = this.toggles[i];
                     $("#node-input-toggle-container").editableList('addItem', { instance: toggle.instance, capability_resources: toggle.capability_resources, semantics: toggle.semantics });
+                }
+
+                // Ranges
+                $('#node-input-range-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var range = opt;
+                        if (!range.hasOwnProperty('instance')) {
+                            range = { instance: "", capability_resources: "", semantics: "", min: "", max: "", precision: "", presets: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+                        var row2 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+
+                        var row1_1 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1); // Instance
+                        var row1_2 = $('<div/>', { style: "margin-top: 4px; width:10%;" }).appendTo(row1);  // Min
+                        var row1_3 = $('<div/>', { style: "margin-top: 4px; width:10%;" }).appendTo(row1);  // Max
+                        var row1_4 = $('<div/>', { style: "margin-top: 4px; width:10%;" }).appendTo(row1);  // Precision
+
+                        var row2_1 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row2); // Capability Resources
+                        var row2_2 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row2); // Semantics
+                        var row2_3 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row2); // Presets
+
+                        var propertyInstance = $('<input/>', { class: "node-input-range-property-instance", type: "text", style: "width:auto;" })
+                            .attr("placeholder", instance_i18n)
+                            .appendTo(row1_1);
+                        propertyInstance.val(range.instance);
+
+                        var propertyMin = $('<input/>', { class: "node-input-range-property-min", type: "text", style: "width:auto;" })
+                            .attr("placeholder", range_min_i18n)
+                            .appendTo(row1_2);
+                        propertyMin.val(range.min);
+
+                        var propertyMax = $('<input/>', { class: "node-input-range-property-max", type: "text", style: "width:auto;" })
+                            .attr("placeholder", range_max_i18n)
+                            .appendTo(row1_3);
+                        propertyMax.val(range.max);
+
+                        var propertyPrecision = $('<input/>', { class: "node-input-range-property-precision", type: "text", style: "width:auto;" })
+                            .attr("placeholder", precision_i18n)
+                            .appendTo(row1_4);
+                        propertyPrecision.val(range.precision);
+
+
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-range-property-capability_resources", type: "text", style: "width:auto;" })
+                            .attr("placeholder", capability_resources_i18n)
+                            .appendTo(row2_1)
+                            .typedInput({ default: 'json', types: ['json'] });
+                        propertycapabilityResources.typedInput('value', range.capability_resources);
+
+                        var propertySemantics = $('<input/>', { class: "node-input-range-property-semantics", type: "text", style: "width:auto;" })
+                            .attr("placeholder", semantics_i18n)
+                            .appendTo(row2_2)
+                            .typedInput({ default: range.semantics ? 'json' : 'str', types: ['str', 'json'] });
+                        propertySemantics.typedInput('value', range.semantics);
+
+                        var propertyPresets = $('<input/>', { class: "node-input-range-property-presets", type: "text", style: "width:auto;" })
+                            .attr("placeholder", presets_i18n)
+                            .appendTo(row2_3)
+                            .typedInput({ default: range.semantics ? 'json' : 'str', types: ['str', 'json'] });
+                        propertyPresets.typedInput('value', range.presets);
+
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                if (!this.ranges) {
+                    this.ranges = [];
+                }
+                for (var i = 0; i < this.ranges.length; i++) {
+                    var range = this.ranges[i];
+                    $("#node-input-range-container").editableList('addItem', {
+                        instance: range.instance,
+                        capability_resources: range.capability_resources,
+                        semantics: range.semantics,
+                        presets: range.presets,
+                        min: range.min,
+                        max: range.max,
+                        precision: range.precision
+                    });
                 }
             },
             oneditsave: function () {
@@ -508,6 +692,7 @@
                         node.camera_stream_configurations.push(c);
                     }
                 });
+
                 // mac_addresses
                 var mac_addresses = $("#node-input-mac_address-container").editableList('items');
                 node.mac_addresses = [];
@@ -516,6 +701,7 @@
                     var name = mac_address.find(".node-input-mac_address-property-name").val();
                     node.mac_addresses.push(name);
                 });
+
                 // toggles
                 var toggles = $("#node-input-toggle-container").editableList('items');
                 node.toggles = [];
@@ -526,6 +712,31 @@
                     var semantics = toggle.find(".node-input-toggle-property-semantics").val();
                     if (instance.trim() || capability_resources.trim()) {
                         node.toggles.push({ instance: instance.trim(), capability_resources: capability_resources.trim(), semantics: semantics.trim() });
+                    }
+                });
+
+                // ranges
+                var ranges = $("#node-input-range-container").editableList('items');
+                node.ranges = [];
+                ranges.each(function (i) {
+                    var range = $(this);
+                    var instance = range.find(".node-input-range-property-instance").val();
+                    var capability_resources = range.find(".node-input-range-property-capability_resources").val();
+                    var semantics = range.find(".node-input-range-property-semantics").val();
+                    var presets = range.find(".node-input-range-property-presets").val();
+                    var range_min = range.find(".node-input-range-property-min").val();
+                    var range_max = range.find(".node-input-range-property-max").val();
+                    var precision = range.find(".node-input-range-property-precision").val();
+                    if (instance.trim() || capability_resources.trim()) {
+                        node.ranges.push({
+                            instance: instance.trim(),
+                            capability_resources: capability_resources.trim(),
+                            semantics: semantics.trim(),
+                            presets: presets,
+                            min: range_min,
+                            max: range_max,
+                            precision: precision.trim()
+                        });
                     }
                 });
             }
@@ -542,6 +753,9 @@
             flex:1;
         }
         ol#node-input-toggle-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-range-container .red-ui-typedInput-container {
             flex:1;
         }
     </style>
@@ -1019,11 +1233,18 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_range_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_range_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_range_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.range_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rangecontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-device.label.ranges"></span>
+        </div>
+        <div class="form-row node-input-range-container-row">
+            <ol id="node-input-range-container"></ol>
         </div>
     </div>
     

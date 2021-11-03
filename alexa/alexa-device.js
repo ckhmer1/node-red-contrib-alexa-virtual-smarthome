@@ -25,6 +25,7 @@
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/get-started-with-device-templates.html
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-property-schemas.html
+// https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/function/15-change.html
 
 const float_values = {
     color: {
@@ -58,7 +59,7 @@ module.exports = function (RED) {
         targetSetpoint: ['lowerSetpoint', 'upperSetpoint'],
     };
 
-    const DEEP_STATES = ['toggles'];
+    const DEEP_STATES = ['toggles', 'modes', 'ranges'];
 
     const CAMERASTREAMS_STATE_TYPE = {
         cameraStreams: {
@@ -144,6 +145,7 @@ module.exports = function (RED) {
                 node.onClose(removed, done);
             });
             node.updateStatusIcon();
+            if (node.isVerbose()) node._debug("Node " + node.config.name + " configured");
         }
 
         //
@@ -939,6 +941,50 @@ module.exports = function (RED) {
 
             // RangeController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rangecontroller.html
+            if (node.config.i_range_controller) {
+                if (node.isVerbose()) node._debug("Alexa.RangeController");
+                if (node.config.ranges !== undefined && node.config.ranges.length > 0) {
+                    node.state["ranges"] = {};
+                    let attributes = {};
+                    state_types['ranges'] = {
+                        type: Formats.OBJECT,
+                        attributes: attributes,
+                    };
+                    node.config.ranges.forEach(range => {
+                        if (range.instance && range.capability_resources) {
+                            node.state["ranges"][range.instance] = node.to_int(range.min, 0);
+                            attributes[range.instance] = {
+                                type: Formats.INT + Formats.MANDATORY,
+                                min: node.to_int(range.min, 0),
+                                max: node.to_int(range.max, 100),
+                            };
+                            let additional_config = {
+                                instance: range.instance,
+                                capabilityResources: JSON.parse(range.capability_resources)
+                            };
+                            additional_config['configuration'] = {
+                                supportedRange: {
+                                    minimumValue: node.to_int(range.min, 0),
+                                    maximumValue: node.to_int(range.max, 100),
+                                    precision: node.to_int(range.precision, 1),
+                                }
+                            };
+                            if (range.presets) {
+                                const presets = JSON.parse(range.presets);
+                                additional_config.configuration['presets'] = Array.isArray(presets) ? presets : [presets];
+                            }
+                            if (range.semantics) {
+                                additional_config['semantics'] = JSON.parse(range.semantics);
+                            }
+                            node.addCapability("Alexa.RangeController",
+                                {
+                                    rangeValue: node.to_int(range.min, 0),
+                                },
+                                additional_config, true);
+                        }
+                    });
+                }
+            }
 
             // RTCSessionController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rtcsessioncontroller.html
@@ -1638,6 +1684,36 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.RangeController": // RangeController
+                    if (name === 'SetRangeValue') {
+                        let ranges = {};
+                        ranges[instance] = payload['rangeValue'];
+                        modified = node.setValues({
+                            ranges: ranges
+                        }, node.state);
+                        if (modified.length > 0) {
+                            modified = [{
+                                ranges: ranges
+                            }];
+                        }
+                    } else if (name === 'AdjustRangeValue') {
+                        const range = node.config.ranges.filter(range => range.instance === instance)[0];
+                        const new_value = node.state.ranges[instance] + payload.rangeValueDeltaDefault ? range.precision : payload.rangeValueDelta;
+                        if (new_value >= range.min && new_value <= range.max) {
+                            let ranges = {};
+                            ranges[instance] = new_value;
+                            modified = node.setValues({
+                                ranges: ranges
+                            }, node.state);
+                            if (modified.length > 0) {
+                                modified = [{
+                                    ranges: ranges
+                                }];
+                            }
+                        } // ELSE TODO send error
+                    }
+                    break;
+
                 case "Alexa.Speaker": // Speaker
                     if (name === 'SetVolume') {
                         modified = node.setValues(payload, node.state);
@@ -1700,6 +1776,7 @@ module.exports = function (RED) {
                         modified = []
                     }
                     break;
+
                 case "Alexa.ToggleController": // ToggleController
                     if (name === 'TurnOn' || name === 'TurnOff') {
                         let toggles = {};
@@ -1714,6 +1791,7 @@ module.exports = function (RED) {
                         }
                     }
                     break;
+
                 default:
                     node.error("execDirective invalid directive " + name + "/" + namespace);
             }
@@ -1960,6 +2038,19 @@ module.exports = function (RED) {
             }
 
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rangecontroller.html
+            if (node.config.i_range_controller) {
+                for (const [range, value] of Object.entries(node.state.ranges || [])) {
+                    properties.push({
+                        namespace: "Alexa.RangeController",
+                        instance: range,
+                        name: "rangeValue",
+                        value: value,
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
+
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rtcsessioncontroller.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-scenecontroller.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html

@@ -95,7 +95,9 @@ module.exports = function (RED) {
     };
 
     const STATE_FOR_NAMESPACE = {
-        "Alexa.ToggleController": "toggles"
+        "Alexa.ToggleController": "toggles",
+        "Alexa.RangeController": "ranges",
+        "Alexa.ModeController": "modes"
     }
 
     const DEFAULT_PAYLOAD_VERSION = '3';

@@ -167,7 +167,8 @@
             "CUBIC_FOOT": "Cubic foot",
             "MEASURED": "Measured",
             "ESTIMATED": "Estimated",
-            "toggles": "Toggles"
+            "toggles": "Toggles",
+            "ranges": "Ranges"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -189,10 +190,14 @@
             "exit_delay": "Exit delay in seconds",
             "MACAddresses": "The MAC address of the device to wake up.",
             "default_resolution": "The resolution of your data readings, in seconds.",
+            "MAC_address": "MAC Address",
             "instance": "Instance",
             "capability_resources": "Capability resources",
             "semantics": "Semantics",
-            "MAC_address": "MAC Address"
+            "range_min": "Minimum",
+            "range_max": "Maximum",
+            "precision": "Precision",
+            "presets": "Presets"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",
