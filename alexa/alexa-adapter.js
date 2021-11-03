@@ -94,6 +94,10 @@ module.exports = function (RED) {
         contactDetectionState: ['Alexa.ContactSensor', 'detectionState']
     };
 
+    const STATE_FOR_NAMESPACE = {
+        "Alexa.ToggleController": "toggles"
+    }
+
     const DEFAULT_PAYLOAD_VERSION = '3';
     const PAYLOADS_VERSION = {
         "Alexa.DeviceUsage.Meter": "1.0"
@@ -884,13 +888,14 @@ module.exports = function (RED) {
                     res.status(500).send('No page available');
                     node.error("Load error " + err);
                 } else {
+                    const timestamp = Date.now().toString();
                     res
                         .set("Content-Security-Policy",
                             "default-src 'self' 'unsafe-inline' ; " +
                             "img-src https://nodered.org ; " +
                             "script-src 'self' https://code.jquery.com 'unsafe-inline' ; "
                         )
-                        .send(data.replace(/alexa_smarthome_url/g, url));
+                        .send(data.replace(/alexa_smarthome_url/g, url).replace(/server_timestamp/g, timestamp));
                 }
             });
         }
@@ -1629,7 +1634,18 @@ module.exports = function (RED) {
         //
         //
         //
-        is_changed_property(name, namespace, changed_property_names) {
+        is_changed_property(property, changed_property_names) {
+            const name = property.name;
+            const namespace = property.namespace;
+            const instance = property.instance;
+            if (instance) {
+                const state_name = STATE_FOR_NAMESPACE[namespace];
+                let changed_arr = changed_property_names.filter(name => typeof name === 'object' && typeof name[state_name] === 'object');
+                if (changed_arr.length === 1 && changed_arr[0][state_name].includes(instance)) {
+                    return true;
+                }
+                return false;
+            }
             if (changed_property_names.includes(name)) {
                 return true;
             }
@@ -1655,7 +1671,7 @@ module.exports = function (RED) {
             if (node.config.verbose) node._debug('get_change_report endpointId ' + endpointId + ' properties ' + JSON.stringify(properties));
             if (changed_property_names.length > 0) {
                 properties.forEach(property => {
-                    if (node.is_changed_property(property.name, property.namespace, changed_property_names)) {
+                    if (node.is_changed_property(property, changed_property_names)) {
                         changed_properties.push(property);
                     } else {
                         unchanged_properties.push(property);

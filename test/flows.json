@@ -246,6 +246,16 @@
         "natural_gas_measuring_method": "ESTIMATED",
         "natural_gas_unit": "CUBIC_FOOT",
         "natural_gas_default_resolution": "7200",
+        "toggles": [
+            {
+                "instance": "SampleManufacturer.Fan.Oscillate",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.Oscillate\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotate\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Girar\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"fr-CA\"}}]}"
+            },
+            {
+                "instance": "SampleManufacturer.Fan.Oscillate12",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.Oscillate\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotate\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Girar\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Rotation\",\"locale\":\"fr-CA\"}}]}"
+            }
+        ],
         "x": 490,
         "y": 1000,
         "wires": [
@@ -3357,6 +3367,274 @@
         "payloadType": "json",
         "x": 290,
         "y": 1020,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "7bbd7003.beeca",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "BLU",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ColorController\",\"name\":\"SetColor\",\"payloadVersion\":\"3\",\"messageId\":\"ca5c7c87-e414-4e6b-991c-ea13f6d73f9e\",\"correlationToken\":\"Correlation\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"token\"},\"endpointId\":\"endpoint\",\"cookie\":{}},\"payload\":{\"color\":{\"hue\":240,\"saturation\":1,\"brightness\":1}}}}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 760,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "2eecd1c9.e8afde",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "RED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ColorController\",\"name\":\"SetColor\",\"payloadVersion\":\"3\",\"messageId\":\"ca5c7c87-e414-4e6b-991c-ea13f6d73f9e\",\"correlationToken\":\"Correlation\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"token\"},\"endpointId\":\"endpoint\",\"cookie\":{}},\"payload\":{\"color\":{\"hue\":0,\"saturation\":1,\"brightness\":1}}}}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 800,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "63cd9a33.69a834",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "White",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ColorTemperatureController\",\"name\":\"SetColorTemperature\",\"payloadVersion\":\"3\",\"messageId\":\"f6234635-13a6-42b1-89a0-dd81dd7af8be\",\"correlationToken\":\"correlationToken\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"token\"},\"endpointId\":\"a7be65ba6d658b90\",\"cookie\":{}},\"payload\":{\"colorTemperatureInKelvin\":4000}}}",
+        "payloadType": "json",
+        "x": 210,
+        "y": 840,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "4ef35db1.0cea44",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "Warm White",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ColorTemperatureController\",\"name\":\"SetColorTemperature\",\"payloadVersion\":\"3\",\"messageId\":\"f6234635-13a6-42b1-89a0-dd81dd7af8be\",\"correlationToken\":\"correlationToken\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"token\"},\"endpointId\":\"a7be65ba6d658b90\",\"cookie\":{}},\"payload\":{\"colorTemperatureInKelvin\":2200}}}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 880,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "980ecf1f.e300d",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "TurnOn Oscillate",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ToggleController\",\"name\":\"TurnOn\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"SampleManufacturer.Fan.Oscillate\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 920,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "d311681b.4ca248",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "TurnOff Oscillate",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ToggleController\",\"name\":\"TurnOff\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\",\"instance\":\"SampleManufacturer.Fan.Oscillate\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 960,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "175bce32.ed9362",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "name": "Toggles",
+        "info": "",
+        "x": 310,
+        "y": 3540,
+        "wires": []
+    },
+    {
+        "id": "2e64ac83.6c7244",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "ON ON",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggles\":{\"SampleManufacturer.Fan.Oscillate\":\"ON\",\"SampleManufacturer.Fan.Oscillate12\":\"ON\"}}",
+        "payloadType": "json",
+        "x": 310,
+        "y": 3580,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "db842796.00b868",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "OFF OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "toggles",
+        "payload": "{\"SampleManufacturer.Fan.Oscillate\":\"OFF\",\"SampleManufacturer.Fan.Oscillate12\":\"OFF\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 3620,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "a61ea607.17e338",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "ON OFF",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"toggles\":{\"SampleManufacturer.Fan.Oscillate\":\"ON\",\"SampleManufacturer.Fan.Oscillate12\":\"OFF\"}}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 3660,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "bfbaf89a.aa5688",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "name": "OFF ON",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "toggles",
+        "payload": "{\"SampleManufacturer.Fan.Oscillate\":\"OFF\",\"SampleManufacturer.Fan.Oscillate12\":\"ON\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 3700,
         "wires": [
             [
                 "58c096a.8fa0d68"

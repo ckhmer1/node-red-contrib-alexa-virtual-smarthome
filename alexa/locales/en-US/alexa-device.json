@@ -166,7 +166,8 @@
             "BTU": "BTU",
             "CUBIC_FOOT": "Cubic foot",
             "MEASURED": "Measured",
-            "ESTIMATED": "Estimated"
+            "ESTIMATED": "Estimated",
+            "toggles": "Toggles"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -187,7 +188,11 @@
             "pin_code": "Four-digit PIN code",
             "exit_delay": "Exit delay in seconds",
             "MACAddresses": "The MAC address of the device to wake up.",
-            "default_resolution": "The resolution of your data readings, in seconds."
+            "default_resolution": "The resolution of your data readings, in seconds.",
+            "instance": "Instance",
+            "capability_resources": "Capability resources",
+            "semantics": "Semantics",
+            "MAC_address": "MAC Address"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",

@@ -17,6 +17,7 @@
     <script>
         let page_url;
         let api_url = "alexa_smarthome_url";
+        const timestamp = server_timestamp;
         const test_data = {
             directive: {
                 header: {
@@ -197,6 +198,11 @@
             });
         }
         document.addEventListener("DOMContentLoaded", function (event) {
+            test_success("server_time", timestamp + " " + (new Date(timestamp)).toISOString());
+            const now = Date.now();
+            test_success("browser_time", now + " " + (new Date(now)).toISOString());
+            const time_diff = Math.floor((now - timestamp) / 1000);
+            test_success("time_difference", time_diff + " sec " + (time_diff < 10 ? "OK" : "ERROR"));
             page_url = window.location.href.split('?')[0];
             test_smarthome_post_test(api_url + '/smarthome');
         });
@@ -254,6 +260,9 @@
         </form>
 
         <br />
+        <b>Server Time: </b><span id="server_time">Not started</span><BR />
+        <b>Browser Time: </b><span id="browser_time">Not started</span><BR />
+        <b>Time difference: </b><span id="time_difference">Not started</span><BR />
         <b>GET oauth: </b><span id="oauth_get">Not started</span><BR />
         <b>POST oauth: </b><span id="oauth_post">Not started</span><BR />
         <b>POST token: </b><span id="token_post">Not started</span><BR />

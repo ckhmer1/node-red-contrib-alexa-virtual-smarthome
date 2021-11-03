@@ -1,38 +1,45 @@
 <script type="text/javascript">
     (function () {
         function isNaturalNumber(v) {
+            if (v === undefined) return true;
             const n = parseInt(v);
             const f = parseFloat(v);
             return !isNaN(v) && Number.isInteger(f) && n >= 0;
         }
         function isMandatoryIngeterNumber(v) {
+            if (v === undefined) return true;
             const n = parseInt(v);
             const f = parseFloat(v);
             return !isNaN(v) && Number.isInteger(f);
         }
         function isIngeterNumber(v) {
+            if (v === undefined) return true;
             if (v.trim().length === 0) {
                 return true;
             }
             return isMandatoryIngeterNumber(v);
         }
         function isMandatoryPositiveNumber(v) {
+            if (v === undefined) return true;
             const n = parseFloat(v);
             return !isNaN(v) && n > 0;
         }
         function isPositiveNumber(v) {
+            if (v === undefined) return true;
             if (v.trim().length === 0) {
                 return true;
             }
             return isMandatoryPositiveNumber(v);
         }
         function isValidPinCODE(v) {
+            if (v === undefined) return true;
             if (v.trim().length === 0) {
                 return true;
             }
             return isNaturalNumber(v) && v.trim().length === 4;
         }
         function isPositiveNumber255(v) {
+            if (v === undefined) return true;
             if (v.trim().length === 0) {
                 return true;
             }
@@ -156,6 +163,34 @@
                 natural_gas_measuring_method: { value: '', required: false },
                 natural_gas_unit: { value: 'CUBIC_FOOT', required: false },
                 natural_gas_default_resolution: { value: 3600, required: false },
+                toggles: {
+                    value: [], required: false, validate: function (toggles) {
+                        if (!toggles || toggles.length === 0) { return true }
+                        let toggles_dict = {};
+                        for (var i = 0; i < toggles.length; i++) {
+                            var t = toggles[i];
+                            if (t.instance.trim() || t.capability_resources.trim()) {
+                                if (toggles_dict.hasOwnProperty(t.instance.trim())) {
+                                    return false;
+                                }
+                                try {
+                                    JSON.parse(t.capability_resources);
+                                } catch (e) {
+                                    return false;
+                                }
+                                if (t.semantics) {
+                                    try {
+                                        JSON.parse(t.semantics);
+                                    } catch (e) {
+                                        return false;
+                                    }
+                                }
+                                toggles_dict[t.instance.trim()] = 1;
+                            }
+                        }
+                        return true;
+                    }
+                },
             },
             inputs: 1,
             outputs: 1,
@@ -255,7 +290,6 @@
                         })
                         noneBtn.prop("checked", camera_stream_configuration.t.includes("NONE")).trigger("change");
 
-
                         $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
                             .text(video_codecs)
                             .appendTo(row3);
@@ -346,11 +380,12 @@
                 }
 
                 // MAC Address
+                var MAC_address_i18n = this._("alexa-device.placeholder.MAC_address");
                 $('#node-input-mac_address-container').css('min-height', '150px').css('min-width', '450px').editableList({
                     addItem: function (container, i, opt) {
-                        var mac = opt;
-                        if (!mac.hasOwnProperty('name')) {
-                            mac = { name: "" };
+                        var mac_address = opt;
+                        if (!mac_address.hasOwnProperty('name')) {
+                            mac_address = { name: "" };
                         }
                         container.css({
                             overflow: 'hidden',
@@ -359,8 +394,9 @@
                         let fragment = document.createDocumentFragment();
                         var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
                         var propertyName = $('<input/>', { class: "node-input-mac_address-property-name", type: "text" })
+                            .attr("placeholder", MAC_address_i18n)
                             .appendTo(row1);
-                        propertyName.val(mac.name);
+                        propertyName.val(mac_address.name);
 
                         container[0].appendChild(fragment);
                     },
@@ -373,6 +409,54 @@
                 for (var i = 0; i < this.mac_addresses.length; i++) {
                     var mac_address = this.mac_addresses[i];
                     $("#node-input-mac_address-container").editableList('addItem', { name: mac_address });
+                }
+
+                // Toggles
+                var instance_i18n = this._("alexa-device.placeholder.instance");
+                var capability_resources_i18n = this._("alexa-device.placeholder.capability_resources");
+                var semantics_i18n = this._("alexa-device.placeholder.semantics");
+                $('#node-input-toggle-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var toggle = opt;
+                        if (!toggle.hasOwnProperty('instance')) {
+                            toggle = { instance: "", capability_resources: "", semantics: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+                        var row1_1 = $('<div/>', {style:"margin-top: 4px; width:auto;"}).appendTo(row1);
+                        var row1_2 = $('<div/>', {style:"margin-top: 4px; width:auto;"}).appendTo(row1);
+                        var row1_3 = $('<div/>', {style:"margin-top: 4px; width:auto;"}).appendTo(row1);
+
+                        var propertyInstance = $('<input/>', { class: "node-input-toggle-property-instance", type: "text", style:"width:auto;" })
+                            .attr("placeholder", instance_i18n)
+                            .appendTo(row1_1);
+                        propertyInstance.val(toggle.instance);
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-toggle-property-capability_resources", type: "text", style:"width:auto;" })
+                            .attr("placeholder", capability_resources_i18n)
+                            .appendTo(row1_2)
+                            .typedInput({ default: 'json', types:['json'] });
+                        propertycapabilityResources.typedInput('value', toggle.capability_resources);
+                        var propertySemantics = $('<input/>', { class: "node-input-toggle-property-semantics", type: "text", style:"width:auto;" })
+                            .attr("placeholder", semantics_i18n)
+                            .appendTo(row1_3)
+                            .typedInput({ default: 'json', types:['json'] });
+                        propertySemantics.typedInput('value', toggle.semantics);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                if (!this.toggles) {
+                    this.toggles = [];
+                }
+                for (var i = 0; i < this.toggles.length; i++) {
+                    var toggle = this.toggles[i];
+                    $("#node-input-toggle-container").editableList('addItem', { instance: toggle.instance, capability_resources: toggle.capability_resources, semantics: toggle.semantics });
                 }
             },
             oneditsave: function () {
@@ -432,6 +516,18 @@
                     var name = mac_address.find(".node-input-mac_address-property-name").val();
                     node.mac_addresses.push(name);
                 });
+                // toggles
+                var toggles = $("#node-input-toggle-container").editableList('items');
+                node.toggles = [];
+                toggles.each(function (i) {
+                    var toggle = $(this);
+                    var instance = toggle.find(".node-input-toggle-property-instance").val();
+                    var capability_resources = toggle.find(".node-input-toggle-property-capability_resources").val();
+                    var semantics = toggle.find(".node-input-toggle-property-semantics").val();
+                    if (instance.trim() || capability_resources.trim()) {
+                        node.toggles.push({ instance: instance.trim(), capability_resources: capability_resources.trim(), semantics: semantics.trim() });
+                    }
+                });
             }
         });
     })();
@@ -442,7 +538,10 @@
         ol#node-input-camera_stream_configuration-container .red-ui-typedInput-container {
             flex:1;
         }
-        ol#node-input-mac_address .red-ui-typedInput-container {
+        ol#node-input-mac_address-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-toggle-container .red-ui-typedInput-container {
             flex:1;
         }
     </style>
@@ -1089,11 +1188,18 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_toggle_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_toggle_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_toggle_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.toggle_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-device.label.toggles"></span>
+        </div>
+        <div class="form-row node-input-toggle-container-row">
+            <ol id="node-input-toggle-container"></ol>
         </div>
     </div>
     

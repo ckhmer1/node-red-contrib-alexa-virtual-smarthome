@@ -58,46 +58,48 @@ module.exports = function (RED) {
         targetSetpoint: ['lowerSetpoint', 'upperSetpoint'],
     };
 
+    const DEEP_STATES = ['toggles'];
+
     const CAMERASTREAMS_STATE_TYPE = {
         cameraStreams: {
             type: Formats.OBJECT | Formats.ARRAY,
             attributes: {
                 uri: Formats.STRING,
-                expirationTime: Formats.DATETIME,
+                expirationTime: Formats.DATETIME + Formats.MANDATORY,
                 idleTimeoutSeconds: {
-                    type: Formats.INT,
+                    type: Formats.INT + Formats.MANDATORY,
                     min: 0
                 },
                 protocol: {
-                    type: Formats.STRING,
+                    type: Formats.STRING + Formats.MANDATORY,
                     values: ['HLS', 'RTSP'],
-                    resolution: {
-                        type: Formats.OBJECT,
-                        attributes: {
-                            width: Formats.INT,
-                            height: {
-                                type: Formats.INT,
-                                min: 480,
-                                max: 1080
-                            }
+                },
+                resolution: {
+                    type: Formats.OBJECT + Formats.MANDATORY,
+                    attributes: {
+                        width: Formats.INT + Formats.MANDATORY,
+                        height: {
+                            type: Formats.INT + Formats.MANDATORY,
+                            min: 480,
+                            max: 1080
                         }
-                    },
-                    authorizationType: {
-                        type: Formats.STRING,
-                        values: ['NONE', 'BASIC', 'DIGEST'],
-                    },
-                    videoCodec: {
-                        type: Formats.STRING,
-                        values: ['H264', 'MPEG2', 'MJPEG', 'JPG']
-                    },
-                    audioCodec: {
-                        type: Formats.STRING,
-                        values: ['AAC', 'G711', 'NONE']
                     }
+                },
+                authorizationType: {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: ['NONE', 'BASIC', 'DIGEST'],
+                },
+                videoCodec: {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: ['H264', 'MPEG2', 'MJPEG', 'JPG']
+                },
+                audioCodec: {
+                    type: Formats.STRING + Formats.MANDATORY,
+                    values: ['AAC', 'G711', 'NONE']
                 }
             }
         },
-        imageUri: Formats.STRING
+        imageUri: Formats.STRING + Formats.MANDATORY
     }
 
 
@@ -1179,6 +1181,38 @@ module.exports = function (RED) {
 
             // ToggleController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
+            if (node.config.i_toggle_controller) {
+                if (node.isVerbose()) node._debug("Alexa.ToggleController");
+                if (node.config.toggles.length > 0) {
+                    node.state["toggles"] = {};
+                    let attributes = {};
+                    state_types['toggles'] = {
+                        type: Formats.OBJECT,
+                        attributes: attributes
+                    };
+                    node.config.toggles.forEach(toggle => {
+                        if (toggle.instance && toggle.capability_resources) {
+                            node.state["toggles"][toggle.instance] = "OFF";
+                            attributes[toggle.instance] = {
+                                type: Formats.STRING + Formats.MANDATORY,
+                                values: ['ON', 'OFF'],
+                            };
+                            let additional_config = {
+                                instance: toggle.instance,
+                                capabilityResources: JSON.parse(toggle.capability_resources)
+                            };
+                            if (toggle.semantics) {
+                                additional_config['semantics'] = JSON.parse(toggle.semantics);
+                            }
+                            node.addCapability("Alexa.ToggleController",
+                                {
+                                    toggleState: 'OFF'
+                                },
+                                additional_config, true);
+                        }
+                    });
+                }
+            }
 
             // WakeOnLANController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
@@ -1224,7 +1258,7 @@ module.exports = function (RED) {
         //
         //
         //
-        getCapability(iface, properties_val) {
+        getCapability(iface, properties_val, no_state) {
             const node = this;
             let capability = {
                 type: "AlexaInterface",
@@ -1235,7 +1269,9 @@ module.exports = function (RED) {
                 let supported = [];
                 Object.keys(properties_val).forEach(key => {
                     const mapped_key = node.alexa.get_mapped_property(iface, key);
-                    node.state[mapped_key] = properties_val[key];
+                    if (no_state !== true) {
+                        node.state[mapped_key] = properties_val[key];
+                    }
                     supported.push({
                         name: key
                     });
@@ -1254,9 +1290,9 @@ module.exports = function (RED) {
         //
         //
         //
-        addCapability(iface, properties_val, attributes) {
+        addCapability(iface, properties_val, attributes, no_state) {
             const node = this;
-            let capability = node.getCapability(iface, properties_val);
+            let capability = node.getCapability(iface, properties_val, no_state);
             if (attributes !== undefined) {
                 Object.assign(capability, attributes);
             }
@@ -1271,8 +1307,9 @@ module.exports = function (RED) {
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html
         execDirective(header, payload, cmd_res) { // Directive
             const node = this;
-            const namespace = header['namespace']
-            const name = header['name']
+            const namespace = header['namespace'];
+            const name = header['name'];
+            const instance = header['instance'];
             if (node.isVerbose()) node._debug("execDirective state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
             let modified = undefined;
             let send_state_in_out = true;
@@ -1663,7 +1700,20 @@ module.exports = function (RED) {
                         modified = []
                     }
                     break;
-
+                case "Alexa.ToggleController": // ToggleController
+                    if (name === 'TurnOn' || name === 'TurnOff') {
+                        let toggles = {};
+                        toggles[instance] = name === 'TurnOn' ? 'ON' : 'OFF';
+                        modified = node.setValues({
+                            toggles: toggles
+                        }, node.state);
+                        if (modified.length > 0) {
+                            modified = [{
+                                toggles: toggles
+                            }];
+                        }
+                    }
+                    break;
                 default:
                     node.error("execDirective invalid directive " + name + "/" + namespace);
             }
@@ -2037,6 +2087,18 @@ module.exports = function (RED) {
                 }
             }
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
+            if (node.config.i_toggle_controller) {
+                for (const [toggle, value] of Object.entries(node.state.toggles)) {
+                    properties.push({
+                        namespace: "Alexa.ToggleController",
+                        instance: toggle,
+                        name: "toggleState",
+                        value: value,
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
             return properties;
         }
@@ -2135,14 +2197,16 @@ module.exports = function (RED) {
             Object.keys(state_types).forEach(key => {
                 if (new_states.hasOwnProperty(key)) {
                     // console.log("CCHI found key " + key);
-                    if (node.setState(key, new_states[key], current_state, state_types[key], exclusive_states[key] || {})) {
+                    // TODO DEEP_STATES
+                    let o_modified = node.setState(key, new_states[key], current_state, state_types[key], exclusive_states[key] || {});
+                    if (o_modified) {
                         node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
-                        modified.push(key);
+                        modified.push(o_modified);
                     }
                     // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
                 }
             });
-            node._debug('updateState new State modified ' + JSON.stringify(modified) + ' state ' + JSON.stringify(current_state));
+            node._debug('updateState new state modified ' + JSON.stringify(modified) + ' state ' + JSON.stringify(current_state));
             return modified;
         }
 
@@ -2287,7 +2351,7 @@ module.exports = function (RED) {
                     RED.log.error("key " + key + " is mandatory.");
                 } else if (state.hasOwnProperty(key)) {
                     delete state[key];
-                    differs = true;
+                    differs = key;
                 }
             } else if (state_type.type & Formats.ARRAY) {
                 if (!Array.isArray(value)) {
@@ -2307,13 +2371,13 @@ module.exports = function (RED) {
                             new_arr.push(new_val);
                             if (old_arr.length > idx) {
                                 if (old_arr[idx] != new_val) {
-                                    differs = true;
+                                    differs = key;
                                 }
                             } else {
-                                differs = true;
+                                differs = key;
                             }
                         } else {
-                            differs = true;
+                            differs = key;
                         }
                     });
                     state[key] = new_arr;
@@ -2371,17 +2435,17 @@ module.exports = function (RED) {
                         }
                         if (cur_obj !== undefined) {
                             if (node.cloneObject(cur_obj, new_obj, state_type.attributes, exclusive_states)) {
-                                differs = true;
+                                differs = key;
                             }
                             if (Object.keys(cur_obj).length > 0) {
                                 new_arr.push(cur_obj);
                             } else {
-                                differs = true; // ??
+                                differs = key; // ??
                             }
                         }
                     });
                     if (replace_all && new_arr.length != old_arr.length) {
-                        differs = true;
+                        differs = key;
                     }
                     state[key] = replace_all ? new_arr : old_arr;
                     if (remove_if_no_data && state[key].length === 0) {
@@ -2397,6 +2461,7 @@ module.exports = function (RED) {
                         old_state = state[key];
                     }
                     let mandatory_to_delete = [];
+                    let o_differs = [];
                     Object.keys(state_type.attributes).forEach(function (ikey) {
                         // console.log("---> Attributes key " + ikey + " " + JSON.stringify(value[ikey]));
                         if (typeof value[ikey] !== 'undefined' && value[ikey] != null) {
@@ -2404,7 +2469,8 @@ module.exports = function (RED) {
                                 old_state[ikey] = {};
                             }
                             if (node.setState(ikey, value[ikey], old_state, state_type.attributes[ikey], exclusive_states[ikey] || {})) {
-                                differs = true;
+                                o_differs.push(ikey);
+                                differs = o_differs;
                             }
                         } else {
                             const a_state_type = typeof state_type.attributes[ikey] === 'number' ? state_type.attributes[ikey] : state_type.attributes[ikey].type;
@@ -2413,7 +2479,8 @@ module.exports = function (RED) {
                                 mandatory_to_delete.push(ikey);
                             } else {
                                 if (typeof state[ikey] != 'undefined') {
-                                    differs = true;
+                                    o_differs.push(ikey);
+                                    differs = o_differs;
                                 }
                                 delete state[key][ikey];
                                 // console.log("Deleted " + ikey + " " + JSON.stringify(state[key]));
@@ -2431,7 +2498,8 @@ module.exports = function (RED) {
                         });
                         if (!exclusive_state_found) {
                             if (typeof state[ikey] != 'undefined') {
-                                differs = true;
+                                o_differs.push(ikey);
+                                differs = o_differs;
                             }
                             delete state[ikey];
                         } else {
@@ -2443,10 +2511,10 @@ module.exports = function (RED) {
                 if (typeof value !== 'object' || Array.isArray(value)) {
                     RED.log.error('key "' + key + '" must be an object.');
                 } else {
-                    Object.keys(old_state).forEach(function (key) {
-                        if (typeof value[key] !== 'undefined') {
-                            if (node.setState(key, value[key], old_state, state_type.type - Formats.COPY_OBJECT, {})) {
-                                differs = true;
+                    Object.keys(old_state).forEach(function (ikey) {
+                        if (typeof value[ikey] !== 'undefined') {
+                            if (node.setState(ikey, value[ikey], old_state, state_type.type - Formats.COPY_OBJECT, {})) {
+                                differs = key;
                             }
                         }
                     });
@@ -2467,13 +2535,20 @@ module.exports = function (RED) {
             }
             if (new_state !== undefined && !(state_type.type & (Formats.OBJECT | Formats.ARRAY))) {
                 // console.log("CCHI Update state for " + key + " to " + new_state);
-                differs = old_state !== new_state;
+                if (old_state !== new_state) {
+                    differs = key;
+                }
                 state[key] = new_state;
             }
             if (differs) {
                 exclusive_states_arr.forEach(rkey => delete state[rkey]);
             }
             // console.log("CCHI END ----> " + key + " = " + JSON.stringify(state[key]));
+            if (Array.isArray(differs)) {
+                let o_differs = {};
+                o_differs[key] = differs;
+                return o_differs;
+            }
             return differs;
         }
 
@@ -2484,101 +2559,7 @@ module.exports = function (RED) {
         setValues(from_object, to_object) {
             const node = this;
             return node.updateState(from_object, node.state, node.state_types, EXCLUSIVE_STATES);
-            /*
-            let differs = [];
-            Object.keys(to_object).forEach(function (key) {
-                if (from_object.hasOwnProperty(key)) {
-                    if (node.setValue(key, from_object[key], to_object, float_values[key] || {})) {
-                        differs.push(key);
-                    }
-                }
-            });
-            node.updateStatusIcon();
-            return differs;
-            */
         }
-
-        //
-        //
-        //
-        //
-        /*setValue(key, value, to_object, float_values) {
-            const node = this;
-            let differs = false;
-            const old_value = to_object[key];
-            const val_type = typeof old_value;
-            let new_value = undefined;
-            if (val_type === 'number') {
-                if (float_values) {
-                    new_value = parseFloat(String(value));
-                    if (isNaN(new_value)) {
-                        throw new Error('Unable to convert "' + value + '" to a float');
-                    }
-                } else {
-                    new_value = parseInt(String(value));
-                    if (isNaN(new_value)) {
-                        throw new Error('Unable to convert "' + value + '" to a float');
-                    }
-                }
-            } else if (val_type === 'string') {
-                new_value = String(value);
-            } else if (val_type === 'boolean') {
-                switch (String(value).toUpperCase()) {
-                    case "TRUE":
-                    case "ON":
-                    case "YES":
-                    case node.YES:
-                    case "1":
-                        new_value = true;
-                        break;
-                    case "FALSE":
-                    case "OFF":
-                    case "NO":
-                    case node.NO:
-                    case "0":
-                        new_value = false;
-                        break;
-                    default:
-                        throw new Error('Unable to convert "' + value + '" to a boolean');
-                }
-            } else if (val_type === 'object') {
-                if (typeof value === "object") {
-                    if (Array.isArray(old_value)) {
-                        if (Array.isArray(value)) {
-                            if (JSON.stringify(to_object[key]) != JSON.stringify(value)) {
-                                differs = true;
-                            }
-                            to_object[key] = value;
-                        } else {
-                            throw new Error('key "' + key + '" must be an array.');
-                        }
-                    } else {
-                        if (Array.isArray(value)) {
-                            throw new Error('key "' + key + '" must be an object.');
-                        }
-                        Object.keys(old_value).forEach(function (key) {
-                            if (typeof value[key] !== 'undefined') {
-                                if (node.setValue(key, value[key], old_value, float_values[key] || {})) {
-                                    differs = true;
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    if (Array.isArray(old_value)) {
-                        throw new Error('key "' + key + '" must be an array.');
-                    }
-                    throw new Error('key "' + key + '" must be an object.');
-                }
-            }
-            if (val_type !== 'object') {
-                if (new_value !== undefined) {
-                    differs = old_value !== new_value;
-                    to_object[key] = new_value;
-                }
-            }
-            return differs;
-        }*/
 
         //
         //
