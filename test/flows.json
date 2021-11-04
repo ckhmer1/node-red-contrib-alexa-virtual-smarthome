@@ -14,6 +14,820 @@
         "info": "https://alexa.amazon.it/spa/index.html#skills/beta/amzn1.ask.skill.a1319900-a900-47c2-bdb4-2f5e4ca89cae/?ref=skill_dsk_skb_ys\n\nhttps://developer.amazon.com/en-US/docs/alexa/smarthome/steps-to-build-a-smart-home-skill.html\n\nhttps://flows.nodered.org/flow/5a4d0fd9e3332ab6ecb56bbd51ed77f8\n\nhttps://www.saggiamente.com/2020/01/come-usare-home-assistant-con-alexa-gratuitamente-metodo-aggiornato-senza-nabucasa-e-token/\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/account-linking-for-sh-and-other.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/add-account-linking-logic-smart-home.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/smarthome/understand-the-smart-home-skill-api.html\n\nhttps://www.home-assistant.io/integrations/alexa.smart_home/\n\nhttps://developer.amazon.com/en-US/docs/alexa/device-apis/message-guide.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-a-web-service.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html\n\nhttps://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-a-web-service.html#verify-request-sent-by-alexa\n\nhttps://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-a-web-service.html#manually-verify-request-sent-by-alexa\n\nhttps://github.com/alexa/alexa-skills-kit-sdk-for-nodejs\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/understand-account-linking.html\n\nhttps://developer.amazon.com/docs/login-with-amazon/register-web.html\n\nhttps://developer.amazon.com/docs/login-with-amazon/register-web.html#create-a-new-security-profile\n\nhttps://flows.nodered.org/flow/195773d3b493d81c9bf012f64da02ea3\n\nhttps://developer.amazon.com/docs/login-with-amazon/web-docs.html\n\npassport-amazon\ncognito-express\n\nhttps://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html#directives\n\nhttps://www.home-assistant.io/integrations/alexa.smart_home/\n\nhttps://developer.amazon.com/en-US/docs/alexa/account-linking/configure-authorization-code-grant.html\n"
     },
     {
+        "id": "8d57ae76.d4c1",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "16c544df.8a6b4b",
+            "4f7e7853.45d1d8",
+            "a74be276.fa0ca",
+            "a2b4b892.275808",
+            "c1e150d9.a7c2b"
+        ],
+        "x": 334,
+        "y": 979,
+        "w": 292,
+        "h": 242
+    },
+    {
+        "id": "10ca3f12.68f441",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "8054833d.35339",
+            "6e77b600.a2f9f8",
+            "1c967ac1.b40265",
+            "815e9477.295ff8",
+            "5def2bf1.11e864"
+        ],
+        "x": 814,
+        "y": 1619,
+        "w": 172,
+        "h": 242
+    },
+    {
+        "id": "9683fd27.1479f",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "175bce32.ed9362",
+            "2e64ac83.6c7244",
+            "db842796.00b868",
+            "a61ea607.17e338",
+            "bfbaf89a.aa5688"
+        ],
+        "x": 794,
+        "y": 1359,
+        "w": 192,
+        "h": 242
+    },
+    {
+        "id": "d9c6beae.d3352",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "6bd6da53.ff5ed4",
+            "f02eef9d.59fa5",
+            "8d816526.d58108"
+        ],
+        "x": 694,
+        "y": 1179,
+        "w": 292,
+        "h": 162
+    },
+    {
+        "id": "3ef7e7ff.058988",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "6c7c2d6a.7730a4",
+            "d2bc142f.d3f1f8",
+            "b40e27a.f80c3d8"
+        ],
+        "x": 734,
+        "y": 999,
+        "w": 252,
+        "h": 162
+    },
+    {
+        "id": "ce88feac.b7163",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "a892bda1.3101d",
+            "d34611ba.1d20b",
+            "cf4dfb7b.f35ca8"
+        ],
+        "x": 754,
+        "y": 819,
+        "w": 232,
+        "h": 162
+    },
+    {
+        "id": "bfa121ae.6942b",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "ec76ffd4.f31f9",
+            "2e8ab8f2.57d388",
+            "fe0207cc.71b9e8"
+        ],
+        "x": 774,
+        "y": 539,
+        "w": 212,
+        "h": 162
+    },
+    {
+        "id": "2427d842.422858",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "5afc7e5.655468",
+            "14103df2.b76e12",
+            "90e497ed.6da6c8",
+            "3951b16c.54e59e",
+            "6a3057c5.262958",
+            "9db4695e.b998a8",
+            "1d5215dd.918aca",
+            "9159c2ce.8fd48",
+            "ca3f1d72.35a3b"
+        ],
+        "x": 654,
+        "y": 119,
+        "w": 332,
+        "h": 402
+    },
+    {
+        "id": "8624f632.e73fc8",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "d11ae58c.f18268",
+            "c8c6df8c.fa17b",
+            "c5687d55.80e6d"
+        ],
+        "x": 374,
+        "y": 1879,
+        "w": 252,
+        "h": 162
+    },
+    {
+        "id": "7956d398.a7c96c",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "7b40b80.dcbf448",
+            "3c9b7fa6.6357f",
+            "5bebba2.0cf7c44"
+        ],
+        "x": 354,
+        "y": 1699,
+        "w": 272,
+        "h": 162
+    },
+    {
+        "id": "50c2ac36.9ca864",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "2e31a003.c70b2",
+            "64ba3f5c.8b689",
+            "a4ce7d38.9653c"
+        ],
+        "x": 374,
+        "y": 1419,
+        "w": 252,
+        "h": 162
+    },
+    {
+        "id": "ba8a1a7f.127558",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "73ab523a.84b5bc",
+            "bfa3967b.84f308",
+            "1c5be69d.0e7c59"
+        ],
+        "x": 414,
+        "y": 1239,
+        "w": 212,
+        "h": 162
+    },
+    {
+        "id": "4d499e52.368c9",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "27f5ad34.1f4312",
+            "80f7a8c7.9e82f8"
+        ],
+        "x": 54,
+        "y": 1139,
+        "w": 272,
+        "h": 122
+    },
+    {
+        "id": "4e712e28.25f18",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "c359c45b.db9df8",
+            "4875dfe1.7f992",
+            "5ccc13e4.e9e5dc",
+            "d8a877bb.329d08",
+            "6b7972c8.d196ac",
+            "520f57ab.bd85c8",
+            "3bdd2b87.908d34",
+            "a018dd66.8e2bb",
+            "44750f6a.f113b",
+            "d46b9113.9e008"
+        ],
+        "x": 354,
+        "y": 519,
+        "w": 272,
+        "h": 442
+    },
+    {
+        "id": "c207b51f.ead0b8",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "8c5aa077.138ed"
+        ],
+        "x": 714,
+        "y": 1879,
+        "w": 272,
+        "h": 82
+    },
+    {
+        "id": "33861595.3c29fa",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "c5e54dcd.6550f"
+        ],
+        "x": 794,
+        "y": 719,
+        "w": 192,
+        "h": 82
+    },
+    {
+        "id": "2fffe9b8.4bdf66",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "3c2a9ba6.ff33d4"
+        ],
+        "x": 774,
+        "y": 19,
+        "w": 212,
+        "h": 82
+    },
+    {
+        "id": "b72ec522.442848",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "fcbf55f0.6b3148"
+        ],
+        "x": 394,
+        "y": 1599,
+        "w": 232,
+        "h": 82
+    },
+    {
+        "id": "9925a165.7480f",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "3baa9e9c1a44b53f",
+            "92fafdddd4cf37f3",
+            "c382bf21aad8eb9f",
+            "b9dbecec.b3ed9"
+        ],
+        "x": 414,
+        "y": 299,
+        "w": 212,
+        "h": 202
+    },
+    {
+        "id": "3c1a3490.a4b1ec",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "cab4aa22.443468",
+            "9de9977a.487a18",
+            "306f0d3e.f70672"
+        ],
+        "x": 74,
+        "y": 79,
+        "w": 252,
+        "h": 162
+    },
+    {
+        "id": "66de66bc.e271f8",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "adb9c6e69e992eb0",
+            "9273677f.aee948"
+        ],
+        "x": 54,
+        "y": 259,
+        "w": 272,
+        "h": 122
+    },
+    {
+        "id": "11760387.e4128c",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "6f8125ef.9c0dac",
+            "83f9395b.2243d8",
+            "dff4fc93.be06d"
+        ],
+        "x": 94,
+        "y": 399,
+        "w": 232,
+        "h": 162
+    },
+    {
+        "id": "5a97d6a0.323758",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "cde8bab8.9b5aa8",
+            "29adead8.48e6e6",
+            "ec67799c.060658"
+        ],
+        "x": 114,
+        "y": 579,
+        "w": 212,
+        "h": 162
+    },
+    {
+        "id": "ab06b7eb.c2e568",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "11f70d37.12c223",
+            "77d14032.a2922",
+            "c929af2f.4716"
+        ],
+        "x": 34,
+        "y": 759,
+        "w": 292,
+        "h": 162
+    },
+    {
+        "id": "80581700.02f2e8",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "36726572.107d0a",
+            "180c111e.e99b1f",
+            "68dda98.e3b5158"
+        ],
+        "x": 94,
+        "y": 959,
+        "w": 232,
+        "h": 162
+    },
+    {
+        "id": "8034f25a.0d655",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "e9c54ab7.9b2768",
+            "dd0e809548f57a03"
+        ],
+        "x": 14,
+        "y": 1279,
+        "w": 312,
+        "h": 122
+    },
+    {
+        "id": "3df38123.9cc23e",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "c552d8fc.9b6878",
+            "7b4384a6.a7db5c",
+            "ead38007.67e8c"
+        ],
+        "x": 94,
+        "y": 1419,
+        "w": 232,
+        "h": 162
+    },
+    {
+        "id": "4b64a00a.bfee9",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "60f724b3.1d89ac",
+            "41fcd33a.96a9bc",
+            "c4072795.1d1e98"
+        ],
+        "x": 94,
+        "y": 1599,
+        "w": 232,
+        "h": 162
+    },
+    {
+        "id": "dac59ee3.d92c3",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "eda80bce.9fab18"
+        ],
+        "x": 154,
+        "y": 1779,
+        "w": 172,
+        "h": 82
+    },
+    {
+        "id": "cb4e15e4.1abd98",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "a086ec2c.a8db8",
+            "779d74bb.18b6fc",
+            "ee82d7e6.758628"
+        ],
+        "x": 74,
+        "y": 1879,
+        "w": 252,
+        "h": 162
+    },
+    {
+        "id": "5cdd40a1.b5c8a",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "2879d69c.f96e8a",
+            "55feda92.2430b4",
+            "83bb6486.85fe28"
+        ],
+        "x": 414,
+        "y": 19,
+        "w": 212,
+        "h": 162
+    },
+    {
+        "id": "e9d1e23f.80d5e",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "a99493.299aeb7"
+        ],
+        "x": 394,
+        "y": 199,
+        "w": 232,
+        "h": 82
+    },
+    {
+        "id": "9f32eb8f.554ab8",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "d8f22efa.dde0a",
+            "7cae27d9.a5a6a8",
+            "e061e9ed.eb06c8",
+            "fd2d1fc9.a6156",
+            "480e2450.ff5bec",
+            "eef7ac27.8e6af"
+        ],
+        "x": 1014,
+        "y": 19,
+        "w": 452,
+        "h": 242
+    },
+    {
+        "id": "3851fb5.3464404",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "12c1a902.fc37c7",
+            "3dc2d311.e5477c",
+            "82c928de.3dbd58",
+            "d8a70c1d.4c9bf"
+        ],
+        "x": 1034,
+        "y": 279,
+        "w": 432,
+        "h": 202
+    },
+    {
+        "id": "3462e0b3.48dbe",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "58c096a.8fa0d68",
+            "a1e3c3f6.df955",
+            "f94cd64.0beae28"
+        ],
+        "x": 1194,
+        "y": 759,
+        "w": 712,
+        "h": 142
+    },
+    {
         "id": "a2728c12.4058f",
         "type": "alexa-adapter",
         "name": "Alexa",
@@ -32,6 +846,7 @@
         "id": "58c096a.8fa0d68",
         "type": "alexa-device",
         "z": "5cc6ca02.0e2a64",
+        "g": "3462e0b3.48dbe",
         "alexa": "a2728c12.4058f",
         "name": "Multi",
         "display_categories": [
@@ -278,8 +1093,38 @@
                 "precision": "1"
             }
         ],
-        "x": 490,
-        "y": 1000,
+        "c_modes": [
+            {
+                "instance": "Washer.WashCycle",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.WashCycle\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Cycle\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Ciclo de lavado\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Cycle de lavage\",\"locale\":\"fr-CA\"}}]}",
+                "semantics": "",
+                "ordered": true,
+                "supported_modes": "[{\"value\":\"WashCycle.Normal\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Normal\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Cottons\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Ciclo normal\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Cycle délicat\",\"locale\":\"fr-CA\"}}]}},{\"value\":\"WashCycle.Delicates\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Delicate\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Delicates\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Knits\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Ciclo delicado\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Cycle délicat\",\"locale\":\"fr-CA\"}}]}}]"
+            },
+            {
+                "instance": "Washer.CurrentWashCycle",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Current wash cycle\",\"locale\":\"en-US\"}}]}",
+                "semantics": "",
+                "ordered": true,
+                "supported_modes": "[{\"value\":\"CurrentWashCycle.Wash\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Wash\",\"locale\":\"en-US\"}}]}},{\"value\":\"CurrentWashCycle.Rinse\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Rinse\",\"locale\":\"en-US\"}}]}},{\"value\":\"CurrentWashCycle.Spin\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Spin\",\"locale\":\"en-US\"}}]}}]"
+            },
+            {
+                "instance": "Washer.WashTemperature",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.WaterTemperature\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Wash temperature\",\"locale\":\"en-US\"}}]}",
+                "semantics": "",
+                "ordered": false,
+                "supported_modes": "[{\"value\":\"WashTemperature.Cold\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Cold\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Cool\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Fría\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Froide\",\"locale\":\"fr-CA\"}}]}},{\"value\":\"WashTemperature.Warm\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Warm\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Tibia\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Tiède\",\"locale\":\"fr-CA\"}}]}},{\"value\":\"WashTemperature.Hot\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Hot\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Caliente\",\"locale\":\"es-MX\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Chaude\",\"locale\":\"fr-CA\"}}]}}]"
+            },
+            {
+                "instance": "Blinds.Position",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Setting.Opening\"}}]}",
+                "semantics": "{\"actionMappings\":[{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Close\",\"Alexa.Actions.Lower\"],\"directive\":{\"name\":\"SetMode\",\"payload\":{\"mode\":\"Position.Down\"}}},{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Open\",\"Alexa.Actions.Raise\"],\"directive\":{\"name\":\"SetMode\",\"payload\":{\"mode\":\"Position.Up\"}}}],\"stateMappings\":[{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Closed\"],\"value\":\"Position.Down\"},{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Open\"],\"value\":\"Position.Up\"}]}",
+                "ordered": false,
+                "supported_modes": "[{\"value\":\"Position.Up\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Open\"}}]}},{\"value\":\"Position.Down\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Close\"}}]}}]"
+            }
+        ],
+        "x": 1270,
+        "y": 800,
         "wires": [
             [
                 "21a10626.9a490a",
@@ -300,14 +1145,15 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1030,
-        "y": 1000,
+        "x": 1990,
+        "y": 800,
         "wires": []
     },
     {
         "id": "c359c45b.db9df8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "",
         "props": [
             {
@@ -325,8 +1171,8 @@
         "topic": "reportState",
         "payload": "reportState",
         "payloadType": "str",
-        "x": 260,
-        "y": 1740,
+        "x": 500,
+        "y": 720,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -337,6 +1183,7 @@
         "id": "4875dfe1.7f992",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "SetMedia 1",
         "props": [
             {
@@ -354,8 +1201,8 @@
         "topic": "SetMedia",
         "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 290,
-        "y": 1660,
+        "x": 530,
+        "y": 640,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -366,6 +1213,7 @@
         "id": "5ccc13e4.e9e5dc",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "SetMedia 2",
         "props": [
             {
@@ -383,8 +1231,8 @@
         "topic": "SetMedia",
         "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 290,
-        "y": 1700,
+        "x": 530,
+        "y": 680,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -395,6 +1243,7 @@
         "id": "d8a877bb.329d08",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "AddOrUpdateMedia 1",
         "props": [
             {
@@ -412,8 +1261,8 @@
         "topic": "AddOrUpdateMedia",
         "payload": "{\"id\":\"1\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 260,
-        "y": 1780,
+        "x": 500,
+        "y": 760,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -424,6 +1273,7 @@
         "id": "6b7972c8.d196ac",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "AddOrUpdateMedia 2",
         "props": [
             {
@@ -441,8 +1291,8 @@
         "topic": "AddOrUpdateMedia",
         "payload": "{\"id\":\"2\",\"cause\":\"cause of media creation\",\"recording\":{\"name\":\"Optional video name\",\"startTime\":\"2018-06-29T19:20:41Z\",\"endTime\":\"2018-06-29T19:21:41Z\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\",\"uri\":{\"value\":\"https://somedomain/somevideo.mp4\",\"expireTime\":\"2018-06-29T19:31:41Z\"},\"thumbnailUri\":{\"value\":\"https://somedomain/someimage.png\",\"expireTime\":\"2018-06-29T19:31:41Z\"}}}",
         "payloadType": "json",
-        "x": 260,
-        "y": 1820,
+        "x": 500,
+        "y": 800,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -453,6 +1303,7 @@
         "id": "520f57ab.bd85c8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "SetMedia",
         "props": [
             {
@@ -470,8 +1321,8 @@
         "topic": "SetMedia",
         "payload": "[]",
         "payloadType": "json",
-        "x": 300,
-        "y": 1620,
+        "x": 540,
+        "y": 600,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -482,6 +1333,7 @@
         "id": "3bdd2b87.908d34",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "RemoveMedia 1",
         "props": [
             {
@@ -499,8 +1351,8 @@
         "topic": "RemoveMedia",
         "payload": "1",
         "payloadType": "str",
-        "x": 280,
-        "y": 1860,
+        "x": 520,
+        "y": 840,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -511,6 +1363,7 @@
         "id": "a018dd66.8e2bb",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "RemoveMedia 2",
         "props": [
             {
@@ -528,8 +1381,8 @@
         "topic": "RemoveMedia",
         "payload": "2",
         "payloadType": "str",
-        "x": 280,
-        "y": 1900,
+        "x": 520,
+        "y": 880,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -540,6 +1393,7 @@
         "id": "44750f6a.f113b",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": "RemoveMedia 3",
         "props": [
             {
@@ -557,8 +1411,8 @@
         "topic": "RemoveMedia",
         "payload": "3",
         "payloadType": "str",
-        "x": 280,
-        "y": 1940,
+        "x": 520,
+        "y": 920,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -569,6 +1423,7 @@
         "id": "adb9c6e69e992eb0",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "66de66bc.e271f8",
         "name": "Camera Streams",
         "props": [
             {
@@ -586,8 +1441,8 @@
         "topic": "cameraStreams",
         "payload": "{\"cameraStreams\":[{\"uri\":\"https://pizza.dynu.net/hls/bbb.m3u8\",\"expirationTime\":\"2022-02-03T16:20:50.52Z\",\"idleTimeoutSeconds\":30,\"protocol\":\"HLS\",\"resolution\":{\"width\":1920,\"height\":1080},\"authorizationType\":\"NONE\",\"videoCodec\":\"H264\",\"audioCodec\":\"AAC\"}],\"imageUri\":\"https://upload.wikimedia.org/wikipedia/commons/f/fb/Veduta_di_Paestum_2010.jpg\"}",
         "payloadType": "json",
-        "x": 270,
-        "y": 260,
+        "x": 210,
+        "y": 340,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -610,8 +1465,8 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "getState",
-        "x": 300,
-        "y": 60,
+        "x": 260,
+        "y": 40,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -622,6 +1477,7 @@
         "id": "7b40b80.dcbf448",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "7956d398.a7c96c",
         "name": "",
         "props": [
             {
@@ -635,8 +1491,8 @@
         "topic": "",
         "payload": "{\"powerState\": \"ON\"}",
         "payloadType": "json",
-        "x": 270,
-        "y": 2380,
+        "x": 510,
+        "y": 1780,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -647,6 +1503,7 @@
         "id": "3c9b7fa6.6357f",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "7956d398.a7c96c",
         "name": "",
         "props": [
             {
@@ -660,8 +1517,8 @@
         "topic": "",
         "payload": "{\"powerState\": \"OFF\"}",
         "payloadType": "json",
-        "x": 260,
-        "y": 2420,
+        "x": 500,
+        "y": 1820,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -672,6 +1529,7 @@
         "id": "5afc7e5.655468",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "SetSecurityDeviceNamesInError",
         "props": [
             {
@@ -689,8 +1547,8 @@
         "topic": "SetSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
         "payloadType": "json",
-        "x": 230,
-        "y": 2660,
+        "x": 830,
+        "y": 200,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -701,6 +1559,7 @@
         "id": "d8f22efa.dde0a",
         "type": "alexa-device",
         "z": "5cc6ca02.0e2a64",
+        "g": "9f32eb8f.554ab8",
         "alexa": "a2728c12.4058f",
         "name": "Finestra Cucina",
         "display_categories": [
@@ -788,8 +1647,10 @@
         "natural_gas_unit": "CUBIC_FOOT",
         "natural_gas_default_resolution": "3600",
         "toggles": [],
-        "x": 720,
-        "y": 620,
+        "ranges": [],
+        "c_modes": [],
+        "x": 1360,
+        "y": 140,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -800,6 +1661,7 @@
         "id": "12c1a902.fc37c7",
         "type": "alexa-device",
         "z": "5cc6ca02.0e2a64",
+        "g": "3851fb5.3464404",
         "alexa": "a2728c12.4058f",
         "name": "Finestra Bagno",
         "display_categories": [
@@ -884,8 +1746,11 @@
         "electricity_default_resolution": "",
         "natural_gas_measuring_method": "",
         "natural_gas_default_resolution": "",
-        "x": 720,
-        "y": 680,
+        "toggles": [],
+        "ranges": [],
+        "c_modes": [],
+        "x": 1360,
+        "y": 320,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -896,6 +1761,7 @@
         "id": "14103df2.b76e12",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "AddSecurityDeviceNamesInError",
         "props": [
             {
@@ -913,8 +1779,8 @@
         "topic": "AddSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Salotto\",\"Finestra Bagno\"]",
         "payloadType": "json",
-        "x": 230,
-        "y": 2700,
+        "x": 830,
+        "y": 240,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -925,6 +1791,7 @@
         "id": "90e497ed.6da6c8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "DelSecurityDeviceNamesInError",
         "props": [
             {
@@ -942,8 +1809,8 @@
         "topic": "DelSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
         "payloadType": "json",
-        "x": 230,
-        "y": 2740,
+        "x": 830,
+        "y": 280,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -954,6 +1821,7 @@
         "id": "3dc2d311.e5477c",
         "type": "alexa-device",
         "z": "5cc6ca02.0e2a64",
+        "g": "3851fb5.3464404",
         "alexa": "a2728c12.4058f",
         "name": "Finestra Salotto",
         "display_categories": [
@@ -1038,8 +1906,11 @@
         "electricity_default_resolution": "",
         "natural_gas_measuring_method": "",
         "natural_gas_default_resolution": "",
-        "x": 720,
-        "y": 740,
+        "toggles": [],
+        "ranges": [],
+        "c_modes": [],
+        "x": 1360,
+        "y": 380,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -1050,6 +1921,7 @@
         "id": "fd2d1fc9.a6156",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9f32eb8f.554ab8",
         "name": "CONTACT",
         "props": [
             {
@@ -1063,8 +1935,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 520,
-        "y": 620,
+        "x": 1160,
+        "y": 140,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1075,6 +1947,7 @@
         "id": "480e2450.ff5bec",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9f32eb8f.554ab8",
         "name": "NO CONTACT",
         "props": [
             {
@@ -1088,8 +1961,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 500,
-        "y": 580,
+        "x": 1140,
+        "y": 100,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1672,6 +2545,7 @@
         "id": "82c928de.3dbd58",
         "type": "alexa-device",
         "z": "5cc6ca02.0e2a64",
+        "g": "3851fb5.3464404",
         "alexa": "a2728c12.4058f",
         "name": "Termostato Bagno",
         "display_categories": [],
@@ -1754,8 +2628,11 @@
         "electricity_default_resolution": "",
         "natural_gas_measuring_method": "",
         "natural_gas_default_resolution": "",
-        "x": 730,
-        "y": 800,
+        "toggles": [],
+        "ranges": [],
+        "c_modes": [],
+        "x": 1350,
+        "y": 440,
         "wires": [
             [
                 "21a10626.9a490a"
@@ -1766,6 +2643,7 @@
         "id": "d8a70c1d.4c9bf",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3851fb5.3464404",
         "name": "",
         "props": [
             {
@@ -1778,8 +2656,8 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "getState",
-        "x": 520,
-        "y": 800,
+        "x": 1140,
+        "y": 440,
         "wires": [
             [
                 "82c928de.3dbd58"
@@ -1815,6 +2693,7 @@
         "id": "a1e3c3f6.df955",
         "type": "switch",
         "z": "5cc6ca02.0e2a64",
+        "g": "3462e0b3.48dbe",
         "name": "ReportMeasurements",
         "property": "name",
         "propertyType": "msg",
@@ -1828,8 +2707,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 680,
-        "y": 1060,
+        "x": 1460,
+        "y": 860,
         "wires": [
             [
                 "f94cd64.0beae28"
@@ -1840,6 +2719,7 @@
         "id": "f94cd64.0beae28",
         "type": "debug",
         "z": "5cc6ca02.0e2a64",
+        "g": "3462e0b3.48dbe",
         "name": "TODO ReportMeasurements",
         "active": true,
         "tosidebar": true,
@@ -1849,8 +2729,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 960,
-        "y": 1060,
+        "x": 1740,
+        "y": 860,
         "wires": []
     },
     {
@@ -1907,6 +2787,7 @@
         "id": "27f5ad34.1f4312",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4d499e52.368c9",
         "name": "MeasurementsReport",
         "props": [
             {
@@ -1929,8 +2810,8 @@
         "topic": "MeasurementsReport",
         "payload": "{\"electricityIntervals\":[{\"usage\":113.2,\"start\":\"2020-07-05T08:00:00Z\",\"end\":\"2020-07-05T09:00:00Z\"},{\"usage\":101.1,\"start\":\"2020-07-05T09:00:00Z\",\"end\":\"2020-07-05T10:00:00Z\"},{\"usage\":0,\"start\":\"2020-07-05T10:00:00Z\",\"end\":\"2020-07-05T10:51:30Z\"},{\"usage\":127.3,\"start\":\"2020-07-05T11:02:30Z\",\"end\":\"2020-07-05T12:00:00Z\"}]}",
         "payloadType": "json",
-        "x": 260,
-        "y": 2020,
+        "x": 200,
+        "y": 1220,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -1941,6 +2822,7 @@
         "id": "7cae27d9.a5a6a8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9f32eb8f.554ab8",
         "name": "MOTION",
         "props": [
             {
@@ -1954,8 +2836,8 @@
         "topic": "",
         "payload": "{\"motionDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 520,
-        "y": 700,
+        "x": 1160,
+        "y": 220,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -1966,6 +2848,7 @@
         "id": "e061e9ed.eb06c8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9f32eb8f.554ab8",
         "name": "NO MOTION",
         "props": [
             {
@@ -1979,8 +2862,8 @@
         "topic": "",
         "payload": "{\"motionDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 510,
-        "y": 660,
+        "x": 1150,
+        "y": 180,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -2041,6 +2924,7 @@
         "id": "3951b16c.54e59e",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "SetSecurityDeviceNamesInError",
         "props": [
             {
@@ -2058,8 +2942,8 @@
         "topic": "SetSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/cucina\"]}",
         "payloadType": "json",
-        "x": 230,
-        "y": 2780,
+        "x": 830,
+        "y": 320,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2070,6 +2954,7 @@
         "id": "6a3057c5.262958",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "AddSecurityDeviceNamesInError",
         "props": [
             {
@@ -2087,8 +2972,8 @@
         "topic": "AddSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
         "payloadType": "json",
-        "x": 230,
-        "y": 2820,
+        "x": 830,
+        "y": 360,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2099,6 +2984,7 @@
         "id": "9db4695e.b998a8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "DelSecurityDeviceNamesInError",
         "props": [
             {
@@ -2116,8 +3002,8 @@
         "topic": "DelSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
         "payloadType": "json",
-        "x": 230,
-        "y": 2860,
+        "x": 830,
+        "y": 400,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2128,6 +3014,7 @@
         "id": "3baa9e9c1a44b53f",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9925a165.7480f",
         "name": "LOCKED",
         "props": [
             {
@@ -2141,8 +3028,8 @@
         "topic": "",
         "payload": "{\"lockState\":\"LOCKED\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 1460,
+        "x": 540,
+        "y": 380,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2153,6 +3040,7 @@
         "id": "92fafdddd4cf37f3",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9925a165.7480f",
         "name": "UNLOCKED",
         "props": [
             {
@@ -2166,8 +3054,8 @@
         "topic": "",
         "payload": "{\"lockState\":\"UNLOCKED\"}",
         "payloadType": "json",
-        "x": 290,
-        "y": 1500,
+        "x": 530,
+        "y": 420,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2178,6 +3066,7 @@
         "id": "c382bf21aad8eb9f",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9925a165.7480f",
         "name": "JAMMED",
         "props": [
             {
@@ -2191,8 +3080,8 @@
         "topic": "",
         "payload": "{\"lockState\":\"JAMMED\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 1540,
+        "x": 540,
+        "y": 460,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2203,6 +3092,7 @@
         "id": "cab4aa22.443468",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3c1a3490.a4b1ec",
         "name": "",
         "props": [
             {
@@ -2220,8 +3110,8 @@
         "topic": "brightness",
         "payload": "10",
         "payloadType": "num",
-        "x": 290,
-        "y": 140,
+        "x": 230,
+        "y": 160,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2232,6 +3122,7 @@
         "id": "9de9977a.487a18",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3c1a3490.a4b1ec",
         "name": "",
         "props": [
             {
@@ -2245,8 +3136,8 @@
         "topic": "",
         "payload": "{\"brightness\":100}",
         "payloadType": "json",
-        "x": 270,
-        "y": 180,
+        "x": 210,
+        "y": 200,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2257,36 +3148,40 @@
         "id": "306f0d3e.f70672",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "3c1a3490.a4b1ec",
         "name": " Brightness Controller",
         "info": "",
-        "x": 270,
-        "y": 100,
+        "x": 200,
+        "y": 120,
         "wires": []
     },
     {
         "id": "9273677f.aee948",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "66de66bc.e271f8",
         "name": " CameraStream Controller",
         "info": "",
-        "x": 250,
-        "y": 220,
+        "x": 190,
+        "y": 300,
         "wires": []
     },
     {
         "id": "6f8125ef.9c0dac",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "11760387.e4128c",
         "name": "Channel Controller",
         "info": "",
-        "x": 270,
-        "y": 300,
+        "x": 210,
+        "y": 440,
         "wires": []
     },
     {
         "id": "83f9395b.2243d8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "11760387.e4128c",
         "name": "RAI 1 HD",
         "props": [
             {
@@ -2300,8 +3195,8 @@
         "topic": "",
         "payload": "{\"channel\":{\"number\":\"501\",\"callSign\":\"RAI 1 HD\",\"affiliateCallSign\":\"RAI\"}}",
         "payloadType": "json",
-        "x": 300,
-        "y": 340,
+        "x": 240,
+        "y": 480,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2312,6 +3207,7 @@
         "id": "dff4fc93.be06d",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "11760387.e4128c",
         "name": "RAI 2 HD",
         "props": [
             {
@@ -2325,8 +3221,8 @@
         "topic": "",
         "payload": "{\"channel\":{\"number\":\"502\",\"callSign\":\"RAI 2 HD\",\"affiliateCallSign\":\"RAI\"}}",
         "payloadType": "json",
-        "x": 300,
-        "y": 380,
+        "x": 240,
+        "y": 520,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2337,16 +3233,18 @@
         "id": "cde8bab8.9b5aa8",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "5a97d6a0.323758",
         "name": " Color Controller",
         "info": "",
-        "x": 280,
-        "y": 420,
+        "x": 220,
+        "y": 620,
         "wires": []
     },
     {
         "id": "29adead8.48e6e6",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "5a97d6a0.323758",
         "name": "Color 1",
         "props": [
             {
@@ -2360,8 +3258,8 @@
         "topic": "",
         "payload": "{\"color\":{\"hue\":350,\"saturation\":0.7138,\"brightness\":0.6524}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 460,
+        "x": 250,
+        "y": 660,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2372,6 +3270,7 @@
         "id": "ec67799c.060658",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "5a97d6a0.323758",
         "name": "Color 2",
         "props": [
             {
@@ -2385,8 +3284,8 @@
         "topic": "",
         "payload": "{\"color\":{\"hue\":300.5,\"saturation\":0.7138,\"brightness\":0.6524}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 500,
+        "x": 250,
+        "y": 700,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2397,16 +3296,18 @@
         "id": "11f70d37.12c223",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "ab06b7eb.c2e568",
         "name": " Color Temperature Controller",
         "info": "",
-        "x": 240,
-        "y": 540,
+        "x": 180,
+        "y": 800,
         "wires": []
     },
     {
         "id": "77d14032.a2922",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "ab06b7eb.c2e568",
         "name": "Warm white",
         "props": [
             {
@@ -2420,8 +3321,8 @@
         "topic": "",
         "payload": "{\"colorTemperatureInKelvin\": 2000}",
         "payloadType": "json",
-        "x": 290,
-        "y": 580,
+        "x": 230,
+        "y": 840,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2432,6 +3333,7 @@
         "id": "c929af2f.4716",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "ab06b7eb.c2e568",
         "name": "Cool white",
         "props": [
             {
@@ -2445,8 +3347,8 @@
         "topic": "",
         "payload": "{\"colorTemperatureInKelvin\": 7000}",
         "payloadType": "json",
-        "x": 300,
-        "y": 620,
+        "x": 240,
+        "y": 880,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2457,16 +3359,18 @@
         "id": "36726572.107d0a",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "80581700.02f2e8",
         "name": "Contact Sensor",
         "info": "",
-        "x": 280,
-        "y": 660,
+        "x": 220,
+        "y": 1000,
         "wires": []
     },
     {
         "id": "180c111e.e99b1f",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "80581700.02f2e8",
         "name": "NO CONTACT",
         "props": [
             {
@@ -2480,8 +3384,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 280,
-        "y": 700,
+        "x": 220,
+        "y": 1040,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2492,6 +3396,7 @@
         "id": "68dda98.e3b5158",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "80581700.02f2e8",
         "name": "CONTACT",
         "props": [
             {
@@ -2505,8 +3410,8 @@
         "topic": "",
         "payload": "{\"contactDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 740,
+        "x": 240,
+        "y": 1080,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2517,16 +3422,18 @@
         "id": "e9c54ab7.9b2768",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "8034f25a.0d655",
         "name": " Doorbell Event Source",
         "info": "",
-        "x": 260,
-        "y": 780,
+        "x": 200,
+        "y": 1320,
         "wires": []
     },
     {
         "id": "dd0e809548f57a03",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "8034f25a.0d655",
         "name": "",
         "props": [
             {
@@ -2544,8 +3451,8 @@
         "topic": "DoorbellPress",
         "payload": "PHYSICAL_INTERACTION",
         "payloadType": "str",
-        "x": 240,
-        "y": 820,
+        "x": 180,
+        "y": 1360,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2556,16 +3463,18 @@
         "id": "c552d8fc.9b6878",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "3df38123.9cc23e",
         "name": " Endpoint Health ",
         "info": "",
-        "x": 280,
-        "y": 860,
+        "x": 220,
+        "y": 1460,
         "wires": []
     },
     {
         "id": "7b4384a6.a7db5c",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3df38123.9cc23e",
         "name": "OK",
         "props": [
             {
@@ -2579,8 +3488,8 @@
         "topic": "",
         "payload": "{\"connectivity\":{\"value\":\"OK\",\"reason\":null}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 900,
+        "x": 250,
+        "y": 1500,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2591,6 +3500,7 @@
         "id": "ead38007.67e8c",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3df38123.9cc23e",
         "name": "UNREACHABLE",
         "props": [
             {
@@ -2604,8 +3514,8 @@
         "topic": "",
         "payload": "{\"connectivity\":{\"value\":\"UNREACHABLE\",\"reason\":\"WIFI_BAD_PASSWORD\"}}",
         "payloadType": "json",
-        "x": 280,
-        "y": 940,
+        "x": 220,
+        "y": 1540,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2616,16 +3526,18 @@
         "id": "60f724b3.1d89ac",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "4b64a00a.bfee9",
         "name": " Equalizer Controller ",
         "info": "",
-        "x": 270,
-        "y": 980,
+        "x": 210,
+        "y": 1640,
         "wires": []
     },
     {
         "id": "41fcd33a.96a9bc",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4b64a00a.bfee9",
         "name": "Bands/Mode",
         "props": [
             {
@@ -2639,8 +3551,8 @@
         "topic": "",
         "payload": "{\"bands\":[{\"name\":\"BASS\",\"value\":0},{\"name\":\"MIDRANGE\",\"value\":3},{\"name\":\"TREBLE\",\"value\":1}],\"mode\":\"MOVIE\"}",
         "payloadType": "json",
-        "x": 290,
-        "y": 1060,
+        "x": 230,
+        "y": 1720,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2651,26 +3563,29 @@
         "id": "eda80bce.9fab18",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "dac59ee3.d92c3",
         "name": "Estimation ",
         "info": "No State or directives",
-        "x": 300,
-        "y": 1100,
+        "x": 240,
+        "y": 1820,
         "wires": []
     },
     {
         "id": "a086ec2c.a8db8",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "cb4e15e4.1abd98",
         "name": " Event Detection Sensor ",
         "info": "",
-        "x": 260,
-        "y": 1140,
+        "x": 200,
+        "y": 1920,
         "wires": []
     },
     {
         "id": "73ab523a.84b5bc",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "ba8a1a7f.127558",
         "name": "MOTION",
         "props": [
             {
@@ -2684,8 +3599,8 @@
         "topic": "",
         "payload": "{\"motionDetectionState\":\"DETECTED\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 2140,
+        "x": 540,
+        "y": 1360,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2696,6 +3611,7 @@
         "id": "bfa3967b.84f308",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "ba8a1a7f.127558",
         "name": "NO MOTION",
         "props": [
             {
@@ -2709,8 +3625,8 @@
         "topic": "",
         "payload": "{\"motionDetectionState\":\"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 290,
-        "y": 2100,
+        "x": 530,
+        "y": 1320,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2721,16 +3637,18 @@
         "id": "2879d69c.f96e8a",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "5cdd40a1.b5c8a",
         "name": " Input Controller ",
         "info": "",
-        "x": 280,
-        "y": 1260,
+        "x": 520,
+        "y": 60,
         "wires": []
     },
     {
         "id": "55feda92.2430b4",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "5cdd40a1.b5c8a",
         "name": "HDMI 1",
         "props": [
             {
@@ -2744,8 +3662,8 @@
         "topic": "",
         "payload": "{\"input\":\"HDMI 1\"}",
         "payloadType": "json",
-        "x": 310,
-        "y": 1300,
+        "x": 550,
+        "y": 100,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2756,6 +3674,7 @@
         "id": "83bb6486.85fe28",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "5cdd40a1.b5c8a",
         "name": "HDMI 2",
         "props": [
             {
@@ -2769,8 +3688,8 @@
         "topic": "",
         "payload": "{\"input\":\"HDMI 2\"}",
         "payloadType": "json",
-        "x": 310,
-        "y": 1340,
+        "x": 550,
+        "y": 140,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2781,56 +3700,62 @@
         "id": "a99493.299aeb7",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "e9d1e23f.80d5e",
         "name": " Keypad Controller ",
         "info": "No properties",
-        "x": 270,
-        "y": 1380,
+        "x": 510,
+        "y": 240,
         "wires": []
     },
     {
         "id": "b9dbecec.b3ed9",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "9925a165.7480f",
         "name": " Lock Controller ",
         "info": "",
-        "x": 280,
-        "y": 1420,
+        "x": 520,
+        "y": 340,
         "wires": []
     },
     {
         "id": "d46b9113.9e008",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "4e712e28.25f18",
         "name": " Media Metadata ",
         "info": "",
-        "x": 280,
-        "y": 1580,
+        "x": 520,
+        "y": 560,
         "wires": []
     },
     {
         "id": "80f7a8c7.9e82f8",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "4d499e52.368c9",
         "name": " Deviceusage meter ",
         "info": "",
-        "x": 270,
-        "y": 1980,
+        "x": 210,
+        "y": 1180,
         "wires": []
     },
     {
         "id": "1c5be69d.0e7c59",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "ba8a1a7f.127558",
         "name": " Motion Sensor ",
         "info": "",
-        "x": 290,
-        "y": 2060,
+        "x": 530,
+        "y": 1280,
         "wires": []
     },
     {
         "id": "779d74bb.18b6fc",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "cb4e15e4.1abd98",
         "name": "DETECTED",
         "props": [
             {
@@ -2844,8 +3769,8 @@
         "topic": "",
         "payload": "{\"humanPresenceDetectionState\":\"DETECTED\",\"detectionMethods\":[\"VIDEO\"],\"media\":{\"type\":\"ALEXA.MEDIAMETADATA\",\"id\":\"<media metadata id>\"}}",
         "payloadType": "json",
-        "x": 290,
-        "y": 1180,
+        "x": 230,
+        "y": 1960,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2856,6 +3781,7 @@
         "id": "ee82d7e6.758628",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "cb4e15e4.1abd98",
         "name": "NOT_DETECTED",
         "props": [
             {
@@ -2869,8 +3795,8 @@
         "topic": "",
         "payload": "{\"humanPresenceDetectionState\": \"NOT_DETECTED\"}",
         "payloadType": "json",
-        "x": 270,
-        "y": 1220,
+        "x": 210,
+        "y": 2000,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2881,16 +3807,18 @@
         "id": "2e31a003.c70b2",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "50c2ac36.9ca864",
         "name": " Percentage Controller ",
         "info": "",
-        "x": 260,
-        "y": 2180,
+        "x": 500,
+        "y": 1460,
         "wires": []
     },
     {
         "id": "64ba3f5c.8b689",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "50c2ac36.9ca864",
         "name": "",
         "props": [
             {
@@ -2904,8 +3832,8 @@
         "topic": "",
         "payload": "{\"percentage\": 75}",
         "payloadType": "json",
-        "x": 270,
-        "y": 2220,
+        "x": 510,
+        "y": 1500,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2916,6 +3844,7 @@
         "id": "a4ce7d38.9653c",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "50c2ac36.9ca864",
         "name": "",
         "props": [
             {
@@ -2929,8 +3858,8 @@
         "topic": "",
         "payload": "{\"percentage\": 37}",
         "payloadType": "json",
-        "x": 270,
-        "y": 2260,
+        "x": 510,
+        "y": 1540,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2941,36 +3870,40 @@
         "id": "fcbf55f0.6b3148",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "b72ec522.442848",
         "name": " Playback Controller ",
         "info": "No states",
-        "x": 270,
-        "y": 2300,
+        "x": 510,
+        "y": 1640,
         "wires": []
     },
     {
         "id": "5bebba2.0cf7c44",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "7956d398.a7c96c",
         "name": " Power Controller ",
         "info": "",
-        "x": 280,
-        "y": 2340,
+        "x": 520,
+        "y": 1740,
         "wires": []
     },
     {
         "id": "d11ae58c.f18268",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "8624f632.e73fc8",
         "name": " PowerLevel Controller ",
         "info": "",
-        "x": 260,
-        "y": 2460,
+        "x": 500,
+        "y": 1920,
         "wires": []
     },
     {
         "id": "c8c6df8c.fa17b",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "8624f632.e73fc8",
         "name": "",
         "props": [
             {
@@ -2984,8 +3917,8 @@
         "topic": "",
         "payload": "{\"powerLevel\": 10}",
         "payloadType": "json",
-        "x": 270,
-        "y": 2500,
+        "x": 510,
+        "y": 1960,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -2996,6 +3929,7 @@
         "id": "c5687d55.80e6d",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "8624f632.e73fc8",
         "name": "",
         "props": [
             {
@@ -3009,8 +3943,8 @@
         "topic": "",
         "payload": "{\"powerLevel\": 50}",
         "payloadType": "json",
-        "x": 270,
-        "y": 2540,
+        "x": 510,
+        "y": 2000,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3021,26 +3955,29 @@
         "id": "3c2a9ba6.ff33d4",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "2fffe9b8.4bdf66",
         "name": " Scene Controller ",
         "info": "No state",
-        "x": 280,
-        "y": 2580,
+        "x": 880,
+        "y": 60,
         "wires": []
     },
     {
         "id": "1d5215dd.918aca",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": " Security Panel Controller ",
         "info": "",
-        "x": 250,
-        "y": 2620,
+        "x": 850,
+        "y": 160,
         "wires": []
     },
     {
         "id": "9159c2ce.8fd48",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "DISARMED",
         "props": [
             {
@@ -3054,8 +3991,8 @@
         "topic": "",
         "payload": "{\"armState\": \"DISARMED\"}",
         "payloadType": "json",
-        "x": 290,
-        "y": 2900,
+        "x": 890,
+        "y": 440,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3066,6 +4003,7 @@
         "id": "ca3f1d72.35a3b",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "2427d842.422858",
         "name": "ARMED_AWAY",
         "props": [
             {
@@ -3079,8 +4017,8 @@
         "topic": "",
         "payload": "{\"armState\":\"ARMED_AWAY\",\"burglaryAlarm\":{\"value\":\"OK\"},\"carbonMonoxideAlarm\":{\"value\":\"OK\"},\"fireAlarm\":{\"value\":\"OK\"},\"waterAlarm\":{\"value\":\"OK\"}}",
         "payloadType": "json",
-        "x": 280,
-        "y": 2940,
+        "x": 880,
+        "y": 480,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3091,16 +4029,18 @@
         "id": "ec76ffd4.f31f9",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "bfa121ae.6942b",
         "name": "Speaker ",
         "info": "",
-        "x": 300,
-        "y": 2980,
+        "x": 900,
+        "y": 580,
         "wires": []
     },
     {
         "id": "2e8ab8f2.57d388",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "bfa121ae.6942b",
         "name": "",
         "props": [
             {
@@ -3114,8 +4054,8 @@
         "topic": "",
         "payload": "{\"volume\": 10}",
         "payloadType": "json",
-        "x": 290,
-        "y": 3020,
+        "x": 890,
+        "y": 620,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3126,6 +4066,7 @@
         "id": "fe0207cc.71b9e8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "bfa121ae.6942b",
         "name": "",
         "props": [
             {
@@ -3139,8 +4080,8 @@
         "topic": "",
         "payload": "{\"volume\":50,\"muted\":true}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3060,
+        "x": 910,
+        "y": 660,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3151,26 +4092,29 @@
         "id": "c5e54dcd.6550f",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "33861595.3c29fa",
         "name": "Step Speaker ",
         "info": "No state",
-        "x": 290,
-        "y": 3100,
+        "x": 890,
+        "y": 760,
         "wires": []
     },
     {
         "id": "a892bda1.3101d",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "ce88feac.b7163",
         "name": "Temperature Sensor ",
         "info": "",
-        "x": 270,
-        "y": 3140,
+        "x": 870,
+        "y": 860,
         "wires": []
     },
     {
         "id": "d34611ba.1d20b",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "ce88feac.b7163",
         "name": "19.9°C",
         "props": [
             {
@@ -3184,8 +4128,8 @@
         "topic": "",
         "payload": "{\"temperature\":{\"value\":19.9,\"scale\":\"CELSIUS\"}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3180,
+        "x": 910,
+        "y": 900,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3196,6 +4140,7 @@
         "id": "cf4dfb7b.f35ca8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "ce88feac.b7163",
         "name": "29.9°C",
         "props": [
             {
@@ -3209,8 +4154,8 @@
         "topic": "",
         "payload": "{\"temperature\":{\"value\":29.9,\"scale\":\"CELSIUS\"}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3220,
+        "x": 910,
+        "y": 940,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3221,16 +4166,18 @@
         "id": "6c7c2d6a.7730a4",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "3ef7e7ff.058988",
         "name": "Thermostat Controller ",
         "info": "",
-        "x": 260,
-        "y": 3260,
+        "x": 860,
+        "y": 1040,
         "wires": []
     },
     {
         "id": "d2bc142f.d3f1f8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3ef7e7ff.058988",
         "name": "T 19.9°C",
         "props": [
             {
@@ -3244,8 +4191,8 @@
         "topic": "",
         "payload": "{\"targetSetpoint\":{\"value\":19.9,\"scale\":\"CELSIUS\"},\"thermostatMode\":\"HEAT\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 3300,
+        "x": 900,
+        "y": 1080,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3256,6 +4203,7 @@
         "id": "b40e27a.f80c3d8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "3ef7e7ff.058988",
         "name": "T 19.9°C - 21.9°C",
         "props": [
             {
@@ -3269,8 +4217,8 @@
         "topic": "",
         "payload": "{\"lowerSetpoint\":{\"value\":19.9,\"scale\":\"CELSIUS\"},\"upperSetpoint\":{\"value\":19.9,\"scale\":\"CELSIUS\"},\"thermostatMode\":\"COOL\"}",
         "payloadType": "json",
-        "x": 280,
-        "y": 3340,
+        "x": 870,
+        "y": 1120,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3281,16 +4229,18 @@
         "id": "6bd6da53.ff5ed4",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "d9c6beae.d3352",
         "name": "Thermostat Controller HVAC",
         "info": "",
-        "x": 240,
-        "y": 3380,
+        "x": 840,
+        "y": 1220,
         "wires": []
     },
     {
         "id": "f02eef9d.59fa5",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "d9c6beae.d3352",
         "name": "",
         "props": [
             {
@@ -3304,8 +4254,8 @@
         "topic": "",
         "payload": "{\"primaryHeaterOperation\":\"STAGE_2\",\"auxiliaryHeaterOperation\":\"OFF\",\"coolerOperation\":\"STAGE_2\",\"fanOperation\":\"STAGE_1\"}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3420,
+        "x": 910,
+        "y": 1260,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3316,6 +4266,7 @@
         "id": "8d816526.d58108",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "d9c6beae.d3352",
         "name": "",
         "props": [
             {
@@ -3329,8 +4280,8 @@
         "topic": "",
         "payload": "{\"primaryHeaterOperation\":\"STAGE_3\",\"auxiliaryHeaterOperation\":\"ON\",\"coolerOperation\":\"STAGE_1\",\"fanOperation\":\"OFF\"}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3460,
+        "x": 910,
+        "y": 1300,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3341,16 +4292,18 @@
         "id": "8c5aa077.138ed",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "c207b51f.ead0b8",
         "name": "Wake On LAN Controller ",
         "info": "No state",
-        "x": 250,
-        "y": 3500,
+        "x": 850,
+        "y": 1920,
         "wires": []
     },
     {
         "id": "eef7ac27.8e6af",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9f32eb8f.554ab8",
         "name": "",
         "props": [
             {
@@ -3363,8 +4316,8 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "getState",
-        "x": 520,
-        "y": 540,
+        "x": 1160,
+        "y": 60,
         "wires": [
             [
                 "d8f22efa.dde0a"
@@ -3375,6 +4328,7 @@
         "id": "c4072795.1d1e98",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "4b64a00a.bfee9",
         "name": "Bands/Mode",
         "props": [
             {
@@ -3388,8 +4342,8 @@
         "topic": "",
         "payload": "{\"bands\":[{\"name\":\"BASS\",\"value\":-1},{\"name\":\"MIDRANGE\",\"value\":-2},{\"name\":\"TREBLE\",\"value\":-3}],\"mode\":\"MUSIC\"}",
         "payloadType": "json",
-        "x": 290,
-        "y": 1020,
+        "x": 230,
+        "y": 1680,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3550,16 +4504,18 @@
         "id": "175bce32.ed9362",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "9683fd27.1479f",
         "name": "Toggles",
         "info": "",
-        "x": 310,
-        "y": 3540,
+        "x": 910,
+        "y": 1400,
         "wires": []
     },
     {
         "id": "2e64ac83.6c7244",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9683fd27.1479f",
         "name": "ON ON",
         "props": [
             {
@@ -3573,8 +4529,8 @@
         "topic": "",
         "payload": "{\"toggles\":{\"Oven.OvenLight\":\"ON\",\"GarbageCan.Lid\":\"ON\"}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3580,
+        "x": 910,
+        "y": 1440,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3585,6 +4541,7 @@
         "id": "db842796.00b868",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9683fd27.1479f",
         "name": "OFF OFF",
         "props": [
             {
@@ -3602,8 +4559,8 @@
         "topic": "toggles",
         "payload": "{\"Oven.OvenLight\":\"OFF\",\"GarbageCan.Lid\":\"OFF\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 3620,
+        "x": 900,
+        "y": 1480,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3614,6 +4571,7 @@
         "id": "a61ea607.17e338",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9683fd27.1479f",
         "name": "ON OFF",
         "props": [
             {
@@ -3627,8 +4585,8 @@
         "topic": "",
         "payload": "{\"toggles\":{\"Oven.OvenLight\":\"ON\",\"GarbageCan.Lid\":\"OFF\"}}",
         "payloadType": "json",
-        "x": 300,
-        "y": 3660,
+        "x": 900,
+        "y": 1520,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3639,6 +4597,7 @@
         "id": "bfbaf89a.aa5688",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "9683fd27.1479f",
         "name": "OFF ON",
         "props": [
             {
@@ -3656,8 +4615,8 @@
         "topic": "toggles",
         "payload": "{\"Oven.OvenLight\":\"OFF\",\"GarbageCan.Lid\":\"ON\"}",
         "payloadType": "json",
-        "x": 300,
-        "y": 3700,
+        "x": 900,
+        "y": 1560,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3668,16 +4627,18 @@
         "id": "8054833d.35339",
         "type": "comment",
         "z": "5cc6ca02.0e2a64",
+        "g": "10ca3f12.68f441",
         "name": "Ranges",
         "info": "",
-        "x": 310,
-        "y": 3740,
+        "x": 910,
+        "y": 1660,
         "wires": []
     },
     {
         "id": "6e77b600.a2f9f8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "10ca3f12.68f441",
         "name": "2 3",
         "props": [
             {
@@ -3691,8 +4652,8 @@
         "topic": "",
         "payload": "{\"ranges\":{\"Fan.Speed\":2,\"Blind.Lift\":3}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3780,
+        "x": 910,
+        "y": 1700,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3703,6 +4664,7 @@
         "id": "1c967ac1.b40265",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "10ca3f12.68f441",
         "name": "4 5",
         "props": [
             {
@@ -3720,8 +4682,8 @@
         "topic": "ranges",
         "payload": "{\"Fan.Speed\":4,\"Blind.Lift\":5}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3820,
+        "x": 910,
+        "y": 1740,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3732,6 +4694,7 @@
         "id": "815e9477.295ff8",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "10ca3f12.68f441",
         "name": ". 6",
         "props": [
             {
@@ -3745,8 +4708,8 @@
         "topic": "",
         "payload": "{\"ranges\":{\"Blind.Lift\":6}}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3860,
+        "x": 910,
+        "y": 1780,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3757,6 +4720,7 @@
         "id": "5def2bf1.11e864",
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
+        "g": "10ca3f12.68f441",
         "name": "7",
         "props": [
             {
@@ -3774,8 +4738,8 @@
         "topic": "ranges",
         "payload": "{\"Fan.Speed\":7}",
         "payloadType": "json",
-        "x": 310,
-        "y": 3900,
+        "x": 910,
+        "y": 1820,
         "wires": [
             [
                 "58c096a.8fa0d68"
@@ -3854,6 +4818,229 @@
         "wires": [
             [
                 "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "1e598666.d1349a",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "WashCycle.Normal",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ModeController\",\"instance\":\"Washer.WashCycle\",\"name\":\"SetMode\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"mode\":\"WashCycle.Normal\"}}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1120,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "de775305.bd0be",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "WashCycle.Delicates",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ModeController\",\"instance\":\"Washer.WashCycle\",\"name\":\"SetMode\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"mode\":\"WashCycle.Delicates\"}}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1160,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "a9aed06b.68f8a",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "WashTemperature next",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ModeController\",\"instance\":\"Washer.WashTemperature\",\"name\":\"AdjustMode\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{}}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1200,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "fa8482b.261c78",
+        "type": "inject",
+        "z": "5a2248b8.76ba18",
+        "name": "WashTemperature prev",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"directive\":{\"header\":{\"namespace\":\"Alexa.ModeController\",\"instance\":\"Washer.WashTemperature\",\"name\":\"AdjustMode\",\"messageId\":\"<message id>\",\"correlationToken\":\"<an opaque correlation token>\",\"payloadVersion\":\"3\"},\"endpoint\":{\"scope\":{\"type\":\"BearerToken\",\"token\":\"<an OAuth2 bearer token>\"},\"endpointId\":\"<endpoint id>\",\"cookie\":{}},\"payload\":{\"modeDelta\":-1}}}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 1240,
+        "wires": [
+            [
+                "83a041b0.cc2f7"
+            ]
+        ]
+    },
+    {
+        "id": "16c544df.8a6b4b",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "g": "8d57ae76.d4c1",
+        "name": "Modes",
+        "info": "",
+        "x": 550,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "4f7e7853.45d1d8",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "8d57ae76.d4c1",
+        "name": "Wash Delicates Cold Up",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"modes\":{\"Washer.CurrentWashCycle\":\"CurrentWashCycle.Wash\",\"Washer.WashTemperature\":\"WashTemperature.Cold\",\"Blinds.Position\":\"Position.Up\",\"Washer.WashCycle\":\"WashCycle.Delicates\"}}",
+        "payloadType": "json",
+        "x": 490,
+        "y": 1060,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "a74be276.fa0ca",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "8d57ae76.d4c1",
+        "name": "Rinse Warm Normal Down",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "modes",
+        "payload": "{\"Washer.CurrentWashCycle\":\"CurrentWashCycle.Rinse\",\"Washer.WashTemperature\":\"WashTemperature.Warm\",\"Blinds.Position\":\"Position.Down\",\"Washer.WashCycle\":\"WashCycle.Normal\"}",
+        "payloadType": "json",
+        "x": 490,
+        "y": 1100,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "a2b4b892.275808",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "8d57ae76.d4c1",
+        "name": "Spin Hot",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"modes\":{\"Washer.CurrentWashCycle\":\"CurrentWashCycle.Spin\",\"Washer.WashTemperature\":\"WashTemperature.Hot\"}}",
+        "payloadType": "json",
+        "x": 540,
+        "y": 1140,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
+            ]
+        ]
+    },
+    {
+        "id": "c1e150d9.a7c2b",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "8d57ae76.d4c1",
+        "name": "Normal",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "modes",
+        "payload": "{\"Washer.WashCycle\":\"WashCycle.Normal\"}",
+        "payloadType": "json",
+        "x": 550,
+        "y": 1180,
+        "wires": [
+            [
+                "58c096a.8fa0d68"
             ]
         ]
     }

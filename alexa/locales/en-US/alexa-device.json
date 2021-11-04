@@ -168,7 +168,8 @@
             "MEASURED": "Measured",
             "ESTIMATED": "Estimated",
             "toggles": "Toggles",
-            "ranges": "Ranges"
+            "ranges": "Ranges",
+            "ordered": "Ordered"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -197,7 +198,8 @@
             "range_min": "Minimum",
             "range_max": "Maximum",
             "precision": "Precision",
-            "presets": "Presets"
+            "presets": "Presets",
+            "supported_modes": "Supported modes"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",
@@ -268,7 +270,7 @@
             "keypad_controller": "Keypad Controller",
             "lock_controller": "Lock Controller",
             "media_metadata": "Media Metadata",
-            "deviceusage_meter": "Deviceusage meter",
+            "deviceusage_meter": "Device usage meter",
             "mode_controller": "Mode Controller",
             "motion_sensor": "Motion Sensor",
             "percentage_controller": "Percentage Controller",

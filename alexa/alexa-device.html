@@ -183,20 +183,24 @@
                             var t = toggles[i];
                             if (t.instance.trim() || t.capability_resources.trim() || t.semantics.trim()) {
                                 if (!t.instance.trim()) {
+                                    console.log(i + "] Toggle instance not filled.");
                                     return false;
                                 }
                                 if (toggles_dict.hasOwnProperty(t.instance.trim())) {
+                                    console.log(i + "] Toggle instance " + r.instance.trim() + " already used.");
                                     return false;
                                 }
                                 try {
                                     JSON.parse(t.capability_resources);
                                 } catch (e) {
+                                    console.log(i + "] Toggle capability resources is not valid");
                                     return false;
                                 }
                                 if (t.semantics) {
                                     try {
                                         JSON.parse(t.semantics);
                                     } catch (e) {
+                                        console.log(i + "] Toggle semantics is not valid");
                                         return false;
                                     }
                                 }
@@ -215,10 +219,11 @@
                             if (r.instance.trim() || r.capability_resources.trim() || r.semantics.trim() || r.min.trim() || r.max.trim() || r.precision.trim() || r.presets.trim()) {
                                 if (r.instance.trim()) {
                                     if (ranges_dict.hasOwnProperty(r.instance.trim())) {
-                                        console.log("Ranges instance " + r.instance.trim() + " already used.");
+                                        console.log(i + "] Range instance " + r.instance.trim() + " already used.");
                                         return false;
                                     }
                                 } else {
+                                    console.log(i + "] Range instance not filled.");
                                     return false;
                                 }
                                 let min = 0;
@@ -228,7 +233,7 @@
                                     if (isIngeterNumber(r.min)) {
                                         min = parseInt(r.min);
                                     } else {
-                                        console.log("Ranges min is not a number");
+                                        console.log(i + "] Range min is not a number");
                                         return false;
                                     }
                                 }
@@ -236,7 +241,7 @@
                                     if (isIngeterNumber(r.max)) {
                                         max = parseInt(r.max);
                                     } else {
-                                        console.log("Ranges max is not a number");
+                                        console.log(i + "] Range max is not a number");
                                         return false;
                                     }
                                 }
@@ -244,13 +249,13 @@
                                     if (isIngeterNumber(r.precision)) {
                                         precision = parseInt(r.precision);
                                     } else {
-                                        console.log("Ranges precision is not a number");
+                                        console.log(i + "] Range precision is not a number");
                                         return false;
                                     }
                                 }
 
                                 if (max < min) {
-                                    console.log("Ranges min is greather than max");
+                                    console.log(i + "] Range min is greather than max");
                                     return false;
                                 }
 
@@ -258,7 +263,7 @@
                                     try {
                                         JSON.parse(r.capability_resources);
                                     } catch (e) {
-                                        console.log("Ranges capability resources is not valid");
+                                        console.log(i + "] Range capability resources is not valid");
                                         return false;
                                     }
                                 } else {
@@ -268,7 +273,7 @@
                                     try {
                                         JSON.parse(r.semantics);
                                     } catch (e) {
-                                        console.log("Ranges semantics is not valid");
+                                        console.log(i + "] Range semantics is not valid");
                                         return false;
                                     }
                                 }
@@ -276,11 +281,63 @@
                                     try {
                                         JSON.parse(r.presets);
                                     } catch (e) {
-                                        console.log("Ranges presets is not valid");
+                                        console.log(i + "] Range presets is not valid");
                                         return false;
                                     }
                                 }
                                 ranges_dict[r.instance.trim()] = 1;
+                            }
+                        }
+                        return true;
+                    }
+                },
+                c_modes: {
+                    value: [], required: false, validate: function (modes) {
+                        if (!modes || modes.length === 0) { return true }
+                        let modes_dict = {};
+                        for (var i = 0; i < modes.length; i++) {
+                            var m = modes[i];
+                            if (m.instance.trim() || m.capability_resources.trim() || m.semantics.trim() || m.supported_modes.trim()) {
+                                if (m.instance.trim()) {
+                                    if (modes_dict.hasOwnProperty(m.instance.trim())) {
+                                        console.log(i + "] Mode instance " + m.instance.trim() + " already used.");
+                                        return false;
+                                    }
+                                } else {
+                                    console.log(i + "] Mode instance not filled.");
+                                    return false;
+                                }
+                                if (m.capability_resources.trim()) {
+                                    try {
+                                        JSON.parse(m.capability_resources);
+                                    } catch (e) {
+                                        console.log(i + "] Mode capability resources is not valid");
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                                if (m.semantics.trim()) {
+                                    try {
+                                        JSON.parse(m.semantics);
+                                    } catch (e) {
+                                        console.log(i + "] Mode semantics is not valid");
+                                        return false;
+                                    }
+                                }
+                                if (m.supported_modes.trim()) {
+                                    try {
+                                        const supported_modes = JSON.parse(m.supported_modes);
+                                        if (!Array.isArray(supported_modes)) {
+                                            console.log(i + "] Mode supported modes must be an array");
+                                            return false;
+                                        }
+                                    } catch (e) {
+                                        console.log(i + "] Mode supported modes is not valid");
+                                        return false;
+                                    }
+                                }
+                                modes_dict[m.instance.trim()] = 1;
                             }
                         }
                         return true;
@@ -324,6 +381,8 @@
                 var range_max_i18n = this._("alexa-device.placeholder.range_max");
                 var precision_i18n = this._("alexa-device.placeholder.precision");
                 var presets_i18n = this._("alexa-device.placeholder.presets");
+                var supported_modes_i18n = this._("alexa-device.placeholder.supported_modes");
+                var ordered_i18n = this._("alexa-device.label.ordered");
 
                 // Camera Stream Configurations
                 $('#node-input-camera_stream_configuration-container').css('min-height', '150px').css('min-width', '450px').editableList({
@@ -345,7 +404,7 @@
                         let fragment = document.createDocumentFragment();
                         var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
                         var row2 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
-                        var row3 = $('<div/>', { style: "margin-top:8px;" }).appendTo(fragment);
+                        var row3 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
                         var row4 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
                         var row5 = $('<div/>', { style: "display:flex;margin-top:8px;" }).appendTo(fragment);
 
@@ -353,40 +412,51 @@
                             .text(protocols)
                             .appendTo(row1);
 
-                        var rstpBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-p-RTSP"/>').appendTo(row1);
+                        var row1_1 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row1);
+                        var row1_2 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row1);
+
+                        var rstpBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-p-RTSP" })
+                            .appendTo(row1_1);
                         rstpBtn.toggleButton({
                             enabledLabel: RTSP,
                             disabledLabel: RTSP
                         })
                         rstpBtn.prop("checked", camera_stream_configuration.p.includes("RTSP")).trigger("change");
 
-                        var hlsBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-p-HLS"/>').appendTo(row1);
+                        var hlsBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-p-HLS" })
+                            .appendTo(row1_2);
                         hlsBtn.toggleButton({
                             enabledLabel: HLS,
                             disabledLabel: HLS
                         })
                         hlsBtn.prop("checked", camera_stream_configuration.p.includes("HLS")).trigger("change");
 
-
-                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;" })
+                        $('<div/>', { style: "display:inline-block;text-align:right; width:120px; padding-right:10px; box-sizing:border-box;margin-right:3px;" })
                             .text(authorization_types)
                             .appendTo(row2);
 
-                        var basicBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-t-BASIC"/>').appendTo(row2);
+                        var row2_1 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row2);
+                        var row2_2 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row2);
+                        var row2_3 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row2);
+
+                        var basicBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-t-BASIC" })
+                            .appendTo(row2_1);
                         basicBtn.toggleButton({
                             enabledLabel: BASIC,
                             disabledLabel: BASIC
                         })
                         basicBtn.prop("checked", camera_stream_configuration.t.includes("BASIC")).trigger("change");
 
-                        var digestBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-t-DIGEST"/>').appendTo(row2);
+                        var digestBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-t-DIGEST" })
+                            .appendTo(row2_2);
                         digestBtn.toggleButton({
                             enabledLabel: DIGEST,
                             disabledLabel: DIGEST
                         })
                         digestBtn.prop("checked", camera_stream_configuration.t.includes("DIGEST")).trigger("change");
 
-                        var noneBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-t-NONE"/>').appendTo(row2);
+                        var noneBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-t-NONE" })
+                            .appendTo(row2_3);
                         noneBtn.toggleButton({
                             enabledLabel: NONE,
                             disabledLabel: NONE
@@ -397,28 +467,37 @@
                             .text(video_codecs)
                             .appendTo(row3);
 
-                        var h264Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-H264"/>').appendTo(row3);
+                        var row3_1 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row3);
+                        var row3_2 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row3);
+                        var row3_3 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row3);
+                        var row3_4 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row3);
+
+                        var h264Btn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-v-H264" })
+                            .appendTo(row3_1);
                         h264Btn.toggleButton({
                             enabledLabel: H264,
                             disabledLabel: H264
                         })
                         h264Btn.prop("checked", camera_stream_configuration.v.includes("H264")).trigger("change");
 
-                        var mpeg2Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-MPEG2"/>').appendTo(row3);
+                        var mpeg2Btn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-v-MPEG2" })
+                            .appendTo(row3_2);
                         mpeg2Btn.toggleButton({
                             enabledLabel: MPEG2,
                             disabledLabel: MPEG2
                         })
                         mpeg2Btn.prop("checked", camera_stream_configuration.v.includes("MPEG2")).trigger("change");
 
-                        var mjpegBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-MJPEG"/>').appendTo(row3);
+                        var mjpegBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-v-MJPEG" })
+                            .appendTo(row3_3);
                         mjpegBtn.toggleButton({
                             enabledLabel: MJPEG,
                             disabledLabel: MJPEG
                         })
                         mjpegBtn.prop("checked", camera_stream_configuration.v.includes("MJPEG")).trigger("change");
 
-                        var jpgBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-v-JPG"/>').appendTo(row3);
+                        var jpgBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-v-JPG" })
+                            .appendTo(row3_4);
                         jpgBtn.toggleButton({
                             enabledLabel: JPG,
                             disabledLabel: JPG
@@ -430,21 +509,28 @@
                             .text(audio_codecs)
                             .appendTo(row4);
 
-                        var g711Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-a-G711"/>', { style: "margin-right:3px;" }).appendTo(row4);
+                        var row4_1 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row4);
+                        var row4_2 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row4);
+                        var row4_3 = $('<div/>', { style: "margin-right:3px;" }).appendTo(row4);
+
+                        var g711Btn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-a-G711" })
+                            .appendTo(row4_1);
                         g711Btn.toggleButton({
                             enabledLabel: G711,
                             disabledLabel: G711
                         })
                         g711Btn.prop("checked", camera_stream_configuration.a.includes("G711")).trigger("change");
 
-                        var aacBtn = $('<input type="checkbox" class="node-input-camera_stream_configuration-a-AAC" style="margin-right:3px;"/>').appendTo(row4);
+                        var aacBtn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-a-AAC" })
+                            .appendTo(row4_2);
                         aacBtn.toggleButton({
                             enabledLabel: AAC,
                             disabledLabel: AAC
                         })
                         aacBtn.prop("checked", camera_stream_configuration.a.includes("AAC")).trigger("change");
 
-                        var none1Btn = $('<input type="checkbox" class="node-input-camera_stream_configuration-a-NONE"/>').appendTo(row4);
+                        var none1Btn = $('<input/>', { type: "checkbox", class: "node-input-camera_stream_configuration-a-NONE" })
+                            .appendTo(row4_3);
                         none1Btn.toggleButton({
                             enabledLabel: NONE,
                             disabledLabel: NONE
@@ -455,7 +541,7 @@
                             .text(resolutions)
                             .appendTo(row5);
 
-                        var propertyResolutions = $('<input/>', { class: "node-input-camera_stream_configuration-r", type: "text" })
+                        var propertyResolutions = $('<input/>', { class: "node-input-camera_stream_configuration-r", type: "text", style: "width:100%;" })
                             .appendTo(row5);
 
                         var r;
@@ -495,7 +581,7 @@
                         });
                         let fragment = document.createDocumentFragment();
                         var row1 = $('<div/>', { style: "display:flex;" }).appendTo(fragment);
-                        var propertyName = $('<input/>', { class: "node-input-mac_address-property-name", type: "text" })
+                        var propertyName = $('<input/>', { class: "node-input-mac_address-property-name", type: "text", style: "width:100%;" })
                             .attr("placeholder", MAC_address_i18n)
                             .appendTo(row1);
                         propertyName.val(mac_address.name);
@@ -526,20 +612,20 @@
                         });
                         let fragment = document.createDocumentFragment();
                         var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
-                        var row1_1 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1);
-                        var row1_2 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1);
-                        var row1_3 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1);
+                        var row1_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1);
+                        var row1_2 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1);
+                        var row1_3 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1);
 
-                        var propertyInstance = $('<input/>', { class: "node-input-toggle-property-instance", type: "text", style: "width:auto;" })
+                        var propertyInstance = $('<input/>', { class: "node-input-toggle-property-instance", type: "text", style: "width:100%;" })
                             .attr("placeholder", instance_i18n)
                             .appendTo(row1_1);
                         propertyInstance.val(toggle.instance);
-                        var propertycapabilityResources = $('<input/>', { class: "node-input-toggle-property-capability_resources", type: "text", style: "width:auto;" })
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-toggle-property-capability_resources", type: "text", style: "width:100%;" })
                             .attr("placeholder", capability_resources_i18n)
                             .appendTo(row1_2)
                             .typedInput({ default: 'json', types: ['json'] });
                         propertycapabilityResources.typedInput('value', toggle.capability_resources);
-                        var propertySemantics = $('<input/>', { class: "node-input-toggle-property-semantics", type: "text", style: "width:auto;" })
+                        var propertySemantics = $('<input/>', { class: "node-input-toggle-property-semantics", type: "text", style: "width:100%;" })
                             .attr("placeholder", semantics_i18n)
                             .appendTo(row1_3)
                             .typedInput({ default: toggle.semantics ? 'json' : 'str', types: ['str', 'json'] });
@@ -571,28 +657,28 @@
                         });
                         let fragment = document.createDocumentFragment();
                         var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
-                        var row2 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+                        var row2 = $('<div/>', { style: "display:flex; align-items: baseline; margin-top: 4px;" }).appendTo(fragment);
 
-                        var row1_1 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row1); // Instance
-                        var row1_2 = $('<div/>', { style: "margin-top: 4px; width:10%;" }).appendTo(row1);  // Min
-                        var row1_3 = $('<div/>', { style: "margin-top: 4px; width:10%;" }).appendTo(row1);  // Max
-                        var row1_4 = $('<div/>', { style: "margin-top: 4px; width:10%;" }).appendTo(row1);  // Precision
+                        var row1_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1); // Instance
+                        var row1_2 = $('<div/>', { style: "width:10%; margin-right:10px;" }).appendTo(row1);  // Min
+                        var row1_3 = $('<div/>', { style: "width:10%; margin-right:10px;" }).appendTo(row1);  // Max
+                        var row1_4 = $('<div/>', { style: "width:10%;" }).appendTo(row1);  // Precision
 
-                        var row2_1 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row2); // Capability Resources
-                        var row2_2 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row2); // Semantics
-                        var row2_3 = $('<div/>', { style: "margin-top: 4px; width:auto;" }).appendTo(row2); // Presets
+                        var row2_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row2); // Capability Resources
+                        var row2_2 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row2); // Semantics
+                        var row2_3 = $('<div/>', { style: "width:100%;" }).appendTo(row2); // Presets
 
-                        var propertyInstance = $('<input/>', { class: "node-input-range-property-instance", type: "text", style: "width:auto;" })
+                        var propertyInstance = $('<input/>', { class: "node-input-range-property-instance", type: "text", style: "width:100%;" })
                             .attr("placeholder", instance_i18n)
                             .appendTo(row1_1);
                         propertyInstance.val(range.instance);
 
-                        var propertyMin = $('<input/>', { class: "node-input-range-property-min", type: "text", style: "width:auto;" })
+                        var propertyMin = $('<input/>', { class: "node-input-range-property-min", type: "text", style: "width:auto; margin-right:10px;" })
                             .attr("placeholder", range_min_i18n)
                             .appendTo(row1_2);
                         propertyMin.val(range.min);
 
-                        var propertyMax = $('<input/>', { class: "node-input-range-property-max", type: "text", style: "width:auto;" })
+                        var propertyMax = $('<input/>', { class: "node-input-range-property-max", type: "text", style: "width:auto; margin-right:10px;" })
                             .attr("placeholder", range_max_i18n)
                             .appendTo(row1_3);
                         propertyMax.val(range.max);
@@ -603,22 +689,22 @@
                         propertyPrecision.val(range.precision);
 
 
-                        var propertycapabilityResources = $('<input/>', { class: "node-input-range-property-capability_resources", type: "text", style: "width:auto;" })
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-range-property-capability_resources", type: "text", style: "width:100%;" })
                             .attr("placeholder", capability_resources_i18n)
                             .appendTo(row2_1)
                             .typedInput({ default: 'json', types: ['json'] });
                         propertycapabilityResources.typedInput('value', range.capability_resources);
 
-                        var propertySemantics = $('<input/>', { class: "node-input-range-property-semantics", type: "text", style: "width:auto;" })
+                        var propertySemantics = $('<input/>', { class: "node-input-range-property-semantics", type: "text", style: "width:100%;" })
                             .attr("placeholder", semantics_i18n)
                             .appendTo(row2_2)
                             .typedInput({ default: range.semantics ? 'json' : 'str', types: ['str', 'json'] });
                         propertySemantics.typedInput('value', range.semantics);
 
-                        var propertyPresets = $('<input/>', { class: "node-input-range-property-presets", type: "text", style: "width:auto;" })
+                        var propertyPresets = $('<input/>', { class: "node-input-range-property-presets", type: "text", style: "width:100%;" })
                             .attr("placeholder", presets_i18n)
                             .appendTo(row2_3)
-                            .typedInput({ default: range.semantics ? 'json' : 'str', types: ['str', 'json'] });
+                            .typedInput({ default: range.presets ? 'json' : 'str', types: ['str', 'json'] });
                         propertyPresets.typedInput('value', range.presets);
 
 
@@ -640,6 +726,79 @@
                         min: range.min,
                         max: range.max,
                         precision: range.precision
+                    });
+                }
+
+                // Modes
+                $('#node-input-mode-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var mode = opt;
+                        if (!mode.hasOwnProperty('instance')) {
+                            mode = { instance: "", capability_resources: "", semantics: "", ordered: false, supported_modes: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+                        var row2 = $('<div/>', { style: "display:flex; align-items: baseline; margin-top: 4px;" }).appendTo(fragment);
+
+                        var row1_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1); // Instance
+                        var row1_2 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1);  // SupportedModes
+                        var row1_3 = $('<div/>', { style: "width:auto;" }).appendTo(row1);  // Ordered
+
+                        var row2_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row2); // Capability Resources
+                        var row2_2 = $('<div/>', { style: "width:100%;" }).appendTo(row2); // Semantics
+
+                        var propertyInstance = $('<input/>', { class: "node-input-mode-property-instance", type: "text", style: "width:100%;" })
+                            .attr("placeholder", instance_i18n)
+                            .appendTo(row1_1);
+                        propertyInstance.val(mode.instance);
+
+                        var propertySupportedModes = $('<input/>', { class: "node-input-mode-property-supported_modes", type: "text", style: "width:100%;" })
+                            .attr("placeholder", supported_modes_i18n)
+                            .appendTo(row1_2)
+                            .typedInput({ default: 'json', types: ['json'] });
+                        propertySupportedModes.typedInput('value', mode.supported_modes);
+
+                        var orderedBtn = $('<input/>', { type: "checkbox", class: "node-input-mode-property-ordered", style: "width:auto;" })
+                            .appendTo(row1_3);
+                        orderedBtn.toggleButton({
+                            enabledLabel: ordered_i18n,
+                            disabledLabel: ordered_i18n
+                        })
+                        orderedBtn.prop("checked", mode.ordered).trigger("change");
+
+
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-mode-property-capability_resources", type: "text", style: "width:100%;" })
+                            .attr("placeholder", capability_resources_i18n)
+                            .appendTo(row2_1)
+                            .typedInput({ default: 'json', types: ['json'] });
+                        propertycapabilityResources.typedInput('value', mode.capability_resources);
+
+                        var propertySemantics = $('<input/>', { class: "node-input-mode-property-semantics", type: "text", style: "width:100%;" })
+                            .attr("placeholder", semantics_i18n)
+                            .appendTo(row2_2)
+                            .typedInput({ default: mode.semantics ? 'json' : 'str', types: ['str', 'json'] });
+                        propertySemantics.typedInput('value', mode.semantics);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                if (!this.c_modes) {
+                    this.c_modes = [];
+                }
+                for (var i = 0; i < this.c_modes.length; i++) {
+                    var mode = this.c_modes[i];
+                    $("#node-input-mode-container").editableList('addItem', {
+                        instance: mode.instance,
+                        capability_resources: mode.capability_resources,
+                        semantics: mode.semantics,
+                        ordered: mode.ordered,
+                        supported_modes: mode.supported_modes
                     });
                 }
             },
@@ -739,6 +898,27 @@
                         });
                     }
                 });
+
+                // modes
+                var modes = $("#node-input-mode-container").editableList('items');
+                node.c_modes = [];
+                modes.each(function (i) {
+                    var mode = $(this);
+                    var instance = mode.find(".node-input-mode-property-instance").val();
+                    var capability_resources = mode.find(".node-input-mode-property-capability_resources").val();
+                    var semantics = mode.find(".node-input-mode-property-semantics").val();
+                    var ordered = mode.find(".node-input-mode-property-ordered").prop('checked');
+                    var supported_modes = mode.find(".node-input-mode-property-supported_modes").val();
+                    if (instance.trim() || capability_resources.trim()) {
+                        node.c_modes.push({
+                            instance: instance.trim(),
+                            capability_resources: capability_resources.trim(),
+                            semantics: semantics.trim(),
+                            ordered: ordered,
+                            supported_modes: supported_modes.trim()
+                        });
+                    }
+                });
             }
         });
     })();
@@ -756,6 +936,9 @@
             flex:1;
         }
         ol#node-input-range-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-mode-container .red-ui-typedInput-container {
             flex:1;
         }
     </style>
@@ -886,6 +1069,66 @@
             <input type="checkbox" id="node-input-i_contact_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.contact_sensor"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-contactsensor.html"><i class="fa fa-external-link"></i></a>
+        </div>
+    </div>
+    
+    <div class="form-row red-ui-editableList-border div_trait" id="i_device_usage_meter" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_device_usage_meter" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.deviceusage_meter"></span>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row red-ui-editableList-border">
+            <div class="form-row"><span data-i18n="alexa-device.label.electricity"></span></div>
+            <div class="form-row">
+                <label for="node-input-electricity_measuring_method"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.measuring_method"></span></label>
+                <select id="node-input-electricity_measuring_method" >
+                    <option value='' data-i18n='alexa-device.label.NONE'></option>
+                    <option value='ESTIMATED' data-i18n='alexa-device.label.ESTIMATED'></option>
+                    <option value='MEASURED' data-i18n='alexa-device.label.MEASURED'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-electricity_unit"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.unit"></span></label>
+                <select id="node-input-electricity_unit" >
+                    <option value='MILLIWATT_HOUR' data-i18n='alexa-device.label.MILLIWATT_HOUR'></option>
+                    <option value='BTU' data-i18n='alexa-device.label.BTU'></option>
+                    <option value='CUBIC_FOOT' data-i18n='alexa-device.label.CUBIC_FOOT'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-electricity_default_resolution"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.default_resolution"></span></label>
+                <input type="text" id="node-input-electricity_default_resolution" data-i18n="[placeholder]alexa-device.placeholder.default_resolution">
+            </div>
+        </div>
+
+        <div class="form-row red-ui-editableList-border">
+            <div class="form-row"><span data-i18n="alexa-device.label.natural_gas"></span></div>
+            <div class="form-row">
+                <label for="node-input-natural_gas_measuring_method"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.measuring_method"></span></label>
+                <select id="node-input-natural_gas_measuring_method" >
+                    <option value='' data-i18n='alexa-device.label.NONE'></option>
+                    <option value='ESTIMATED' data-i18n='alexa-device.label.ESTIMATED'></option>
+                    <option value='MEASURED' data-i18n='alexa-device.label.MEASURED'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-natural_gas_unit"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.unit"></span></label>
+                <select id="node-input-natural_gas_unit" >
+                    <option value='MILLIWATT_HOUR' data-i18n='alexa-device.label.MILLIWATT_HOUR'></option>
+                    <option value='BTU' data-i18n='alexa-device.label.BTU'></option>
+                    <option value='CUBIC_FOOT' data-i18n='alexa-device.label.CUBIC_FOOT'></option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="node-input-natural_gas_default_resolution"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.default_resolution"></span></label>
+                <input type="text" id="node-input-natural_gas_default_resolution" data-i18n="[placeholder]alexa-device.placeholder.default_resolution">
+            </div>
         </div>
     </div>
     
@@ -1111,71 +1354,18 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" id="i_device_usage_meter" style="background: #fbfbfb; padding: 5px;">
-        <div class="form-row">
-            <input type="checkbox" id="node-input-i_device_usage_meter" style="display:inline-block; width:20px; vertical-align:baseline;">
-            <span data-i18n="alexa-device.interface.deviceusage_meter"></span>
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html"><i class="fa fa-external-link"></i></a>
-        </div>
-
-        <div class="form-row red-ui-editableList-border">
-            <div class="form-row"><span data-i18n="alexa-device.label.electricity"></span></div>
-            <div class="form-row">
-                <label for="node-input-electricity_measuring_method"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.measuring_method"></span></label>
-                <select id="node-input-electricity_measuring_method" >
-                    <option value='' data-i18n='alexa-device.label.NONE'></option>
-                    <option value='ESTIMATED' data-i18n='alexa-device.label.ESTIMATED'></option>
-                    <option value='MEASURED' data-i18n='alexa-device.label.MEASURED'></option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label for="node-input-electricity_unit"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.unit"></span></label>
-                <select id="node-input-electricity_unit" >
-                    <option value='MILLIWATT_HOUR' data-i18n='alexa-device.label.MILLIWATT_HOUR'></option>
-                    <option value='BTU' data-i18n='alexa-device.label.BTU'></option>
-                    <option value='CUBIC_FOOT' data-i18n='alexa-device.label.CUBIC_FOOT'></option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label for="node-input-electricity_default_resolution"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.default_resolution"></span></label>
-                <input type="text" id="node-input-electricity_default_resolution" data-i18n="[placeholder]alexa-device.placeholder.default_resolution">
-            </div>
-        </div>
-
-        <div class="form-row red-ui-editableList-border">
-            <div class="form-row"><span data-i18n="alexa-device.label.natural_gas"></span></div>
-            <div class="form-row">
-                <label for="node-input-natural_gas_measuring_method"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.measuring_method"></span></label>
-                <select id="node-input-natural_gas_measuring_method" >
-                    <option value='' data-i18n='alexa-device.label.NONE'></option>
-                    <option value='ESTIMATED' data-i18n='alexa-device.label.ESTIMATED'></option>
-                    <option value='MEASURED' data-i18n='alexa-device.label.MEASURED'></option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label for="node-input-natural_gas_unit"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.unit"></span></label>
-                <select id="node-input-natural_gas_unit" >
-                    <option value='MILLIWATT_HOUR' data-i18n='alexa-device.label.MILLIWATT_HOUR'></option>
-                    <option value='BTU' data-i18n='alexa-device.label.BTU'></option>
-                    <option value='CUBIC_FOOT' data-i18n='alexa-device.label.CUBIC_FOOT'></option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label for="node-input-natural_gas_default_resolution"><i class="fa fa-tag"></i> <span data-i18n="alexa-device.label.default_resolution"></span></label>
-                <input type="text" id="node-input-natural_gas_default_resolution" data-i18n="[placeholder]alexa-device.placeholder.default_resolution">
-            </div>
-        </div>
-    </div>
-    
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_mode_controller" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_mode_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_mode_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.mode_controller"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-modecontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-device.label.modes"></span>
+        </div>
+        <div class="form-row node-input-mode-container-row">
+            <ol id="node-input-mode-container"></ol>
         </div>
     </div>
     

@@ -875,6 +875,48 @@ module.exports = function (RED) {
 
             // ModeController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-modecontroller.html
+            if (node.config.i_mode_controller) {
+                if (node.isVerbose()) node._debug("Alexa.ModeController");
+                if (node.config.c_modes !== undefined && node.config.c_modes.length > 0) {
+                    node.state["modes"] = {};
+                    let attributes = {};
+                    state_types['modes'] = {
+                        type: Formats.OBJECT,
+                        attributes: attributes,
+                    };
+                    node.config.c_modes.forEach(mode => {
+                        if (mode.instance && mode.capability_resources && mode.supported_modes) {
+                            const supported_modes = JSON.parse(mode.supported_modes);
+                            if (Array.isArray(supported_modes)) {
+                                const values = supported_modes.map(sm => sm.value);
+                                if (values.length > 0) {
+                                    node.state["modes"][mode.instance] = values[0];
+                                    attributes[mode.instance] = {
+                                        type: Formats.STRING + Formats.MANDATORY,
+                                        values: values,
+                                    };
+                                    let additional_config = {
+                                        instance: mode.instance,
+                                        capabilityResources: JSON.parse(mode.capability_resources),
+                                        configuration: {
+                                            ordered: mode.ordered,
+                                            supportedModes: supported_modes
+                                        }
+                                    };
+                                    if (mode.semantics) {
+                                        additional_config['semantics'] = JSON.parse(mode.semantics);
+                                    }
+                                    node.addCapability("Alexa.ModeController",
+                                        {
+                                            mode: values[0],
+                                        },
+                                        additional_config, true);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
 
             // MotionSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-motionsensor.html
@@ -960,13 +1002,13 @@ module.exports = function (RED) {
                             };
                             let additional_config = {
                                 instance: range.instance,
-                                capabilityResources: JSON.parse(range.capability_resources)
-                            };
-                            additional_config['configuration'] = {
-                                supportedRange: {
-                                    minimumValue: node.to_int(range.min, 0),
-                                    maximumValue: node.to_int(range.max, 100),
-                                    precision: node.to_int(range.precision, 1),
+                                capabilityResources: JSON.parse(range.capability_resources),
+                                configuration: {
+                                    supportedRange: {
+                                        minimumValue: node.to_int(range.min, 0),
+                                        maximumValue: node.to_int(range.max, 100),
+                                        precision: node.to_int(range.precision, 1),
+                                    }
                                 }
                             };
                             if (range.presets) {
@@ -1507,6 +1549,43 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.ModeController": // ModeController
+                    if (name === 'SetMode') {
+                        let modes = {};
+                        modes[instance] = payload['mode'];
+                        modified = node.setValues({
+                            modes: modes
+                        }, node.state);
+                        if (modified.length > 0) {
+                            modified = [{
+                                modes: [instance]
+                            }];
+                        }
+                    } else if (name === 'AdjustMode') {
+                        const mode = node.config.c_modes.filter(node => node.instance === instance)[0];
+                        const supported_modes = JSON.parse(mode.supported_modes);
+                        const values = supported_modes.map(sm => sm.value);
+                        const cur_value = node.state.modes[instance];
+                        let idx = values.indexOf(cur_value);
+                        const delta = payload['modeDelta'] || 1;
+                        idx = (idx + delta) % values.length;
+                        while (idx < 0) {
+                            idx = idx + values.length;
+                        }
+                        const new_value = values[idx];
+                        let modes = {};
+                        modes[instance] = new_value;
+                        modified = node.setValues({
+                            modes: modes
+                        }, node.state);
+                        if (modified.length > 0) {
+                            modified = [{
+                                modes: [instance]
+                            }];
+                        }
+                    }
+                    break;
+
                 case "Alexa.InputController": // InputController
                     if (name === 'SelectInput') {
                         modified = node.setValues(payload, node.state);
@@ -1991,6 +2070,19 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-modecontroller.html
+            if (node.config.i_mode_controller) {
+                for (const [mode, value] of Object.entries(node.state.modes || [])) {
+                    properties.push({
+                        namespace: "Alexa.ModeController",
+                        instance: mode,
+                        name: "mode",
+                        value: value,
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
+
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-motionsensor.html
             // MotionSensor
             if (node.config.i_motion_sensor) {
