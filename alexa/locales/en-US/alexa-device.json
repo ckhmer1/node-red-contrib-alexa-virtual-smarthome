@@ -169,7 +169,10 @@
             "ESTIMATED": "Estimated",
             "toggles": "Toggles",
             "ranges": "Ranges",
-            "ordered": "Ordered"
+            "ordered": "Ordered",
+            "allow_remote_resume": "Allow remote resume",
+            "inventory_level_sensor": "Inventory Level Sensor",
+            "inventory_usage_sensor": "Inventory Usage Sensor"
         },
         "placeholder": {
             "alexa": "Alexa",
@@ -199,7 +202,9 @@
             "range_max": "Maximum",
             "precision": "Precision",
             "presets": "Presets",
-            "supported_modes": "Supported modes"
+            "supported_modes": "Supported modes",
+            "replenishment": "Replenishment",
+            "measurement": "Measurement"
         },
         "display_category": {
             "ACTIVITY_TRIGGER": "Activity Trigger",
@@ -265,7 +270,7 @@
             "estimation": "Estimation",
             "event_detection_sensor": "Event Detection Sensor",
             "input_controller": "Input Controller",
-            "inventory_level_sensor": "Inventory LevelSensor",
+            "inventory_level_sensor": "Inventory Level Sensor",
             "inventory_usage_sensor": "Inventory Usage Sensor",
             "keypad_controller": "Keypad Controller",
             "lock_controller": "Lock Controller",
@@ -285,6 +290,7 @@
             "step_speaker": "Step Speaker",
             "temperature_sensor": "Temperature Sensor",
             "thermostat_controller": "Thermostat Controller",
+            "timehold_controller": "Timehold Controller",
             "thermostat_controller_hvac_components": "Thermostat Controller HVAC Components",
             "toggle_controller": "Toggle Controller",
             "wake_on_lan_controller": "Wake On LAN Controller"

@@ -997,6 +997,8 @@
         "i_security_panel_controller": true,
         "i_speaker": true,
         "i_step_speaker": true,
+        "i_timehold_controller": false,
+        "allow_remote_resume": false,
         "i_temperature_sensor": true,
         "i_thermostat_controller": true,
         "a_target_setpoint": true,
@@ -1148,6 +1150,28 @@
                 "semantics": "{\"actionMappings\":[{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Close\",\"Alexa.Actions.Lower\"],\"directive\":{\"name\":\"SetMode\",\"payload\":{\"mode\":\"Position.Down\"}}},{\"@type\":\"ActionsToDirective\",\"actions\":[\"Alexa.Actions.Open\",\"Alexa.Actions.Raise\"],\"directive\":{\"name\":\"SetMode\",\"payload\":{\"mode\":\"Position.Up\"}}}],\"stateMappings\":[{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Closed\"],\"value\":\"Position.Down\"},{\"@type\":\"StatesToValue\",\"states\":[\"Alexa.States.Open\"],\"value\":\"Position.Up\"}]}",
                 "ordered": false,
                 "supported_modes": "[{\"value\":\"Position.Up\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Open\"}}]}},{\"value\":\"Position.Down\",\"modeResources\":{\"friendlyNames\":[{\"@type\":\"asset\",\"value\":{\"assetId\":\"Alexa.Value.Close\"}}]}}]"
+            }
+        ],
+        "inventory_usage_sensors": [
+            {
+                "instance": "Sensor.CoffeePod",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Coffee pods\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Capsules de café\",\"locale\":\"fr-FR\"}}]}",
+                "measurement": "{\"@type\":\"Count\"}",
+                "replenishment": "{\"@type\":\"DashReplenishmentId\",\"value\":\"<the replenishment ID for refill options>\"}"
+            }
+        ],
+        "inventory_level_sensors": [
+            {
+                "instance": "InkSensor.Cyan",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Cyan ink\",\"locale\":\"en-US\"}},{\"@type\":\"text\",\"value\":{\"text\":\"Encre cyan\",\"locale\":\"fr-FR\"}}]}",
+                "measurement": "{\"@type\":\"Volume\",\"unit\":\"MILLILITER\"}",
+                "replenishment": "{\"@type\":\"DashReplenishmentId\",\"value\":\"<the replenishment ID for refill options>\"}"
+            },
+            {
+                "instance": "PaperSensor.FrontTray",
+                "capability_resources": "{\"friendlyNames\":[{\"@type\":\"text\",\"value\":{\"text\":\"Front tray\",\"locale\":\"en-US\"}}]}",
+                "measurement": "{\"@type\":\"Count\"}",
+                "replenishment": "{\"@type\":\"DashReplenishmentId\",\"value\":\"<the replenishment ID for refill options>\"}"
             }
         ],
         "x": 1330,

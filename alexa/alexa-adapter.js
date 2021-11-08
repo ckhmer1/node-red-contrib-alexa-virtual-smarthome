@@ -97,7 +97,8 @@ module.exports = function (RED) {
     const STATE_FOR_NAMESPACE = {
         "Alexa.ToggleController": "toggles",
         "Alexa.RangeController": "ranges",
-        "Alexa.ModeController": "modes"
+        "Alexa.ModeController": "modes",
+        "Alexa.InventoryLevelSensor": "levels"
     }
 
     const DEFAULT_PAYLOAD_VERSION = '3';

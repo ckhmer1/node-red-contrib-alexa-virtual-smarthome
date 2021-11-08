@@ -99,6 +99,8 @@
                 i_security_panel_controller: { value: false, required: false },
                 i_speaker: { value: false, required: false },
                 i_step_speaker: { value: false, required: false },
+                i_timehold_controller: { value: false, required: false },
+                allow_remote_resume: { value: false, required: false },
                 i_temperature_sensor: { value: false, required: false },
                 i_thermostat_controller: { value: false, required: false },
                 a_target_setpoint: { value: false, required: false },
@@ -178,7 +180,7 @@
                 toggles: {
                     value: [], required: false, validate: function (toggles) {
                         if (!toggles || toggles.length === 0) { return true }
-                        let toggles_dict = {};
+                        let instance_dict = {};
                         for (var i = 0; i < toggles.length; i++) {
                             var t = toggles[i];
                             if (t.instance.trim() || t.capability_resources.trim() || t.semantics.trim()) {
@@ -186,7 +188,7 @@
                                     console.log(i + "] Toggle instance not filled.");
                                     return false;
                                 }
-                                if (toggles_dict.hasOwnProperty(t.instance.trim())) {
+                                if (instance_dict.hasOwnProperty(t.instance.trim())) {
                                     console.log(i + "] Toggle instance " + r.instance.trim() + " already used.");
                                     return false;
                                 }
@@ -204,7 +206,7 @@
                                         return false;
                                     }
                                 }
-                                toggles_dict[t.instance.trim()] = 1;
+                                instance_dict[t.instance.trim()] = 1;
                             }
                         }
                         return true;
@@ -213,12 +215,12 @@
                 ranges: {
                     value: [], required: false, validate: function (ranges) {
                         if (!ranges || ranges.length === 0) { return true }
-                        let ranges_dict = {};
+                        let instance_dict = {};
                         for (var i = 0; i < ranges.length; i++) {
                             var r = ranges[i];
                             if (r.instance.trim() || r.capability_resources.trim() || r.semantics.trim() || r.min.trim() || r.max.trim() || r.precision.trim() || r.presets.trim()) {
                                 if (r.instance.trim()) {
-                                    if (ranges_dict.hasOwnProperty(r.instance.trim())) {
+                                    if (instance_dict.hasOwnProperty(r.instance.trim())) {
                                         console.log(i + "] Range instance " + r.instance.trim() + " already used.");
                                         return false;
                                     }
@@ -285,7 +287,7 @@
                                         return false;
                                     }
                                 }
-                                ranges_dict[r.instance.trim()] = 1;
+                                instance_dict[r.instance.trim()] = 1;
                             }
                         }
                         return true;
@@ -294,12 +296,12 @@
                 c_modes: {
                     value: [], required: false, validate: function (modes) {
                         if (!modes || modes.length === 0) { return true }
-                        let modes_dict = {};
+                        let instance_dict = {};
                         for (var i = 0; i < modes.length; i++) {
                             var m = modes[i];
                             if (m.instance.trim() || m.capability_resources.trim() || m.semantics.trim() || m.supported_modes.trim()) {
                                 if (m.instance.trim()) {
-                                    if (modes_dict.hasOwnProperty(m.instance.trim())) {
+                                    if (instance_dict.hasOwnProperty(m.instance.trim())) {
                                         console.log(i + "] Mode instance " + m.instance.trim() + " already used.");
                                         return false;
                                     }
@@ -337,12 +339,116 @@
                                         return false;
                                     }
                                 }
-                                modes_dict[m.instance.trim()] = 1;
+                                instance_dict[m.instance.trim()] = 1;
                             }
                         }
                         return true;
                     }
-                }
+                },
+                inventory_usage_sensors: {
+                    value: [], required: false, validate: function (inventories) {
+                        if (!inventories || inventories.length === 0) { return true }
+                        let instance_dict = {};
+                        for (var i = 0; i < inventories.length; i++) {
+                            var o = inventories[i];
+                            console.log("inventory_usage_sensor " + JSON.stringify(o));
+                            if (o.instance.trim() || o.capability_resources.trim() || o.measurement.trim() || o.replenishment.trim()) {
+                                if (o.instance.trim()) {
+                                    if (instance_dict.hasOwnProperty(o.instance.trim())) {
+                                        console.log(i + "] Inventory Usage Sensor instance " + o.instance.trim() + " already used.");
+                                        return false;
+                                    }
+                                } else {
+                                    console.log(i + "] Inventory Usage Sensor instance not filled.");
+                                    return false;
+                                }
+                                if (o.capability_resources.trim()) {
+                                    try {
+                                        JSON.parse(o.capability_resources);
+                                    } catch (e) {
+                                        console.log(i + "] Inventory Usage Sensor capability resources is not valid");
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                                if (o.measurement.trim()) {
+                                    try {
+                                        JSON.parse(o.measurement);
+                                    } catch (e) {
+                                        console.log(i + "] Inventory Usage Sensor measurement is not valid");
+                                        return false;
+                                    }
+                                } else {
+                                    console.log(i + "] Inventory Usage Sensor measurement not filled.");
+                                    return false;
+                                }
+                                if (o.replenishment.trim()) {
+                                    try {
+                                        JSON.parse(o.replenishment);
+                                    } catch (e) {
+                                        console.log(i + "] Inventory Usage Sensor replenishment is not valid");
+                                        return false;
+                                    }
+                                }
+                                instance_dict[o.instance.trim()] = 1;
+                            }
+                        }
+                        return true;
+                    }
+                },
+                inventory_level_sensors: {
+                    value: [], required: false, validate: function (inventories) {
+                        if (!inventories || inventories.length === 0) { return true }
+                        let instance_dict = {};
+                        for (var i = 0; i < inventories.length; i++) {
+                            var o = inventories[i];
+                            console.log("inventory_level_sensors " + JSON.stringify(o));
+                            if (o.instance.trim() || o.capability_resources.trim() || o.measurement.trim() || o.replenishment.trim()) {
+                                if (o.instance.trim()) {
+                                    if (instance_dict.hasOwnProperty(o.instance.trim())) {
+                                        console.log(i + "] Inventory Level Sensor instance " + o.instance.trim() + " already used.");
+                                        return false;
+                                    }
+                                } else {
+                                    console.log(i + "] Inventory Level Sensor instance not filled.");
+                                    return false;
+                                }
+                                if (o.capability_resources.trim()) {
+                                    try {
+                                        JSON.parse(o.capability_resources);
+                                    } catch (e) {
+                                        console.log(i + "] Inventory Level Sensor capability resources is not valid");
+                                        return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                                if (o.measurement.trim()) {
+                                    try {
+                                        JSON.parse(o.measurement);
+                                    } catch (e) {
+                                        console.log(i + "] Inventory Level Sensor measurement is not valid");
+                                        return false;
+                                    }
+                                } else {
+                                    console.log(i + "] Inventory Level Sensor measurement not filled.");
+                                    return false;
+                                }
+                                if (o.replenishment.trim()) {
+                                    try {
+                                        JSON.parse(o.replenishment);
+                                    } catch (e) {
+                                        console.log(i + "] Inventory Level Sensor replenishment is not valid");
+                                        return false;
+                                    }
+                                }
+                                instance_dict[o.instance.trim()] = 1;
+                            }
+                        }
+                        return true;
+                    }
+                },
             },
             inputs: 1,
             outputs: 1,
@@ -383,6 +489,8 @@
                 var presets_i18n = this._("alexa-device.placeholder.presets");
                 var supported_modes_i18n = this._("alexa-device.placeholder.supported_modes");
                 var ordered_i18n = this._("alexa-device.label.ordered");
+                var replenishment_i18n = this._("alexa-device.placeholder.replenishment");
+                var measurement_i18n = this._("alexa-device.placeholder.measurement");
 
                 // Camera Stream Configurations
                 $('#node-input-camera_stream_configuration-container').css('min-height', '150px').css('min-width', '450px').editableList({
@@ -801,6 +909,131 @@
                         supported_modes: mode.supported_modes
                     });
                 }
+
+
+                // InventoryUsageSensor
+                $('#node-input-inventory_usage_sensor-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var o = opt;
+                        if (!o.hasOwnProperty('instance')) {
+                            o = { instance: "", capability_resources: "", measurement: "", replenishment: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+                        var row2 = $('<div/>', { style: "display:flex; align-items: baseline; margin-top: 4px;" }).appendTo(fragment);
+
+                        var row1_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1); // Instance
+                        var row1_2 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1); // measurement
+
+                        var row2_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row2); // Capability Resources
+                        var row2_2 = $('<div/>', { style: "width:100%;" }).appendTo(row2); // replenishment
+
+                        var propertyInstance = $('<input/>', { class: "node-input-inventory_usage_sensor-property-instance", type: "text", style: "width:100%;" })
+                            .attr("placeholder", instance_i18n)
+                            .appendTo(row1_1);
+                        propertyInstance.val(o.instance);
+
+                        var propertyMeasurement = $('<input/>', { class: "node-input-inventory_usage_sensor-property-measurement", type: "text", style: "width:100%;" })
+                            .attr("placeholder", measurement_i18n)
+                            .appendTo(row1_2)
+                            .typedInput({ default: 'json', types: ['json'] });
+                            propertyMeasurement.typedInput('value', o.measurement);
+
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-inventory_usage_sensor-property-capability_resources", type: "text", style: "width:100%;" })
+                            .attr("placeholder", capability_resources_i18n)
+                            .appendTo(row2_1)
+                            .typedInput({ default: 'json', types: ['json'] });
+                        propertycapabilityResources.typedInput('value', o.capability_resources);
+
+                        var propertyReplenishment = $('<input/>', { class: "node-input-inventory_usage_sensor-property-replenishment", type: "text", style: "width:100%;" })
+                            .attr("placeholder", replenishment_i18n)
+                            .appendTo(row2_2)
+                            .typedInput({ default: o.replenishment ? 'json' : 'str', types: ['str', 'json'] });
+                        propertyReplenishment.typedInput('value', o.replenishment);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                if (!this.inventory_usage_sensors) {
+                    this.inventory_usage_sensors = [];
+                }
+                for (var i = 0; i < this.inventory_usage_sensors.length; i++) {
+                    var o = this.inventory_usage_sensors[i];
+                    $("#node-input-inventory_usage_sensor-container").editableList('addItem', {
+                        instance: o.instance,
+                        capability_resources: o.capability_resources,
+                        measurement: o.measurement,
+                        replenishment: o.replenishment
+                    });
+                }
+
+                // InventoryLevelSensor
+                $('#node-input-inventory_level_sensor-container').css('min-height', '150px').css('min-width', '450px').editableList({
+                    addItem: function (container, i, opt) {
+                        var o = opt;
+                        if (!o.hasOwnProperty('instance')) {
+                            o = { instance: "", capability_resources: "", measurement: "", replenishment: "" };
+                        }
+                        container.css({
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                        });
+                        let fragment = document.createDocumentFragment();
+                        var row1 = $('<div/>', { style: "display:flex; align-items: baseline" }).appendTo(fragment);
+                        var row2 = $('<div/>', { style: "display:flex; align-items: baseline; margin-top: 4px;" }).appendTo(fragment);
+
+                        var row1_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1); // Instance
+                        var row1_2 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row1); // measurement
+
+                        var row2_1 = $('<div/>', { style: "width:100%; margin-right:10px;" }).appendTo(row2); // Capability Resources
+                        var row2_2 = $('<div/>', { style: "width:100%;" }).appendTo(row2); // replenishment
+
+                        var propertyInstance = $('<input/>', { class: "node-input-inventory_level_sensor-property-instance", type: "text", style: "width:100%;" })
+                            .attr("placeholder", instance_i18n)
+                            .appendTo(row1_1);
+                        propertyInstance.val(o.instance);
+
+                        var propertyMeasurement = $('<input/>', { class: "node-input-inventory_level_sensor-property-measurement", type: "text", style: "width:100%;" })
+                            .attr("placeholder", measurement_i18n)
+                            .appendTo(row1_2)
+                            .typedInput({ default: 'json', types: ['json'] });
+                            propertyMeasurement.typedInput('value', o.measurement);
+
+                        var propertycapabilityResources = $('<input/>', { class: "node-input-inventory_level_sensor-property-capability_resources", type: "text", style: "width:100%;" })
+                            .attr("placeholder", capability_resources_i18n)
+                            .appendTo(row2_1)
+                            .typedInput({ default: 'json', types: ['json'] });
+                        propertycapabilityResources.typedInput('value', o.capability_resources);
+
+                        var propertyReplenishment = $('<input/>', { class: "node-input-inventory_level_sensor-property-replenishment", type: "text", style: "width:100%;" })
+                            .attr("placeholder", replenishment_i18n)
+                            .appendTo(row2_2)
+                            .typedInput({ default: o.replenishment ? 'json' : 'str', types: ['str', 'json'] });
+                        propertyReplenishment.typedInput('value', o.replenishment);
+
+                        container[0].appendChild(fragment);
+                    },
+                    removable: true,
+                    sortable: true
+                });
+                if (!this.inventory_level_sensors) {
+                    this.inventory_level_sensors = [];
+                }
+                for (var i = 0; i < this.inventory_level_sensors.length; i++) {
+                    var o = this.inventory_level_sensors[i];
+                    $("#node-input-inventory_level_sensor-container").editableList('addItem', {
+                        instance: o.instance,
+                        capability_resources: o.capability_resources,
+                        measurement: o.measurement,
+                        replenishment: o.replenishment
+                    });
+                }
             },
             oneditsave: function () {
                 // Camera Stream
@@ -899,6 +1132,44 @@
                     }
                 });
 
+                // InventoryLevelSensor
+                var inventory_level_sensors = $("#node-input-inventory_level_sensor-container").editableList('items');
+                node.inventory_level_sensors = [];
+                inventory_level_sensors.each(function (i) {
+                    var sensor = $(this);
+                    var instance = sensor.find(".node-input-inventory_level_sensor-property-instance").val();
+                    var capability_resources = sensor.find(".node-input-inventory_level_sensor-property-capability_resources").val();
+                    var measurement = sensor.find(".node-input-inventory_level_sensor-property-measurement").val();
+                    var replenishment = sensor.find(".node-input-inventory_level_sensor-property-replenishment").val();
+                    if (instance.trim() || capability_resources.trim() || replenishment.trim() || measurement.trim()) {
+                        node.inventory_level_sensors.push({
+                            instance: instance.trim(),
+                            capability_resources: capability_resources.trim(),
+                            measurement: measurement.trim(),
+                            replenishment: replenishment.trim()
+                        });
+                    }
+                });
+
+                // InventoryUsageSensor
+                var inventory_usage_sensors = $("#node-input-inventory_usage_sensor-container").editableList('items');
+                node.inventory_usage_sensors = [];
+                inventory_usage_sensors.each(function (i) {
+                    var sensor = $(this);
+                    var instance = sensor.find(".node-input-inventory_usage_sensor-property-instance").val();
+                    var capability_resources = sensor.find(".node-input-inventory_usage_sensor-property-capability_resources").val();
+                    var measurement = sensor.find(".node-input-inventory_usage_sensor-property-measurement").val();
+                    var replenishment = sensor.find(".node-input-inventory_usage_sensor-property-replenishment").val();
+                    if (instance.trim() || capability_resources.trim() || replenishment.trim() || measurement.trim()) {
+                        node.inventory_usage_sensors.push({
+                            instance: instance.trim(),
+                            capability_resources: capability_resources.trim(),
+                            measurement: measurement.trim(),
+                            replenishment: replenishment.trim()
+                        });
+                    }
+                });
+
                 // modes
                 var modes = $("#node-input-mode-container").editableList('items');
                 node.c_modes = [];
@@ -939,6 +1210,12 @@
             flex:1;
         }
         ol#node-input-mode-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-inventory_usage_sensor-container .red-ui-typedInput-container {
+            flex:1;
+        }
+        ol#node-input-inventory_level_sensor-container .red-ui-typedInput-container {
             flex:1;
         }
     </style>
@@ -1293,19 +1570,33 @@
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_inventory_level_sensor" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_inventory_level_sensor" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_inventory_level_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.inventory_level_sensor"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventorylevelsensor.html"><i class="fa fa-external-link"></i></a>
         </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-device.label.inventory_level_sensor"></span>
+        </div>
+        <div class="form-row node-input-inventory_level_sensor-container-row">
+            <ol id="node-input-inventory_level_sensor-container"></ol>
+        </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_inventory_usage_sensor" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border div_trait" id="i_inventory_usage_sensor" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_inventory_usage_sensor" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-device.interface.inventory_usage_sensor"></span>
             <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventoryusagesensor.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row" style="margin-bottom:0;">
+            <i class="fa fa-list"></i> <span data-i18n="alexa-device.label.inventory_usage_sensor"></span>
+        </div>
+        <div class="form-row node-input-inventory_usage_sensor-container-row">
+            <ol id="node-input-inventory_usage_sensor-container"></ol>
         </div>
     </div>
     
@@ -1599,6 +1890,19 @@
         </div>
     </div>
     
+    <div class="form-row red-ui-editableList-border div_trait" hidden id="i_timehold_controller" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_timehold_controller" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.timehold_controller"></span>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-timeholdcontroller.html"><i class="fa fa-external-link"></i></a>
+        </div>
+
+        <div class="form-row">
+            <input type="checkbox" id="node-input-allow_remote_resume" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.label.allow_remote_resume"></span>
+        </div>
+    </div>
+
     <div class="form-row red-ui-editableList-border div_trait" id="i_toggle_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_toggle_controller" style="display:inline-block; width:20px; vertical-align:baseline;">

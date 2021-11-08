@@ -283,6 +283,13 @@ module.exports = function (RED) {
                     }
                 };
                 node.alexa.send_event_gw(node.id, 'Alexa.DeviceUsage.Meter', 'MeasurementsReport', msg.payload, other_data).then(() => { });
+            } else if (topic === 'INVENTORYCONSUMED') {
+                let other_data = {
+                    header:{
+                        instance: msg.instance
+                    }
+                };
+                node.alexa.send_event_gw(node.id, 'Alexa.InventoryUsageSensor', 'InventoryConsumed', msg.payload, other_data).then(() => { });
             } else if (topic === 'EXECDIRECTIVE') { // test
                 if (node.isVerbose()) {
                     node._debug(" CCHI execDirective " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
@@ -837,11 +844,156 @@ module.exports = function (RED) {
                     value: node.config.a_inputs,
                 };
             }
+
             // InventoryLevelSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventorylevelsensor.html
+            if (node.config.i_inventory_level_sensor) {
+                if (node.isVerbose()) node._debug("Alexa.InventoryLevelSensor");
+                if (node.config.inventory_level_sensors !== undefined && node.config.inventory_level_sensors.length > 0) {
+                    node.state["levels"] = {};
+                    let attributes = {};
+                    state_types['levels'] = {
+                        type: Formats.OBJECT,
+                        attributes: attributes,
+                    };
+                    node.config.inventory_level_sensors.forEach(s => {
+                        if (s.instance && s.capability_resources && s.measurement) {
+                            const measurement = JSON.parse(s.measurement);
+                            let ok = false;
+                            switch (measurement['@type']) {
+                                case 'Count':
+                                    ok = true;
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING,
+                                                values: ['Count']
+                                            },
+                                            value: Formats.INT,
+                                        },
+                                    };
+                                    break;
+                                case 'Percentage':
+                                    ok = true;
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING,
+                                                values: ['Percentage']
+                                            },
+                                            value: {
+                                                type: Formats.INT,
+                                                min: 0,
+                                                max: 100
+                                            }
+                                        },
+                                    };
+                                    break;
+                                case 'Volume':
+                                    // Unit
+                                    ok = true;
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING,
+                                                values: ['Volume']
+                                            },
+                                            value: Formats.FLOAT,
+                                            unit: {
+                                                type: Formats.STRING,
+                                                values: [s.measurement.unit]
+                                            }
+                                        },
+                                    };
+                                    break;
+                                case 'Weight':
+                                    ok = true;
+                                    // Unit
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING,
+                                                values: ['Weight']
+                                            },
+                                            value: Formats.FLOAT,
+                                            unit: {
+                                                type: Formats.STRING,
+                                                values: [s.measurement.unit]
+                                            }
+                                        },
+                                    };
+                                    break;
+                            }
+                            if (ok) {
+                                node.state["levels"][s.instance] = 0;
+                                let additional_config = {
+                                    instance: s.instance,
+                                    capabilityResources: JSON.parse(s.capability_resources),
+                                    configuration: {
+                                        measurement: JSON.parse(s.measurement)
+                                    }
+                                };
+                                if (s.replenishment) {
+                                    additional_config.configuration['replenishment'] = JSON.parse(s.replenishment);
+                                }
+                                node.addCapability("Alexa.InventoryLevelSensor",
+                                    {
+                                        level: 0,
+                                    },
+                                    additional_config, true);
+
+                            }
+                        }
+                    });
+                }
+            }
 
             // InventoryUsageSensor
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventoryusagesensor.html
+            if (node.config.i_inventory_usage_sensor) {
+                if (node.isVerbose()) node._debug("Alexa.InventoryUsageSensor");
+                if (node.config.inventory_usage_sensors !== undefined && node.config.inventory_usage_sensors.length > 0) {
+                    node.config.inventory_usage_sensors.forEach(s => {
+                        if (s.instance && s.capability_resources && s.measurement) {
+                            const measurement = JSON.parse(s.measurement);
+                            let ok = false;
+                            switch (measurement['@type']) {
+                                case 'Count':
+                                    ok = true;
+                                    break;
+                                case 'Percentage':
+                                    ok = true;
+                                    break;
+                                case 'Volume':
+                                    // Unit
+                                    ok = true;
+                                    break;
+                                case 'Weight':
+                                    ok = true;
+                                    // Unit
+                                    break;
+                            }
+                            if (ok) {
+                                let additional_config = {
+                                    instance: s.instance,
+                                    capabilityResources: JSON.parse(s.capability_resources),
+                                    configuration: {
+                                        measurement: JSON.parse(s.measurement)
+                                    }
+                                };
+                                if (s.replenishment) {
+                                    additional_config.configuration['replenishment'] = JSON.parse(s.replenishment);
+                                }
+                                node.addCapability("Alexa.InventoryUsageSensor", {}, additional_config);
+                            }
+                        }
+                    });
+                }
+            }
 
             // KeypadController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-keypadcontroller.html
@@ -1261,10 +1413,24 @@ module.exports = function (RED) {
                     };
                 }
                 if (add_interface) {
-                    node.addCapability("ThermostatController.HVAC.Components", properties, {
+                    node.addCapability("Alexa.ThermostatController.HVAC.Components", properties, {
                         configuration: configurations
                     });
                 }
+            }
+
+            // TimeHoldController 
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-timeholdcontroller.html
+            if (node.config.i_timehold_controller) {
+                if (node.isVerbose()) node._debug("Alexa.TimeHoldController");
+                node.addCapability("Alexa.TimeHoldController", {
+                    holdStartTime: "",
+                    holdEndTime: ""
+                }, {
+                    configuration: {
+                        allowRemoteResume: node.config.allow_remote_resume
+                    }
+                });
             }
 
             // ToggleController
@@ -1856,6 +2022,15 @@ module.exports = function (RED) {
                     }
                     break;
 
+                case "Alexa.TimeHoldController": // TimeHoldController
+                    if (name === 'Hold') { // TODO
+                        modified = [];
+                    }
+                    else if (name === 'Resume') {
+                        modified = [];
+                    }
+                    break;
+
                 case "Alexa.ToggleController": // ToggleController
                     if (name === 'TurnOn' || name === 'TurnOff') {
                         let toggles = {};
@@ -2054,6 +2229,18 @@ module.exports = function (RED) {
                 });
             }
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventorylevelsensor.html
+            if (node.config.i_inventory_level_sensor) {
+                for (const [level, value] of Object.entries(node.state.levels || [])) {
+                    properties.push({
+                        namespace: "Alexa.InventoryLevelSensor",
+                        instance: level,
+                        name: "level",
+                        value: value,
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventoryusagesensor.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-keypadcontroller.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-lockcontroller.html
@@ -2264,6 +2451,27 @@ module.exports = function (RED) {
                         namespace: "Alexa.ThermostatController.HVAC.Components",
                         name: "fanOperation",
                         value: node.state['fanOperation'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+            }
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-timeholdcontroller.html
+            if (node.config.i_timehold_controller) {
+                if (node.state['holdStartTime']) {
+                    properties.push({
+                        namespace: "Alexa.TimeHoldController",
+                        name: "holdStartTime",
+                        value: node.state['holdStartTime'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (node.state['holdEndTime']) {
+                    properties.push({
+                        namespace: "Alexa.TimeHoldController",
+                        name: "holdEndTime",
+                        value: node.state['holdEndTime'],
                         timeOfSample: time_of_sample,
                         uncertaintyInMilliseconds: uncertainty,
                     });
