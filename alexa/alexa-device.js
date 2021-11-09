@@ -284,12 +284,40 @@ module.exports = function (RED) {
                 };
                 node.alexa.send_event_gw(node.id, 'Alexa.DeviceUsage.Meter', 'MeasurementsReport', msg.payload, other_data).then(() => { });
             } else if (topic === 'INVENTORYCONSUMED') {
-                let other_data = {
-                    header:{
-                        instance: msg.instance
+                if (node.state_types_inventory_usage_sensors) {
+                    let new_state = {};
+                    console.log("CCHI state_types_inventory_usage_sensors " + JSON.stringify(node.state_types_inventory_usage_sensors));
+                    for (const [instance, state_type] of Object.entries(node.state_types_inventory_usage_sensors)) {
+                        console.log("CCHI instance " + instance + " " + JSON.stringify(state_type));
+                        new_state[instance] = {
+                            "@type": state_type.attributes['@type'].values[0],
+                        };
+                        if (state_type.attributes.unit) {
+                            new_state[instance]['unit'] = state_type.attributes['unit'].values[0];
+                        }
                     }
-                };
-                node.alexa.send_event_gw(node.id, 'Alexa.InventoryUsageSensor', 'InventoryConsumed', msg.payload, other_data).then(() => { });
+                    const modified = node.updateState(msg.payload || {}, new_state, node.state_types_inventory_usage_sensors, {});
+                    if (modified.length > 0) {
+                        modified.forEach(m => {
+                            const time_of_sample = (new Date()).toISOString();
+                            for (const [instance, state_type] of Object.entries(m)) {
+                                if (Array.isArray(state_type) && state_type.length === 1 && state_type[0] === 'value') {
+                                    let other_data = {
+                                        event: {
+                                            header: {
+                                                instance: instance
+                                            }
+                                        }
+                                    };
+                                    process.nextTick(() => {
+                                        node.alexa.send_event_gw(node.id, 'Alexa.InventoryUsageSensor', 'InventoryConsumed', { usage: new_state[instance], timeOfSample: time_of_sample }, other_data).then(() => { });
+                                    });
+
+                                }
+                            }
+                        });
+                    }
+                }
             } else if (topic === 'EXECDIRECTIVE') { // test
                 if (node.isVerbose()) {
                     node._debug(" CCHI execDirective " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
@@ -306,15 +334,15 @@ module.exports = function (RED) {
                             payload: {}
                         };
                         msg1.payload[key] = msg.payload;
-                        node._debug(".input: found state " + key);
+                        node._debug(".input: found state " + key + " new msg " + JSON.stringify(msg1));
                     }
                 });
 
-                if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
+                // if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 // const modified = node.setValues(msg1.payload || {}, node.state);
                 const modified = node.updateState(msg1.payload || {}, node.state, node.state_types, EXCLUSIVE_STATES);
-                if (node.isVerbose()) node._debug("CCHI " + node.id + " modified " + JSON.stringify(modified));
-                if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
+                // if (node.isVerbose()) node._debug("CCHI " + node.id + " modified " + JSON.stringify(modified));
+                // if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
                 if (modified.length > 0) {
                     process.nextTick(() => {
                         node.alexa.send_change_report(node.id, modified).then(() => { });
@@ -851,6 +879,7 @@ module.exports = function (RED) {
                 if (node.isVerbose()) node._debug("Alexa.InventoryLevelSensor");
                 if (node.config.inventory_level_sensors !== undefined && node.config.inventory_level_sensors.length > 0) {
                     node.state["levels"] = {};
+                    let value = {};
                     let attributes = {};
                     state_types['levels'] = {
                         type: Formats.OBJECT,
@@ -860,6 +889,10 @@ module.exports = function (RED) {
                         if (s.instance && s.capability_resources && s.measurement) {
                             const measurement = JSON.parse(s.measurement);
                             let ok = false;
+                            value = {
+                                "@type": measurement['@type'],
+                                value: 0
+                            };
                             switch (measurement['@type']) {
                                 case 'Count':
                                     ok = true;
@@ -867,10 +900,10 @@ module.exports = function (RED) {
                                         type: Formats.OBJECT + Formats.MANDATORY,
                                         attributes: {
                                             "@type": {
-                                                type: Formats.STRING,
+                                                type: Formats.STRING + Formats.MANDATORY,
                                                 values: ['Count']
                                             },
-                                            value: Formats.INT,
+                                            value: Formats.INT + Formats.MANDATORY,
                                         },
                                     };
                                     break;
@@ -880,11 +913,11 @@ module.exports = function (RED) {
                                         type: Formats.OBJECT + Formats.MANDATORY,
                                         attributes: {
                                             "@type": {
-                                                type: Formats.STRING,
+                                                type: Formats.STRING + Formats.MANDATORY,
                                                 values: ['Percentage']
                                             },
                                             value: {
-                                                type: Formats.INT,
+                                                type: Formats.INT + Formats.MANDATORY,
                                                 min: 0,
                                                 max: 100
                                             }
@@ -892,44 +925,44 @@ module.exports = function (RED) {
                                     };
                                     break;
                                 case 'Volume':
-                                    // Unit
+                                    value['unit'] = measurement.unit;
                                     ok = true;
                                     attributes[s.instance] = {
                                         type: Formats.OBJECT + Formats.MANDATORY,
                                         attributes: {
                                             "@type": {
-                                                type: Formats.STRING,
+                                                type: Formats.STRING + Formats.MANDATORY,
                                                 values: ['Volume']
                                             },
-                                            value: Formats.FLOAT,
+                                            value: Formats.FLOAT + Formats.MANDATORY,
                                             unit: {
-                                                type: Formats.STRING,
-                                                values: [s.measurement.unit]
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: [measurement.unit]
                                             }
                                         },
                                     };
                                     break;
                                 case 'Weight':
                                     ok = true;
-                                    // Unit
+                                    value['unit'] = measurement.unit;
                                     attributes[s.instance] = {
                                         type: Formats.OBJECT + Formats.MANDATORY,
                                         attributes: {
                                             "@type": {
-                                                type: Formats.STRING,
+                                                type: Formats.STRING + Formats.MANDATORY,
                                                 values: ['Weight']
                                             },
-                                            value: Formats.FLOAT,
+                                            value: Formats.FLOAT + Formats.MANDATORY,
                                             unit: {
-                                                type: Formats.STRING,
-                                                values: [s.measurement.unit]
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: [measurement.unit]
                                             }
                                         },
                                     };
                                     break;
                             }
                             if (ok) {
-                                node.state["levels"][s.instance] = 0;
+                                node.state["levels"][s.instance] = value;
                                 let additional_config = {
                                     instance: s.instance,
                                     capabilityResources: JSON.parse(s.capability_resources),
@@ -940,11 +973,7 @@ module.exports = function (RED) {
                                 if (s.replenishment) {
                                     additional_config.configuration['replenishment'] = JSON.parse(s.replenishment);
                                 }
-                                node.addCapability("Alexa.InventoryLevelSensor",
-                                    {
-                                        level: 0,
-                                    },
-                                    additional_config, true);
+                                node.addCapability("Alexa.InventoryLevelSensor", value, additional_config, true);
 
                             }
                         }
@@ -957,6 +986,8 @@ module.exports = function (RED) {
             if (node.config.i_inventory_usage_sensor) {
                 if (node.isVerbose()) node._debug("Alexa.InventoryUsageSensor");
                 if (node.config.inventory_usage_sensors !== undefined && node.config.inventory_usage_sensors.length > 0) {
+                    node.state_types_inventory_usage_sensors = {};
+                    let attributes = node.state_types_inventory_usage_sensors;
                     node.config.inventory_usage_sensors.forEach(s => {
                         if (s.instance && s.capability_resources && s.measurement) {
                             const measurement = JSON.parse(s.measurement);
@@ -964,17 +995,67 @@ module.exports = function (RED) {
                             switch (measurement['@type']) {
                                 case 'Count':
                                     ok = true;
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: ['Count']
+                                            },
+                                            value: Formats.INT + Formats.MANDATORY,
+                                        },
+                                    };
                                     break;
                                 case 'Percentage':
                                     ok = true;
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: ['Percentage']
+                                            },
+                                            value: {
+                                                type: Formats.INT + Formats.MANDATORY,
+                                                min: 0,
+                                                max: 100
+                                            }
+                                        },
+                                    };
                                     break;
                                 case 'Volume':
-                                    // Unit
                                     ok = true;
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: ['Volume']
+                                            },
+                                            value: Formats.FLOAT + Formats.MANDATORY,
+                                            unit: {
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: [measurement.unit]
+                                            }
+                                        },
+                                    };
                                     break;
                                 case 'Weight':
                                     ok = true;
-                                    // Unit
+                                    attributes[s.instance] = {
+                                        type: Formats.OBJECT + Formats.MANDATORY,
+                                        attributes: {
+                                            "@type": {
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: ['Weight']
+                                            },
+                                            value: Formats.FLOAT + Formats.MANDATORY,
+                                            unit: {
+                                                type: Formats.STRING + Formats.MANDATORY,
+                                                values: [measurement.unit]
+                                            }
+                                        },
+                                    };
                                     break;
                             }
                             if (ok) {
@@ -2585,6 +2666,8 @@ module.exports = function (RED) {
         updateState(new_states, current_state, state_types, exclusive_states) {
             const node = this;
             let modified = [];
+            if (node.isVerbose()) node._debug("CCHI updateState state_types " + JSON.stringify(state_types));
+            if (node.isVerbose()) node._debug('updateState current state ' + JSON.stringify(current_state));
             Object.keys(state_types).forEach(key => {
                 if (new_states.hasOwnProperty(key)) {
                     // console.log("CCHI found key " + key);
@@ -2596,8 +2679,9 @@ module.exports = function (RED) {
                     }
                     // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));
                 }
+                // else console.log("CCHI NOT found key " + key);
             });
-            node._debug('updateState new state modified ' + JSON.stringify(modified) + ' state ' + JSON.stringify(current_state));
+            if (node.isVerbose()) node._debug('updateState modified ' + JSON.stringify(modified) + ' new state ' + JSON.stringify(current_state));
             return modified;
         }
 
