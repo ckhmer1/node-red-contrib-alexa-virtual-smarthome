@@ -90,6 +90,7 @@
                 i_motion_sensor: { value: false, required: false },
                 i_percentage_controller: { value: false, required: false },
                 i_playback_controller: { value: false, required: false },
+                i_playback_state_reporter: { value: false, required: false },
                 a_playback_modes: { value: [], required: false },
                 i_power_controller: { value: false, required: false },
                 i_power_level_controller: { value: false, required: false },
@@ -1697,7 +1698,15 @@
             </select>
         </div>
     </div>
-    
+
+    <div class="form-row red-ui-editableList-border div_trait" id="i_playback_state_reporter" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <input type="checkbox" id="node-input-i_playback_state_reporter" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-device.interface.playback_state_reporter"></span>
+            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackstatereporter.html"><i class="fa fa-external-link"></i></a>
+        </div>
+    </div>
+
     <div class="form-row red-ui-editableList-border div_trait" id="i_power_controller" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
             <input type="checkbox" id="node-input-i_power_controller" style="display:inline-block; width:20px; vertical-align:baseline;">

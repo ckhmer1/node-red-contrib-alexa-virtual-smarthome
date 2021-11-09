@@ -280,6 +280,7 @@
             "motion_sensor": "Motion Sensor",
             "percentage_controller": "Percentage Controller",
             "playback_controller": "Playback Controller",
+            "playback_state_reporter": "Playback state reporter",
             "power_controller": "Power Controller",
             "power_level_controller": "PowerLevel Controller",
             "range_controller": "Range Controller",

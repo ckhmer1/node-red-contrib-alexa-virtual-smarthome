@@ -905,6 +905,30 @@
         "h": 162
     },
     {
+        "id": "6ab2861.3f57678",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "3f817392.76794c",
+            "c4250ffa.5a6c1",
+            "2dee37ad.667e08",
+            "9f401aed.776c88"
+        ],
+        "x": 1194,
+        "y": 459,
+        "w": 322,
+        "h": 162
+    },
+    {
         "id": "a2728c12.4058f",
         "type": "alexa-adapter",
         "name": "Alexa",
@@ -1029,6 +1053,7 @@
         "i_motion_sensor": true,
         "i_percentage_controller": true,
         "i_playback_controller": true,
+        "i_playback_state_reporter": true,
         "a_playback_modes": [
             "Play",
             "Pause",
@@ -4174,7 +4199,7 @@
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
         "g": "bfa121ae.6942b",
-        "name": "",
+        "name": "Muted 50",
         "props": [
             {
                 "p": "payload"
@@ -4187,7 +4212,7 @@
         "topic": "",
         "payload": "{\"volume\":50,\"muted\":true}",
         "payloadType": "json",
-        "x": 990,
+        "x": 980,
         "y": 660,
         "wires": [
             [
@@ -5188,7 +5213,8 @@
             "80e05795.817cb8",
             "6581fa5.2647a04",
             "d1ef2e81.e363",
-            "e477f87b.40c7b8"
+            "e477f87b.40c7b8",
+            "9f401aed.776c88"
         ],
         "x": 1275,
         "y": 960,
@@ -5771,5 +5797,85 @@
                 "e477f87b.40c7b8"
             ]
         ]
+    },
+    {
+        "id": "3f817392.76794c",
+        "type": "comment",
+        "z": "5cc6ca02.0e2a64",
+        "g": "6ab2861.3f57678",
+        "name": "PlaybackStateReporter",
+        "info": "",
+        "x": 1320,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "c4250ffa.5a6c1",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "6ab2861.3f57678",
+        "name": "PAUSED",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"playbackState\": \"PAUSED\"}",
+        "payloadType": "json",
+        "x": 1360,
+        "y": 580,
+        "wires": [
+            [
+                "9f401aed.776c88"
+            ]
+        ]
+    },
+    {
+        "id": "2dee37ad.667e08",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "6ab2861.3f57678",
+        "name": "PLAYING",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "playbackState",
+        "payload": "PLAYING",
+        "payloadType": "str",
+        "x": 1360,
+        "y": 540,
+        "wires": [
+            [
+                "9f401aed.776c88"
+            ]
+        ]
+    },
+    {
+        "id": "9f401aed.776c88",
+        "type": "link out",
+        "z": "5cc6ca02.0e2a64",
+        "g": "6ab2861.3f57678",
+        "name": "",
+        "links": [
+            "5494439c.affb9c"
+        ],
+        "x": 1475,
+        "y": 560,
+        "wires": []
     }
 ]

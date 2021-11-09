@@ -1187,6 +1187,19 @@ module.exports = function (RED) {
                 });
             }
 
+            // PlaybackStateReporter
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackstatereporter.html
+            if (node.config.i_playback_state_reporter) {
+                if (node.isVerbose()) node._debug("Alexa.PlaybackStateReporter");
+                node.addCapability("Alexa.PlaybackStateReporter", {
+                    playbackState: 'STOPPED'
+                });
+                state_types['playbackState'] = {
+                    type: Formats.STRING,
+                    values: ['PLAYING', 'PAUSED', 'STOPPED'],
+                };
+            }
+
             // PowerController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html
             if (node.config.i_power_controller) {
@@ -2374,6 +2387,17 @@ module.exports = function (RED) {
                 });
             }
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackcontroller.html
+            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackstatereporter.html
+            if (node.config.i_playback_state_reporter) {
+                properties.push({
+                    namespace: "Alexa.PlaybackStateReporter",
+                    name: "playbackState",
+                    value: node.state['playbackState'],
+                    timeOfSample: time_of_sample,
+                    uncertaintyInMilliseconds: uncertainty,
+                });
+            }
+
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html
             // PowerController
             if (node.config.i_power_controller || node.config.i_wake_on_lan_controller) {
