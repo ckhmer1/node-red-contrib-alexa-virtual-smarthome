@@ -1,4 +1,44 @@
-
 <script type="text/html" data-help-name="alexa-adapter">
-    <p>An adapter node that interfaces with Alexa Smart Home</p>
+<p>An adapter node that interfaces with Alexa Smart Home Skill.</p>
+
+<h3>Details</h3>
+
+    <p><code>Name</code> a name for the configuration, e.g.: <code>Alexa</code>.</p>
+
+    <p><code>Login with Amazon</code>, if checked, use the <code>Login with Amazon</code> for linking the Amazon Smart Home Skill, otherwise use a <code>username</code> and <code>password</code>.</p>
+
+    <p><code>Client id</code>: The Security Profile Client id. The value copied in (1). Only visible if <code>Login with Amazon</code>, is checked.</p>
+
+    <p><code>Secret</code>: Security Profile Secret. The value copied in (2). Only visible if <code>Login with Amazon</code>, is checked.</p>
+
+    <p><code>Allowed emails</code>: a list of emails allowed to link the Amazon Smart Home Skill. Only visible if <code>Login with Amazon</code>, is checked.</p>
+
+    <p><code>Username</code>: a Username used to link the Amazon Smart Home Skill. Only visible if <code>Login with Amazon</code>, is not checked.</p>
+
+    <p><code>Password</code>: a password used to link the Amazon Smart Home Skill. Only visible if <code>Login with Amazon</code>, is not checked.</p>
+
+    <p><code>Alexa skill client id</code>: the Alexa skill client id. The value copied in (9).</p>
+
+    <p><code>Alexa skill secret</code>: the Alexa skill secret. The value copied in (10).</p>
+
+    <p><code>Your client id</code>: the random generated Client Id copied in (5).</p>
+
+    <p><code>Your secret</code>: the random generater Secret copied in (6).</p>
+
+    <p><code>Scope</code>: the scope copied in (7), e.g.: <code>smart_home</code>.</p>
+
+    <p><code>Event endpoint</code>: the endpoint for your region. See <a href="https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#send-events-to-the-correct-url">Send Events to the Correct URL</a>.</p>
+
+    <p><code>HTTP Port</code>: the server port waiting for Alexa messages. If filled, the node starts the server to the specified port, if empty or 0, use the same Node-RED port. You need to redirect the <code>/alexa/</code> HTTPS traffic on this port.</p>
+
+    <p><code>HTTP Path</code>: the server path prefix. The default value is <code>alexa</code>. If You change it, You need to adapt all the uri in the Amazon configuration.</p>
+
+    <p><code>Verbose log</code>: enable it only for troubleshooting.</p>
+
+
+<h3>References</h3>
+    <ul>
+        <li><a href="https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome#the-config-node">GitHub</a> - the nodes github repository</li>
+    </ul>
+
 </script>

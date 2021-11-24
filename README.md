@@ -247,14 +247,14 @@ def lambda_handler(event, context):
 
 * "Name": a name, e.g.: "Alexa".
 * "Login with Amazon", checked.
-* "Client id": the value copied in (1).
-* "Secret": the value copied in (2).
-* "Allowed emails": add your the email used to login with Amazon.
-* "Alexa skill client id": the value copied in (9).
-* "Alexa skill secret": the value copied in (10).
-* "Your client id": the value copied in (5).
-* "Your secret": the value copied in (6).
-* "Scope": the value copied in (7), e.g.: "smart_home".
+* "Client id": the value copied in [(1)](#add-your-website-to-your-security-profile).
+* "Secret": the value copied in [(2)](#add-your-website-to-your-security-profile).
+* "Allowed emails": add the email used to login with Amazon.
+* "Alexa skill client id": the value copied in [(9)](#configure-the-service-endpoint).
+* "Alexa skill secret": the value copied in [(10)](#configure-the-service-endpoint).
+* "Your client id": the value copied in [(5)](#configure-the-service-endpoint).
+* "Your secret": the value copied in [(6)](#configure-the-service-endpoint).
+* "Scope": the value copied in [(7)](#configure-the-service-endpoint)., e.g.: "smart_home".
 * "Event endpoint": enter the endpoint for your region. See [Send Events to the Correct URL](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#send-events-to-the-correct-url).
 * "HTTP Port": You can leave it empty for using the same Node-RED port, or fill it with a port number. You need to redirect the "/alexa/" HTTPS traffic on this port.
 * "HTTP Path": enter "alexa". If You change it, You need to adapt all the uri in the Amazon configuration.

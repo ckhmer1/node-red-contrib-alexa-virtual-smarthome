@@ -1924,7 +1924,7 @@
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
         "g": "2427d842.422858",
-        "name": "DelSecurityDeviceNamesInError",
+        "name": "RemoveSecurityDeviceNamesInError",
         "props": [
             {
                 "p": "payload"
@@ -1938,7 +1938,7 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "DelSecurityDeviceNamesInError",
+        "topic": "RemoveSecurityDeviceNamesInError",
         "payload": "[\"Finestra Cucina\",\"Finestra Bagno\"]",
         "payloadType": "json",
         "x": 890,
@@ -3117,7 +3117,7 @@
         "type": "inject",
         "z": "5cc6ca02.0e2a64",
         "g": "2427d842.422858",
-        "name": "DelSecurityDeviceNamesInError",
+        "name": "RemoveSecurityDeviceNamesInError",
         "props": [
             {
                 "p": "payload"
@@ -3131,7 +3131,7 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "DelSecurityDeviceNamesInError",
+        "topic": "RemoveSecurityDeviceNamesInError",
         "payload": "{\"names\":[\"Finestra Cucina1\",\"Finestra Bagno\"],\"topics\":[\"finestra/salotto\"]}",
         "payloadType": "json",
         "x": 890,

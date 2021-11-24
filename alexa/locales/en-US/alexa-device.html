@@ -1,3 +1,346 @@
 <script type="text/html" data-help-name="alexa-device">
-    <p>Alexa Device. An Alexa Smart Home device.</p>
+<p>An Alexa Smart Home device.</p>
+
+<h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt class="optional">topic 
+            <span class="property-type">string | empty</span>
+        </dt>
+        <ul>
+            <li><dd> The device property name to modify.</dd></li>
+            <li><dd> A command to execute.</dd></li>
+            <li><dd> An Attribute name to set for the node.</dd></li>
+        </ul>
+
+        <dt>payload
+            <span class="property-type">string | JSON | integer | boolean</span>
+        </dt>
+        <ul>
+            <li><dd> Changes to apply to the device properties (and send to Alexa Smart Home Skill), if the topic is a property name or empty. </dd></li>
+            <li><dd> Parameters for the command to execute, if the topic is a command. </dd></li>
+            <li><dd> Values of the attribute to set for the node, if the topic is an attribute name. </dd></li>
+        </ul>
+    </dl>
+
+    
+<h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt class="optional">topic 
+            <span class="property-type">string | empty</span>
+        </dt>
+            <dd> The topic configured, if an Alexa directive is received.</dd>
+
+        <dt>payload
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> the last device properties or a command output. </dd>
+
+        <dt>inputs
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> the directive inputs, if an Alexa directive is received. </dd>
+
+        <dt>modified
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> the modified property names, if a device properties are received in the payload or an Alexa directive is received. </dd>
+    
+        <dt>device
+            <span class="property-type">string</span>
+        </dt>
+            <dd> the device name, if an Alexa directive is received. </dd>
+
+        <dt>name
+            <span class="property-type">string</span>
+        </dt>
+            <dd> the directive name, if an Alexa directive is received. </dd>
+
+        <dt>namespace
+            <span class="property-type">string</span>
+        </dt>
+            <dd> the directive namespace, if an Alexa directive is received. </dd>
+    </dl>
+
+                    
+<h3>Details</h3>
+    <p><code>msg.topic</code> is used to understand if update tge devive state, the device attributes or execute a command.
+        If the topic is a known command name, the command will be executed.
+        If the topic is a known attribute name, the device attribute will be updated.
+        If the topic is a known property name, the device property will be updated.
+        If no match, the payload must be a JSON structure with keys corresponding to property names and value the property value.
+    </p>
+    <p><code>msg.payload</code> is used as an input parameter for the new state values or the new attribute values or the command inputs.</p>
+
+<h3>Device Properties</h3>
+    <dl class="message-properties">
+        <dt class="optional">brightness 
+            <span class="property-type">integer | empty</span>
+        </dt>
+            <dd> It is the property for the Brightness Controller. It is an integer and valid values from 0 to 100 inclusive.</dd>
+
+        <dt class="optional">channel 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Channel Controller. It is a structure having <code>number</code>, <code>callSign</code>, <code>affiliateCallSign</code> and <code>uri</code> attributes.</dd>
+
+        <dt class="optional">channelMetadata 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Channel Controller. It provides additional information about a channel. It is a structure having <code>name</code> and <code>image</code> attributes.</dd>
+
+        <dt class="optional">color 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Channel Controller. It represents the color of the device. It is a structure having <code>hue</code>, <code>saturation</code> and <code>brightness</code> attributes.</dd>
+
+        <dt class="optional">colorTemperatureInKelvin 
+            <span class="property-type">integer</span>
+        </dt>
+            <dd> It is the property for the Color Temperature Controller. It represents the color temperature in degrees Kelvin of the device. Valid values range from 1,000 to 10,000 inclusive.</dd>
+
+        <dt class="optional">contactDetectionState 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Contact Sensor Interface. It represents the state of the contact. Valid values are <code>DETECTED</code> and <code>NOT_DETECTED</code>.</dd>
+
+        <dt class="optional">connectivity 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Endpoint Health Controller. It represents the connectivity status of a device. It is a structure having <code>value</code> and <code>reason</code> attributes.</dd>
+    
+        <dt class="optional">battery 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Endpoint Health Controller. Use this property to report the health of the device battery and/or the device charging status. It is a structure having <code>health</code>, <code>chargingHealth</code> and <code>levelPercentage</code> attributes.</dd>
+
+        <dt class="optional">RadioDiagnostics 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Endpoint Health Controller. Use this property to report the signal strength and other diagnostic data of the radio network to which the device connects. It is a structure having <code>radioType</code>, <code>signalStrength</code> and <code>signalToNoiseRatio</code> attributes.</dd>
+    
+        <dt class="optional">SignalStrength 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Endpoint Health Controller. Use this property to report information about the signal strength of the radio network to which the device connects. It is a structure having <code>quality</code> and <code>rssiInDBM</code> attributes.</dd>
+
+        <dt class="optional">SignalToNoiseRatio 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Endpoint Health Controller. Use this property to report the signal-to-noise ratio of the radio network to which the device connects. It is a structure having <code>quality</code> and <code>snrInDB</code> attributes.</dd>
+    
+        <dt class="optional">networkThroughput 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Endpoint Health Controller. Use this property to report the calculated throughput of the network to which the device connects and how the throughput affects the device. It is a structure having <code>quality</code> and <code>bitsPerSecond</code> attributes.</dd>
+
+        <dt class="optional">bands 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Equalizer Controller. This property represent the different bands, and the level of each, for the equalizer on a device. It is an array of band. Every band is a structure having <code>name</code> and <code>value</code> attributes.</dd>
+
+        <dt class="optional">mode 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Equalizer Controller. This property represent the equalizer mode of the device, if one is set.</dd>
+
+        <dt class="optional">humanPresenceDetectionState 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the EventDetection Sensor. Use this property to report the human presence. It is a structure having <code>value</code>, <code>detectionMethods</code> and <code>media</code> attributes.</dd>
+
+        <dt class="optional">input 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Input Controller. This property represent the selected input of the device.</dd>
+
+        <dt class="optional">levels 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Inventory Level Sensor. This property represent, for every instance, the current amount of a consumable that a device has remaining.</dd>
+    
+        <dt class="optional">lockState 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Lock Controller. It represents the state of a lock. Valid values are <code>LOCKED</code>, <code>UNLOCKED</code> and <code>JAMMED</code>.</dd>
+    
+        <dt class="optional">modes 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Mode Controller. This property represent, for every instance, the current mode of the device.</dd>
+    
+        <dt class="optional">motionDetectionState 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Motion Sensor Interface. It represents the state of the motion detection. Valid values are <code>DETECTED</code> and <code>NOT_DETECTED</code>.</dd>
+    
+        <dt class="optional">percentage 
+            <span class="property-type">integer</span>
+        </dt>
+            <dd> It is the property for the Color Percentage Controller. It represents the percentage of the device. Valid values range from 0 to 100 inclusive.</dd>
+    
+        <dt class="optional">playbackState 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Playback State Reporter. This property indicates whether the content is <code>PLAYING</code>, <code>PAUSED</code> or <code>STOPPED</code>. It is a structure having the <code>state</code> attribute.</dd>
+    
+        <dt class="optional">powerState 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Power Controller. This property indicates whether the device is <code>ON</code> or <code>OFF</code>.</dd>
+
+        <dt class="optional">powerLevel 
+            <span class="property-type">integer</span>
+        </dt>
+            <dd> It is the property for the Color Power Level Controller. It represents the power level of a device expressed as an integer percentage between 0 and 100 inclusive.</dd>
+    
+        <dt class="optional">ranges 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Range Controller. This property represent, for every instance,  a number within a minimum and maximum range.</dd>
+    
+        <dt class="optional">armState 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Security Panel Controller. It represents the state of the security system. Valid values are <code>DISARMED</code>, <code>ARMED_AWAY</code>, <code>ARMED_STAY</code> and <code>ARMED_NIGHT</code>.</dd>
+    
+        <dt class="optional">burglaryAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Security Panel Controller. This property indicates the current state of a burglary alarm. Valid values are <code>OK</code> or <code>ALARM</code>. It is a structure having the <code>value</code> attribute.</dd>
+
+        <dt class="optional">carbonMonoxideAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Security Panel Controller. This property indicates the current state of a carbon monoxide alarm. Valid values are <code>OK</code> or <code>ALARM</code>. It is a structure having the <code>value</code> attribute.</dd>
+
+        <dt class="optional">fireAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Security Panel Controller. This property indicates the current state of a fire alarm. Valid values are <code>OK</code> or <code>ALARM</code>. It is a structure having the <code>value</code> attribute.</dd>
+
+        <dt class="optional">waterAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Security Panel Controller. This property indicates the current state of a water alarm. Valid values are <code>OK</code> or <code>ALARM</code>. It is a structure having the <code>value</code> attribute.</dd>
+    
+        <dt class="optional">volume 
+            <span class="property-type">integer</span>
+        </dt>
+            <dd> It is the property for the Color Speaker Interface. It represents the audio volume level of a device expressed as an integer between 0 and 100 inclusive.</dd>
+    
+        <dt class="optional">muted 
+            <span class="property-type">boolean</span>
+        </dt>
+            <dd> It is the property for the Color Speaker Interface. This property indicates whether the audio of a device is muted or not. The property is <code>true</code> if the device is muted, <code>false</code> if the device is not muted.</dd>
+    
+        <dt class="optional">temperature 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Temperature Sensor Interface. It represents a temperature. It is a structure having <code>value</code> and <code>scale</code> attributes.</dd>
+
+        <dt class="optional">targetSetpoint 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller. It represents a temperature. The thermostat should maintain the temperature at this setpoint. Single-setpoint thermostats use this property. It is a structure having <code>value</code> and <code>scale</code> attributes.</dd>
+
+        <dt class="optional">lowerSetpoint 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller. It represents a temperature. The thermostat should maintain the temperature above this setpoint. Dual-setpoint thermostats use this property. It is a structure having <code>value</code> and <code>scale</code> attributes.</dd>
+
+        <dt class="optional">upperSetpoint 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller. It represents a temperature. The thermostat should maintain the temperature below this setpoint. Dual-setpoint thermostats use this property. It is a structure having <code>value</code> and <code>scale</code> attributes.</dd>
+    
+        <dt class="optional">thermostatMode 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller. It represents the current mode of the thermostat. Valid values are <code>AUTO</code>, <code>COOL</code>, <code>HEAT</code>, <code>ECO</code> and <code>OFF</code>.</dd>
+    
+        <dt class="optional">adaptiveRecoveryStatus 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller. It represents the current status of pre-heating or pre-cooling. Valid values are <code>PREHEATING</code>, <code>PRECOOLING</code> and <code>INACTIVE</code>.</dd>
+
+        <dt class="optional">primaryHeaterOperation 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller HVAC Components Interface. It represents the current operating stage of the primary heating component. Usually the main heating mechanism is a heat pump. Valid values are <code>OFF</code>, <code>STAGE_1</code>, <code>STAGE_2</code> and <code>STAGE_3</code>.</dd>
+
+        <dt class="optional">auxiliaryHeaterOperation 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller HVAC Components Interface. This property indicates if the auxiliary heating is on or off. Valid values are <code>ON</code> and <code>OFF</code>. Usually the auxiliary heating mechanism uses electric resistance heating.</dd>
+
+        <dt class="optional">coolerOperation 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller HVAC Components Interface. It represents the current operating stage of the cooling component. Valid values are <code>OFF</code>, <code>STAGE_1</code>, <code>STAGE_2</code> and <code>STAGE_3</code>.</dd>
+
+        <dt class="optional">fanOperation 
+            <span class="property-type">string</span>
+        </dt>
+            <dd> It is the property for the Thermostat Controller HVAC Components Interface. It represents the current operating stage of the ventilation component. Valid values are <code>OFF</code>, <code>STAGE_1</code>, <code>STAGE_2</code> and <code>STAGE_3</code>.</dd>
+    
+        <dt class="optional">toggles 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> It is the property for the Toggle Controller. This property represent, for every instance, the state of the device. Valid values are <code>ON</code> and <code>OFF</code>.</dd>
+    </dl>
+
+<h3>Commands or Attributes</h3>
+    <dl class="message-properties">
+        <dt class="optional">ReportState</dt>
+            <dd> Sends the current property values to the Alexa.</dd>
+
+        <dt class="optional">GetState</dt>
+            <dd> Sends to the node output a message with the payload containing current node property values.</dd>
+
+        <dt class="optional">GetAllStates</dt>
+            <dd> Sends to the node output a message with the payload containing all nodes current property values.</dd>
+
+        <dt class="optional">GetNames</dt>
+            <dd> Sends to the node output a message with the payload containing all node names.</dd>
+
+        <dt class="optional">DorrBellPress</dt>
+            <dd> Sends to the Alexa a DoorbellPress event to notify that the doorbell was pressed.</dd>
+
+        <dt class="optional">CameraStreams</dt>
+            <dd> Sets the current camera stream urls.</dd>
+
+        <dt class="optional">SetMedia</dt>
+            <dd> Sets the current media recording available and notifies Alexa that a media recording has been created or updated. The payload contains a media info or an array of media info replacing the current media recording.</dd>
+
+        <dt class="optional">AddOrUpdateMedia</dt>
+            <dd> Add or update the current media recording available and notifies Alexa that a media recording has been created or updated. The payload contains a media info or an array of media info to add or update.</dd>
+
+        <dt class="optional">RemoveMedia</dt>
+            <dd> Remove the specified media recording and notifies Alexa that a media recording has been removed. The payload contains a media id or an array of media ids to remove.</dd>
+
+        <dt class="optional">SetSecurityDeviceNamesInError</dt>
+            <dd> Sets the current Security Device in Error. The payload contains a device name or an array of device names replacing the current one.</dd>
+
+        <dt class="optional">AddSecurityDeviceNamesInError</dt>
+            <dd> Add or update the current Security Device in Error. The payload contains a device name or an array of device names to add.</dd>
+
+        <dt class="optional">RemoveSecurityDeviceNamesInError</dt>
+            <dd> Remove the specified Security Device in Error. The payload contains a device name or an array of device names to remove.</dd>
+
+        <dt class="optional">MeasurementsReport/dt>
+            <dd> Send a MeasurementsReport event to proactively report to Alexa a batch of one or more energy use measurements.</dd>
+
+        <dt class="optional">InventoryConsumed/dt>
+            <dd> Send an InventoryConsumed event to proactively report to Alexa the amount of a consumable that your device has already consumed.</dd>
+
+        <dt class="optional">ExecDirective/dt>
+            <dd> Simulate receiving a directive from Alexa.</dd>
+    </dl>
+    
+
+<h3>References</h3>
+    <ul>
+        <li><a href="https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html">Alexa</a> - List of Alexa Interfaces and Supported Languages</li>
+        <li><a href="https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome">GitHub</a> - the nodes github repository</li>
+    </ul>
 </script>

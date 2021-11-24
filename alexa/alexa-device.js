@@ -266,7 +266,7 @@ module.exports = function (RED) {
                     node.security_device_names_in_error.push(name);
                 }
                 node._debug("CCHI " + node.id + " security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
-            } else if (topic === 'DELSECURITYDEVICENAMESINERROR') {
+            } else if (topic === 'REMOVESECURITYDEVICENAMESINERROR') {
                 const r_topics = typeof msg.payload === 'string' ? [] : (Array.isArray(msg.payload || []) ? [] : msg.payload.topics);
                 let r_names = typeof msg.payload === 'string' ? [msg.payload] : (Array.isArray(msg.payload || []) ? msg.payload || [] : msg.payload.names);
                 for (const [id, name] of Object.entries(node.alexa.get_devices_id_name(r_names, r_topics))) {
@@ -604,7 +604,7 @@ module.exports = function (RED) {
                         }
                     }
                 };
-                state_types['battery '] = {
+                state_types['battery'] = {
                     type: Formats.OBJECT,
                     attributes: {
                         health: {
@@ -652,7 +652,7 @@ module.exports = function (RED) {
                         }
                     }
                 };
-                state_types['radioDiagnostics '] = {
+                state_types['radioDiagnostics'] = {
                     type: Formats.OBJECT,
                     attributes: {
                         radioType: {
@@ -689,7 +689,7 @@ module.exports = function (RED) {
                         }
                     }
                 };
-                state_types['radioDiagnostics'] = {
+                state_types['SignalStrength'] = {
                     type: Formats.OBJECT,
                     attributes: {
                         quality: {
@@ -717,7 +717,7 @@ module.exports = function (RED) {
                         }
                     }
                 };
-                state_types['networkThroughput '] = {
+                state_types['networkThroughput'] = {
                     type: Formats.OBJECT,
                     attributes: {
                         quality: {
@@ -1192,12 +1192,20 @@ module.exports = function (RED) {
             if (node.config.i_playback_state_reporter) {
                 if (node.isVerbose()) node._debug("Alexa.PlaybackStateReporter");
                 node.addCapability("Alexa.PlaybackStateReporter", {
-                    playbackState: 'STOPPED'
+                    playbackState: {
+                        state: 'STOPPED'
+                    }
                 });
                 state_types['playbackState'] = {
-                    type: Formats.STRING,
-                    values: ['PLAYING', 'PAUSED', 'STOPPED'],
+                    type: Formats.OBJECT,
+                    attributes: {
+                        state: {
+                            type: Formats.STRING,
+                            values: ['PLAYING', 'PAUSED', 'STOPPED'],
+                        },
+                    }
                 };
+
             }
 
             // PowerController
@@ -1448,6 +1456,10 @@ module.exports = function (RED) {
                         values: node.config.a_modes,
                     };
                 }
+                state_types['adaptiveRecoveryStatus'] = {
+                    type: Formats.STRING,
+                    values: ['PREHEATING', 'PRECOOLING', 'INACTIVE'],
+                };
                 node.addCapability("Alexa.ThermostatController",
                     properties,
                     {
@@ -2517,6 +2529,15 @@ module.exports = function (RED) {
                         namespace: "Alexa.ThermostatController",
                         name: "thermostatMode",
                         value: node.state['thermostatMode'],
+                        timeOfSample: time_of_sample,
+                        uncertaintyInMilliseconds: uncertainty,
+                    });
+                }
+                if (node.state.adaptiveRecoveryStatus !== undefined) {
+                    properties.push({
+                        namespace: "Alexa.ThermostatController",
+                        name: "adaptiveRecoveryStatus",
+                        value: node.state['adaptiveRecoveryStatus'],
                         timeOfSample: time_of_sample,
                         uncertaintyInMilliseconds: uncertainty,
                     });
