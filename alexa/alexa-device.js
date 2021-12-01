@@ -385,18 +385,24 @@ module.exports = function (RED) {
                 node.config.camera_stream_configurations.forEach(c => {
                     let r = [];
                     c.r.forEach(wh => {
-                        r.push({
-                            width: wh[0],
-                            height: wh[1]
+                        let w = node.to_int(wh[0]);
+                        let h = node.to_int(wh[1]);
+                        if (w !== undefined && h !== undefined && h >= 480 && h <= 1080) {
+                            r.push({
+                                width: w,
+                                height: h
+                            });
+                        }
+                    });
+                    if (r.length > 0) {
+                        camera_stream_configurations.push({
+                            protocols: c.p,
+                            resolutions: r,
+                            authorizationTypes: c.t,
+                            videoCodecs: c.v,
+                            audioCodecs: c.a
                         });
-                    });
-                    camera_stream_configurations.push({
-                        protocols: c.p,
-                        resolutions: r,
-                        authorizationTypes: c.t,
-                        videoCodecs: c.v,
-                        audioCodecs: c.a
-                    });
+                    }
                 });
                 node.addCapability("Alexa.CameraStreamController", undefined,
                     {
