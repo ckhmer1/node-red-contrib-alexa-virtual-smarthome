@@ -660,7 +660,7 @@ module.exports = function (RED) {
                 node.error("smarthome_post: Wrong request payload_version " + payload_version + " for " + header.namespace);
                 return res.status(401).send('Unsupported payload version');
             }
-            if (node.tokens.own.access_token !== scope.token || "BearerToken" !== scope.type) {
+            if (typeof node.tokens.own !== "object" || node.tokens.own.access_token !== scope.token || "BearerToken" !== scope.type) {
                 node.error("smarthome_post: Wrong authorization");
                 return res.status(401).send('Wrong authorization');
             }
@@ -1630,6 +1630,14 @@ module.exports = function (RED) {
                     name = i_name;
                 }
             });
+            return name;
+        }
+
+        get_mapped_property_info(name) {
+            const info = PROPERTIES_MAPPING[name];
+            if (info) {
+                return info[1];
+            }
             return name;
         }
 

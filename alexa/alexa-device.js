@@ -27,13 +27,6 @@
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-property-schemas.html
 // https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/function/15-change.html
 
-const float_values = {
-    color: {
-        saturation: true,
-        brightness: true
-    }
-};
-
 module.exports = function (RED) {
     "use strict";
 
@@ -59,7 +52,55 @@ module.exports = function (RED) {
         targetSetpoint: ['lowerSetpoint', 'upperSetpoint'],
     };
 
-    const DEEP_STATES = ['toggles', 'modes', 'ranges'];
+    const DEEP_STATES = {
+        levels: 'level',
+        modes: 'mode',
+        ranges: 'rangeValue',
+        toggles: 'toggleState',
+    };
+
+    const PORPERTIES_INFO = {
+        brightness: "Alexa.BrightnessController",
+        channel: "Alexa.ChannelController",
+        color: "Alexa.ColorController",
+        colorTemperatureInKelvin: "Alexa.ColorTemperatureController",
+        contactDetectionState: "Alexa.ContactSensor",
+        connectivity: "Alexa.EndpointHealth",
+        bands: "Alexa.EqualizerController",
+        mode: "Alexa.EqualizerController",
+        humanPresenceDetectionState: "Alexa.EventDetectionSensor",
+        input: "Alexa.InputController",
+        value: "Alexa.InventoryLevelSensor",
+        unit: "Alexa.InventoryLevelSensor",
+        lockState: "Alexa.LockController",
+        motionDetectionState: "Alexa.MotionSensor",
+        percentage: "Alexa.PercentageController",
+        playbackState: "Alexa.PlaybackStateReporter",
+        powerState: "Alexa.PowerController",
+        powerLevel: "Alexa.PowerLevelController",
+        rangeValue: "Alexa.RangeController",
+        armState: "Alexa.SecurityPanelController",
+        burglaryAlarm: "Alexa.SecurityPanelController",
+        carbonMonoxideAlarm: "Alexa.SecurityPanelController",
+        fireAlarm: "Alexa.SecurityPanelController",
+        waterAlarm: "Alexa.SecurityPanelController",
+        volume: "Alexa.Speaker",
+        muted: "Alexa.Speaker",
+        temperature: "Alexa.TemperatureSensor",
+        targetSetpoint: "Alexa.ThermostatController",
+        lowerSetpoint: "Alexa.ThermostatController",
+        upperSetpoint: "Alexa.ThermostatController",
+        thermostatMode: "Alexa.ThermostatController",
+        primaryHeaterOperation: "Alexa.ThermostatController.HVAC.Components",
+        auxiliaryHeaterOperation: "Alexa.ThermostatController.HVAC.Components",
+        coolerOperation: "Alexa.ThermostatController.HVAC.Components",
+        fanOperation: "Alexa.ThermostatController.HVAC.Components",
+        toggleState: "Alexa.ToggleController",
+        levels: 'Alexa.InventoryLevelSensor',
+        modes: 'Alexa.ModeController',
+        ranges: 'Alexa.RangeController',
+        toggles: 'Alexa.ToggleController',
+    };
 
     const CAMERASTREAMS_STATE_TYPE = {
         cameraStreams: {
@@ -101,7 +142,7 @@ module.exports = function (RED) {
             }
         },
         imageUri: Formats.STRING + Formats.MANDATORY
-    }
+    };
 
 
     /******************************************************************************************************************
@@ -2213,416 +2254,32 @@ module.exports = function (RED) {
             const uncertainty = 500;
             let properties = [];
             const time_of_sample = (new Date()).toISOString();
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-automationmanagement.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-brightnesscontroller.html
-            // BrightnessController
-            if (node.config.i_brightness_controller) {
-                properties.push({
-                    namespace: "Alexa.BrightnessController",
-                    name: "brightness",
-                    value: node.state['brightness'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-camerastreamcontroller.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-channelcontroller.html
-            if (node.config.i_channel_controller) {
-                if (node.state['channel'] !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ChannelController",
-                        name: "channel",
-                        value: node.state['channel'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state['channelMetadata'] !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ChannelController",
-                        name: "channelMetadata",
-                        value: node.state['channelMetadata'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colorcontroller.html
-            // ColorController
-            if (node.config.i_color_controller) {
-                if (node.state['color'] !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ColorController",
-                        name: "color",
-                        value: node.state['color'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colortemperaturecontroller.html
-            // ColorTemperatureController
-            if (node.config.i_color_temperature_controller) {
-                if (node.state['colorTemperatureInKelvin'] !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ColorTemperatureController",
-                        name: "colorTemperatureInKelvin",
-                        value: node.state['colorTemperatureInKelvin'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-contactsensor.html
-            // ContactSensor
-            if (node.config.i_contact_sensor) {
-                properties.push({
-                    namespace: "Alexa.ContactSensor",
-                    name: "detectionState",
-                    value: node.state['contactDetectionState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-endpointhealth.html
-            // EndpointHealth
-            if (node.config.i_endpoint_health) {
-                properties.push({
-                    namespace: "Alexa.EndpointHealth",
-                    name: "connectivity",
-                    value: node.state['connectivity'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-equalizercontroller.html
-            // EqualizerController
-            if (node.config.i_equalizer_controller) {
-                if (typeof node.state['bands'] === 'object') {
-                    properties.push({
-                        namespace: "Alexa.EqualizerController",
-                        name: "bands",
-                        value: node.state['bands'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (typeof node.state['mode'] === 'string') {
-                    properties.push({
-                        namespace: "Alexa.EqualizerController",
-                        name: "mode",
-                        value: node.state['mode'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
 
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-estimation.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-eventdetectionsensor.html
-            if (node.config.i_event_detection_sensor) {
-                properties.push({
-                    namespace: "Alexa.EventDetectionSensor",
-                    name: "humanPresenceDetectionState",
-                    value: node.state['inhumanPresenceDetectionStateput'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inputcontroller.html
-            if (node.config.i_input_controller) {
-                properties.push({
-                    namespace: "Alexa.InputController",
-                    name: "input",
-                    value: node.state['input'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventorylevelsensor.html
-            if (node.config.i_inventory_level_sensor) {
-                for (const [level, value] of Object.entries(node.state.levels || [])) {
+            for (const [key, value] of Object.entries(node.state || {})) {
+                let name = DEEP_STATES[key];
+                if (name) {
+                    for (const [intance, ivalue] of Object.entries(value)) {
+                        properties.push({
+                            namespace: PORPERTIES_INFO[key],
+                            instance: intance,
+                            name: name,
+                            value: ivalue,
+                            timeOfSample: time_of_sample,
+                            uncertaintyInMilliseconds: uncertainty,
+                        });
+                    }
+                } else {
+                    let name = node.alexa.get_mapped_property_info(key) || key;
                     properties.push({
-                        namespace: "Alexa.InventoryLevelSensor",
-                        instance: level,
-                        name: "level",
+                        namespace: PORPERTIES_INFO[key],
+                        name: name,
                         value: value,
                         timeOfSample: time_of_sample,
                         uncertaintyInMilliseconds: uncertainty,
                     });
                 }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-inventoryusagesensor.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-keypadcontroller.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-lockcontroller.html
-            // LockController
-            if (node.config.i_lock_controller) {
-                properties.push({
-                    namespace: "Alexa.LockController",
-                    name: "lockState",
-                    value: node.state['lockState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-mediametadata.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-deviceusage-meter.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-modecontroller.html
-            if (node.config.i_mode_controller) {
-                for (const [mode, value] of Object.entries(node.state.modes || [])) {
-                    properties.push({
-                        namespace: "Alexa.ModeController",
-                        instance: mode,
-                        name: "mode",
-                        value: value,
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
+            };
 
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-motionsensor.html
-            // MotionSensor
-            if (node.config.i_motion_sensor) {
-                properties.push({
-                    namespace: "Alexa.MotionSensor",
-                    name: "detectionState",
-                    value: node.state['motionDetectionState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-percentagecontroller.html
-            // PercentageController
-            if (node.config.i_percentage_controller) {
-                properties.push({
-                    namespace: "Alexa.PercentageController",
-                    name: "percentage",
-                    value: node.state['percentage'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackcontroller.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-playbackstatereporter.html
-            if (node.config.i_playback_state_reporter) {
-                properties.push({
-                    namespace: "Alexa.PlaybackStateReporter",
-                    name: "playbackState",
-                    value: node.state['playbackState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powercontroller.html
-            // PowerController
-            if (node.config.i_power_controller || node.config.i_wake_on_lan_controller) {
-                properties.push({
-                    namespace: "Alexa.PowerController",
-                    name: "powerState",
-                    value: node.state['powerState'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-powerlevelcontroller.html
-            if (node.config.i_power_level_controller) {
-                properties.push({
-                    namespace: "Alexa.PowerLevelController",
-                    name: "powerLevel",
-                    value: node.state['powerLevel'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rangecontroller.html
-            if (node.config.i_range_controller) {
-                for (const [range, value] of Object.entries(node.state.ranges || [])) {
-                    properties.push({
-                        namespace: "Alexa.RangeController",
-                        instance: range,
-                        name: "rangeValue",
-                        value: value,
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-rtcsessioncontroller.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-scenecontroller.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-securitypanelcontroller.html
-            // SecurityPanelController
-            if (node.config.i_security_panel_controller) {
-                if (node.state['armState']) {
-                    properties.push({
-                        namespace: "Alexa.SecurityPanelController",
-                        name: "armState",
-                        value: node.state['armState'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                node.config.alarms.forEach(alarm => {
-                    properties.push({
-                        namespace: "Alexa.SecurityPanelController",
-                        name: alarm,
-                        value: node.state[alarm],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                });
-            }
-
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-speaker.html
-            if (node.config.i_speaker) {
-                properties.push({
-                    namespace: "Alexa.Speaker",
-                    name: "volume",
-                    value: node.state['volume'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-stepspeaker.html
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-temperaturesensor.html
-            // TemperatureSensor
-            if (node.config.i_temperature_sensor) {
-                properties.push({
-                    namespace: "Alexa.TemperatureSensor",
-                    name: "temperature",
-                    value: node.state['temperature'],
-                    timeOfSample: time_of_sample,
-                    uncertaintyInMilliseconds: uncertainty,
-                });
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller.html
-            // ThermostatController
-            if (node.config.i_thermostat_controller) {
-                if (node.state.targetSetpoint !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController",
-                        name: "targetSetpoint",
-                        value: node.state['targetSetpoint'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.lowerSetpoint !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController",
-                        name: "lowerSetpoint",
-                        value: node.state['lowerSetpoint'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.upperSetpoint !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController",
-                        name: "upperSetpoint",
-                        value: node.state['upperSetpoint'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.thermostatMode !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController",
-                        name: "thermostatMode",
-                        value: node.state['thermostatMode'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.adaptiveRecoveryStatus !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController",
-                        name: "adaptiveRecoveryStatus",
-                        value: node.state['adaptiveRecoveryStatus'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-thermostatcontroller-hvac-components.html
-            if (node.config.i_thermostat_controller_hvac_components) {
-                if (node.state.primaryHeaterOperation !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController.HVAC.Components",
-                        name: "primaryHeaterOperation",
-                        value: node.state['primaryHeaterOperation'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.auxiliaryHeaterOperation !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController.HVAC.Components",
-                        name: "auxiliaryHeaterOperation",
-                        value: node.state['auxiliaryHeaterOperation'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.primaryHeaterOperation !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController.HVAC.Components",
-                        name: "coolerOperation",
-                        value: node.state['coolerOperation'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state.primaryHeaterOperation !== undefined) {
-                    properties.push({
-                        namespace: "Alexa.ThermostatController.HVAC.Components",
-                        name: "fanOperation",
-                        value: node.state['fanOperation'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-timeholdcontroller.html
-            if (node.config.i_timehold_controller) {
-                if (node.state['holdStartTime']) {
-                    properties.push({
-                        namespace: "Alexa.TimeHoldController",
-                        name: "holdStartTime",
-                        value: node.state['holdStartTime'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-                if (node.state['holdEndTime']) {
-                    properties.push({
-                        namespace: "Alexa.TimeHoldController",
-                        name: "holdEndTime",
-                        value: node.state['holdEndTime'],
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-togglecontroller.html
-            if (node.config.i_toggle_controller) {
-                for (const [toggle, value] of Object.entries(node.state.toggles)) {
-                    properties.push({
-                        namespace: "Alexa.ToggleController",
-                        instance: toggle,
-                        name: "toggleState",
-                        value: value,
-                        timeOfSample: time_of_sample,
-                        uncertaintyInMilliseconds: uncertainty,
-                    });
-                }
-            }
-            // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-wakeonlancontroller.html
             return properties;
         }
 
