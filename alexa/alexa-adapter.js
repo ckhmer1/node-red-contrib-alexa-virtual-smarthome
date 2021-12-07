@@ -202,13 +202,14 @@ module.exports = function (RED) {
         setup() {
             const node = this;
             if (node.config.verbose) node._debug("setup server path " + node.http_server.path());
+            node.get_tokens_sync();
             node.get_tokens()
                 .then(() => {
                     if (node.config.verbose) node._debug("setup Tokens loaded");
                 })
                 .catch(err => {
                     node.error("setup Tokens load error " + err);
-                })
+                });
 
             node.UnregisterUrl();
             if (node.http_port.trim()) {
@@ -1308,6 +1309,41 @@ module.exports = function (RED) {
         //
         //
         //
+        // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-errorresponse.html
+        send_error_response_to_event_gw(endpointId, correlationToken, error_type, error_message) {
+            const node = this;
+            const error_msg = node.get_error_response(error_type, error_message, endpointId, undefined);
+            error_msg.event.header['correlationToken'] = correlationToken;
+            if (node.config.verbose) node._debug("CCHI send_error_response_to_event_gw " + JSON.stringify(error_msg));
+            node.get_access_token('evn')
+                .then(access_token => {
+                    if (node.config.verbose) node._debug('send_error_response_to_event_gw error_msg ' + JSON.stringify(error_msg));
+                    if (node.config.verbose) node._debug('send_error_response_to_event_gw to event_endpoint ' + node.config.event_endpoint);
+                    superagent
+                        .post(node.config.event_endpoint)
+                        .use(throttle.plugin())
+                        .set('Authorization', 'Bearer ' + access_token)
+                        .send(error_msg)
+                        .end((err, res) => {
+                            if (err) {
+                                node.error('send_error_response_to_event_gw err ' + JSON.stringify(err));
+                                reject(err);
+                            } else {
+                                if (node.config.verbose) node._debug('send_error_response_to_event_gw res ' + JSON.stringify(res));
+                                resolve(res);
+                            }
+                        });
+                    if (node.config.verbose) node._debug('send_error_response_to_event_gw sent');
+                })
+                .catch(err => {
+                    node.error('send_error_response_to_event_gw get_access_token err ' + JSON.stringify(err));
+                });
+        }
+
+        //
+        //
+        //
+        //
         send_event_gw(endpointId, namespace, name, payload, other_data) {
             // https://github.com/alexa/alexa-smarthome/blob/master/sample_async/python/sample_async.py
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
@@ -1380,15 +1416,15 @@ module.exports = function (RED) {
                 }
                 node.get_access_token('evn')
                     .then(access_token => {
-                        let state = node.get_change_report(endpointId, namespace, name, undefined, changed_property_names, reason);
-                        node.objectMerge(state, cmd_res);
-                        if (node.config.verbose) node._debug('send_change_report state ' + JSON.stringify(state));
+                        let msg = node.get_change_report(endpointId, namespace, name, undefined, changed_property_names, reason);
+                        node.objectMerge(msg, cmd_res);
+                        if (node.config.verbose) node._debug('send_change_report msg ' + JSON.stringify(msg));
                         if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
                             .use(throttle.plugin())
                             .set('Authorization', 'Bearer ' + access_token)
-                            .send(state)
+                            .send(msg)
                             .end((err, res) => {
                                 if (err) {
                                     node.error('send_change_report err ' + JSON.stringify(err));
@@ -1831,6 +1867,18 @@ module.exports = function (RED) {
                 // TODO all states??
             }
         }*/
+
+        //
+        //
+        //
+        //
+        get_tokens_sync() {
+            const node = this;
+            if (node.tokens === undefined) {
+                node.tokens = node.loadJsonSync("tokens", node.tokens_filename, {}, node.user_dir);
+            }
+            return node.tokens;
+        }
 
         //
         //

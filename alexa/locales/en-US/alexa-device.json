@@ -298,7 +298,8 @@
         },
         "error": {
             "missing-config": "Missing SmartHome configuration",
-            "missing-bridge": "Missing SmartHome bridge"
+            "missing-bridge": "Missing SmartHome bridge",
+            "missing-display_categories": "Missing display categories"
         }
     }
 }

@@ -170,6 +170,11 @@ module.exports = function (RED) {
                 node.status({ fill: "red", shape: "dot", text: RED._("alexa-device.error.missing-bridge") });
                 return;
             }
+            if (node.config.display_categories.length === 0) {
+                node.error(RED._("alexa-device.error.missing-display_categories"));
+                node.status({ fill: "red", shape: "dot", text: RED._("alexa-device.error.missing-display_categories") });
+                return;
+            }
             if (node.isVerbose()) node._debug("config " + JSON.stringify(config));
             if (node.isVerbose()) node._debug("display_categories " + JSON.stringify(node.config.display_categories));
             let names = node.config.display_categories.map(dt => RED._("alexa-device.display_category." + dt));
@@ -445,10 +450,14 @@ module.exports = function (RED) {
                         });
                     }
                 });
-                node.addCapability("Alexa.CameraStreamController", undefined,
-                    {
-                        cameraStreamConfigurations: camera_stream_configurations
-                    });
+                if (camera_stream_configurations.length > 0) {
+                    node.addCapability("Alexa.CameraStreamController", undefined,
+                        {
+                            cameraStreamConfigurations: camera_stream_configurations
+                        });
+                } else {
+                    node.config.i_camera_stream_controller = false;
+                }
             }
 
             // ChannelController
@@ -579,6 +588,8 @@ module.exports = function (RED) {
                                 powerProfile: powerProfile
                             }
                         });
+                } else {
+                    node.config.i_device_usage_estimation = false;
                 }
             }
 
@@ -610,6 +621,8 @@ module.exports = function (RED) {
                             energySources: energy_sources
                         }
                     });
+                } else {
+                    node.config.i_device_usage_meter = false;
                 }
             }
 
@@ -788,7 +801,6 @@ module.exports = function (RED) {
                 if (node.config.bands.length > 0) {
                     let bands_supported = [];
                     let bands_value = [];
-                    let attributes = [];
                     node.config.bands.forEach(band => {
                         bands_supported.push({
                             name: band
@@ -932,6 +944,7 @@ module.exports = function (RED) {
                         type: Formats.OBJECT,
                         attributes: attributes,
                     };
+                    let not_added = true;
                     node.config.inventory_level_sensors.forEach(s => {
                         if (s.instance && s.capability_resources && s.measurement) {
                             const measurement = JSON.parse(s.measurement);
@@ -1020,11 +1033,17 @@ module.exports = function (RED) {
                                 if (s.replenishment) {
                                     additional_config.configuration['replenishment'] = JSON.parse(s.replenishment);
                                 }
+                                not_added = false;
                                 node.addCapability("Alexa.InventoryLevelSensor", value, additional_config, true);
 
                             }
                         }
                     });
+                    if (not_added) {
+                        node.config.i_inventory_level_sensor = false;
+                    }
+                } else {
+                    node.config.i_inventory_level_sensor = false;
                 }
             }
 
@@ -1035,6 +1054,7 @@ module.exports = function (RED) {
                 if (node.config.inventory_usage_sensors !== undefined && node.config.inventory_usage_sensors.length > 0) {
                     node.state_types_inventory_usage_sensors = {};
                     let attributes = node.state_types_inventory_usage_sensors;
+                    let not_added = true;
                     node.config.inventory_usage_sensors.forEach(s => {
                         if (s.instance && s.capability_resources && s.measurement) {
                             const measurement = JSON.parse(s.measurement);
@@ -1116,10 +1136,16 @@ module.exports = function (RED) {
                                 if (s.replenishment) {
                                     additional_config.configuration['replenishment'] = JSON.parse(s.replenishment);
                                 }
+                                not_added = false;
                                 node.addCapability("Alexa.InventoryUsageSensor", {}, additional_config);
                             }
                         }
                     });
+                    if (not_added) {
+                        node.config.i_inventory_usage_sensor = false;
+                    }
+                } else {
+                    node.config.i_inventory_usage_sensor = false;
                 }
             }
 
@@ -1164,6 +1190,7 @@ module.exports = function (RED) {
                         type: Formats.OBJECT,
                         attributes: attributes,
                     };
+                    let not_added = true;
                     node.config.c_modes.forEach(mode => {
                         if (mode.instance && mode.capability_resources && mode.supported_modes) {
                             const supported_modes = JSON.parse(mode.supported_modes);
@@ -1186,6 +1213,7 @@ module.exports = function (RED) {
                                     if (mode.semantics) {
                                         additional_config['semantics'] = JSON.parse(mode.semantics);
                                     }
+                                    not_added = false;
                                     node.addCapability("Alexa.ModeController",
                                         {
                                             mode: values[0],
@@ -1195,6 +1223,11 @@ module.exports = function (RED) {
                             }
                         }
                     });
+                    if (not_added) {
+                        node.config.i_mode_controller = false;
+                    }
+                } else {
+                    node.config.i_mode_controller = false;
                 }
             }
 
@@ -1293,6 +1326,7 @@ module.exports = function (RED) {
                         type: Formats.OBJECT,
                         attributes: attributes,
                     };
+                    let not_added = true;
                     node.config.ranges.forEach(range => {
                         if (range.instance && range.capability_resources) {
                             node.state["ranges"][range.instance] = node.to_int(range.min, 0);
@@ -1319,6 +1353,7 @@ module.exports = function (RED) {
                             if (range.semantics) {
                                 additional_config['semantics'] = JSON.parse(range.semantics);
                             }
+                            not_added = false;
                             node.addCapability("Alexa.RangeController",
                                 {
                                     rangeValue: node.to_int(range.min, 0),
@@ -1326,6 +1361,11 @@ module.exports = function (RED) {
                                 additional_config, true);
                         }
                     });
+                    if (not_added) {
+                        node.config.i_range_controller = false;
+                    }
+                } else {
+                    node.config.i_range_controller = false;
                 }
             }
 
@@ -1382,6 +1422,8 @@ module.exports = function (RED) {
                             configuration: configuration
                         }
                     );
+                } else {
+                    node.config.i_security_panel_controller = false;
                 }
             }
 
@@ -1569,6 +1611,8 @@ module.exports = function (RED) {
                     node.addCapability("Alexa.ThermostatController.HVAC.Components", properties, {
                         configuration: configurations
                     });
+                } else {
+                    node.config.i_thermostat_controller_hvac_components = false;
                 }
             }
 
@@ -1593,6 +1637,7 @@ module.exports = function (RED) {
                 if (node.config.toggles.length > 0) {
                     node.state["toggles"] = {};
                     let attributes = {};
+                    let not_added = true;
                     state_types['toggles'] = {
                         type: Formats.OBJECT,
                         attributes: attributes
@@ -1611,6 +1656,7 @@ module.exports = function (RED) {
                             if (toggle.semantics) {
                                 additional_config['semantics'] = JSON.parse(toggle.semantics);
                             }
+                            not_added = false;
                             node.addCapability("Alexa.ToggleController",
                                 {
                                     toggleState: 'OFF'
@@ -1618,6 +1664,11 @@ module.exports = function (RED) {
                                 additional_config, true);
                         }
                     });
+                    if (not_added) {
+                        node.config.i_toggle_controller = false;
+                    }
+                } else {
+                    node.config.i_toggle_controller = false;
                 }
             }
 
@@ -1631,6 +1682,8 @@ module.exports = function (RED) {
                             mac_addresses: node.config.mac_addresses
                         }
                     });
+                } else {
+                    node.config.i_wake_on_lan_controller = false
                 }
             }
 
@@ -1717,6 +1770,7 @@ module.exports = function (RED) {
             const namespace = header['namespace'];
             const name = header['name'];
             const instance = header['instance'];
+            const correlationToken = header['correlationToken'];
             if (node.isVerbose()) node._debug("execDirective state before " + name + "/" + namespace + " " + JSON.stringify(node.state));
             let modified = undefined;
             let send_state_in_out = true;
@@ -1821,13 +1875,13 @@ module.exports = function (RED) {
                 case "Alexa.DeviceUsage.Meter": // DeviceUsage.Meter
                     if (name === 'ReportMeasurements') {
                         modified = [];
-                        other_data['correlationToken'] = header['correlationToken'];
+                        other_data['correlationToken'] = correlationToken;
                     } else if (name === 'ReduceResolution') {
                         modified = [];
-                        other_data['correlationToken'] = header['correlationToken'];
+                        other_data['correlationToken'] = correlationToken;
                     } else if (name === 'InvalidMeasurementError') {
                         modified = [];
-                        other_data['correlationToken'] = header['correlationToken'];
+                        other_data['correlationToken'] = correlationToken;
                     }
                     break;
 
@@ -1952,25 +2006,34 @@ module.exports = function (RED) {
                             process.nextTick(() => {
                                 if (node.isVerbose()) node._debug("execDirective send_change_report");
                                 // TODO manage response
-                                node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", undefined, 'Alexa.WakeOnLANController', 'WakeUp')
+                                node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION",
+                                    {
+                                        event: {
+                                            header: {
+                                                correlationToken: correlationToken
+                                            }
+                                        }
+                                    },
+                                    'Alexa.WakeOnLANController', 'WakeUp')
                                     .then(res => {
                                         if (node.isVerbose()) node._debug("execDirective send_change_report for WakeUp OK");
                                         modified = node.setValues({
                                             powerState: 'ON'
                                         }, node.state);
                                         node.sendState(modified, payload, namespace, name);
-                                        node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION", {
-                                            event: {
-                                                header: {
-                                                    correlationToken: header.correlationToken
+                                        node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION",
+                                            {
+                                                event: {
+                                                    header: {
+                                                        correlationToken: correlationToken
+                                                    }
                                                 }
-                                            }
-                                        }, 'Alexa', 'Response')
+                                            }, 'Alexa', 'Response')
                                             .then(() => { });
                                     })
                                     .catch(() => {
                                         if (node.isVerbose()) node._debug("execDirective send_change_report for WakeUp ERROR");
-                                        node.alexa.send_error_response(undefined, undefined, node.id, 'INTERNAL_ERROR', 'Unknown error');
+                                        node.alexa.send_error_response_to_event_gw(node.id, correlationToken, 'INTERNAL_ERROR', 'Unknown error');
                                     });
                             });
                         } else {
