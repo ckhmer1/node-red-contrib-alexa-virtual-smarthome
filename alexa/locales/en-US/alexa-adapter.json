@@ -46,7 +46,8 @@
             "missing-bridge": "Missing SmartHome.",
             "login-error": "Invalid username or password.",
             "invalid-directive": "Invalid directive.",
-            "accept-grant-directive": "Failed to handle the AcceptGrant directive."
+            "accept-grant-directive": "Failed to handle the AcceptGrant directive.",
+            "no-account-link": "You need to link your account with your Smart Home skill."
         }
     }
 }

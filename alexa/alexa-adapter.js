@@ -191,7 +191,7 @@ module.exports = function (RED) {
         //
         //
         _debug(msg) {
-            console.log('AlexaAdapterNode:' + msg); // TODO REMOVE
+            console.log((new Date()).toLocaleTimeString() + ' - ' + '[debug] [alexa-adapter:' + this.config.name + '] ' + msg); // TODO REMOVE
             this.debug('AlexaAdapterNode:' + msg);
         }
 
@@ -1876,6 +1876,9 @@ module.exports = function (RED) {
             const node = this;
             if (node.tokens === undefined) {
                 node.tokens = node.loadJsonSync("tokens", node.tokens_filename, {}, node.user_dir);
+                if (Object.keys(node.tokens).length == 0) {
+                    node.error(RED._("alexa-adapter.error.no-account-link"));
+                }
             }
             return node.tokens;
         }

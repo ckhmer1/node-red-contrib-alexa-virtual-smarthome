@@ -207,7 +207,7 @@ module.exports = function (RED) {
         //
         //
         _debug(msg) {
-            console.log('AlexaDeviceNode:' + msg); // TODO REMOVE
+            console.log((new Date()).toLocaleTimeString() + ' - ' + '[debug] [alexa-device:' + this.config.name + '] ' + msg); // TODO REMOVE
             this.debug('AlexaDeviceNode:' + msg);
         }
 
