@@ -297,9 +297,20 @@
             "wake_on_lan_controller": "Wake On LAN Controller"
         },
         "error": {
-            "missing-config": "Missing SmartHome configuration",
-            "missing-bridge": "Missing SmartHome bridge",
-            "missing-display_categories": "Missing display categories"
+            "missing-config": "Missing SmartHome configuration.",
+            "missing-bridge": "Missing SmartHome bridge.",
+            "missing-display_categories": "Missing display categories.",
+            "no_camera_stream_controller": "Missing or invalid camera stream controller config.",
+            "no_device_usage_estimation": "Missing or invalid device usage estimation config.",
+            "no_device_usage_meter": "Missing or invalid device usage meter config.",
+            "no_inventory_level_sensor": "Missing or invalid inventory level sensor config.",
+            "no_inventory_usage_sensor": "Missing or invalid inventory usage sensor config.",
+            "no_mode_controller": "Missing or invalid mode controller config.",
+            "no_range_controller": "Missing or invalid range controller config.",
+            "no_security_panel_controller": "Missing or invalid security panel controller config.",
+            "no_thermostat_controller_hvac_components": "Missing or invalid thermostat controller hvac components config.",
+            "no_toggle_controller": "Missing or invalid toggle controller config.",
+            "no_wake_on_lan_controller": "Missing or invalid wake on lan controller config."
         }
     }
 }

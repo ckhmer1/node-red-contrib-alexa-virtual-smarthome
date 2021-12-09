@@ -22,7 +22,7 @@ This module does NOT directly interface with devices made by Amazon.
 ## Prerequisites
 
 1. A 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org).
-2. A reverse proxy, like nginx, forwarding the right request to the Node-RED server.
+2. A reverse proxy, like nginx, forwarding the Amazon request to the Node-RED server.
 3. Forward TCP traffic coming in from the Internet to your reverse proxy server.
 4. An updated NodeJS version.
 5. An Amazon developer account (use the same username used in the Amazon Alexa App or devices).
@@ -31,14 +31,13 @@ This module does NOT directly interface with devices made by Amazon.
 ---
 ## Setup Instructions
 
-We are going to create a Smart Home Skill, a Lambda Function linked to the Node-RED server. See [Understand the Smart Home Skill API](
+You are going to create a Smart Home Skill, a Lambda Function linked to the Node-RED server. See [Understand the Smart Home Skill API](
 https://developer.amazon.com/en-US/docs/alexa/smarthome/understand-the-smart-home-skill-api.html) for mode info.
 
 
 #### Create a Security Profile (Used also for the login with Amazon feature)
 
-Go to the https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html and create a Security Profile. See the 
-[Register for Login with Amazon](https://developer.amazon.com/docs/login-with-amazon/register-web.html) for more info.
+To create the Security Profile, use the following steps ([Register for Login with Amazon](https://developer.amazon.com/docs/login-with-amazon/register-web.html) for more info):
 
 * Sign in to your [Login with Amazon Console](https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html)
 * Click on the "Create a New Security Profile" button.
@@ -59,7 +58,7 @@ Go to the https://developer.amazon.com/loginwithamazon/console/site/lwa/overview
 
 #### Create a smart home skill
 
-Go to the [Alexa developer account](https://developer.amazon.com/alexa/console/ask) and create a smart home skill. See the [Steps to Build a Smart Home Skill](https://developer.amazon.com/en-US/docs/alexa/smarthome/steps-to-build-a-smart-home-skill.html) for more info.
+To create a smart home skill, use the following steps ([Steps to Build a Smart Home Skill](https://developer.amazon.com/en-US/docs/alexa/smarthome/steps-to-build-a-smart-home-skill.html) for more info):
 
 * Sign in to your [Alexa developer account](https://developer.amazon.com/alexa/console/ask)
 * Click on the "Create Skill" button.
@@ -72,7 +71,7 @@ Go to the [Alexa developer account](https://developer.amazon.com/alexa/console/a
 
 #### Create a Lambda Function
 
-Go to https://aws.amazon.com and create a lambda function for the skill. See the [Host a Custom Skill as an AWS Lambda Function](https://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-an-aws-lambda-function.html) for more info. 
+To create a lambda function for the skill, use the following steps ([Host a Custom Skill as an AWS Lambda Function](https://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-an-aws-lambda-function.html) for more info):
 
 ##### Create an IAM Role for Lambda
 
@@ -230,6 +229,19 @@ def lambda_handler(event, context):
 * Click the "Edit" button.
 * Copy the three "Alexa Redirect URLs" (8) from the "Account linking" in the "Allowed Return URLs" field.
 * Click the "Save" button.
+
+#### Add an Alexa Device node on the Node-RED server
+
+You need to add an Alexa Device node in Node-RED to Link your account with your Smart Home skill.
+
+* Add an Alexa Device and configure an [Alexa Config node](#the-config-node) (You need exactly one config node). 
+* Configure the [Alexa Device node](#the-device-node).
+
+#### Configure a reverse proxy for forwarding the Amazon request to the Node-RED server
+
+You need to configure your reverse proxy (nginx, Apache HTTP) to forwart the /alexa/oauth, /alexa/token and /alexa/smarthome to the Node-RED Alexa node. Update the /alexa path in according with "HTTP Path" configuration. 
+
+See [Nginx reverse proxy configuration](#nginx-reverse-proxy-configuration) for an example of the nginx configuration.
 
 #### Link your account with your Smart Home skill
 

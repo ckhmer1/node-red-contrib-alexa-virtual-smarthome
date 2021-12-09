@@ -456,6 +456,7 @@ module.exports = function (RED) {
                             cameraStreamConfigurations: camera_stream_configurations
                         });
                 } else {
+                    node.error(RED._("alexa-device.error.no_camera_stream_controller"))
                     node.config.i_camera_stream_controller = false;
                 }
             }
@@ -589,6 +590,7 @@ module.exports = function (RED) {
                             }
                         });
                 } else {
+                    node.error(RED._("alexa-device.error.no_device_usage_estimation"))
                     node.config.i_device_usage_estimation = false;
                 }
             }
@@ -622,6 +624,7 @@ module.exports = function (RED) {
                         }
                     });
                 } else {
+                    node.error(RED._("alexa-device.error.no_device_usage_meter"))
                     node.config.i_device_usage_meter = false;
                 }
             }
@@ -1040,9 +1043,11 @@ module.exports = function (RED) {
                         }
                     });
                     if (not_added) {
+                        node.error(RED._("alexa-device.error.no_inventory_level_sensor"))
                         node.config.i_inventory_level_sensor = false;
                     }
                 } else {
+                    node.error(RED._("alexa-device.error.no_inventory_level_sensor"))
                     node.config.i_inventory_level_sensor = false;
                 }
             }
@@ -1142,9 +1147,11 @@ module.exports = function (RED) {
                         }
                     });
                     if (not_added) {
+                        node.error(RED._("alexa-device.error.no_inventory_usage_sensor"))
                         node.config.i_inventory_usage_sensor = false;
                     }
                 } else {
+                    node.error(RED._("alexa-device.error.no_inventory_usage_sensor"))
                     node.config.i_inventory_usage_sensor = false;
                 }
             }
@@ -1224,9 +1231,11 @@ module.exports = function (RED) {
                         }
                     });
                     if (not_added) {
+                        node.error(RED._("alexa-device.error.no_mode_controller"))
                         node.config.i_mode_controller = false;
                     }
                 } else {
+                    node.error(RED._("alexa-device.error.no_mode_controller"))
                     node.config.i_mode_controller = false;
                 }
             }
@@ -1362,9 +1371,11 @@ module.exports = function (RED) {
                         }
                     });
                     if (not_added) {
+                        node.error(RED._("alexa-device.error.no_range_controller"))
                         node.config.i_range_controller = false;
                     }
                 } else {
+                    node.error(RED._("alexa-device.error.no_range_controller"))
                     node.config.i_range_controller = false;
                 }
             }
@@ -1423,6 +1434,7 @@ module.exports = function (RED) {
                         }
                     );
                 } else {
+                    node.error(RED._("alexa-device.error.no_security_panel_controller"))
                     node.config.i_security_panel_controller = false;
                 }
             }
@@ -1612,6 +1624,7 @@ module.exports = function (RED) {
                         configuration: configurations
                     });
                 } else {
+                    node.error(RED._("alexa-device.error.no_thermostat_controller_hvac_components"))
                     node.config.i_thermostat_controller_hvac_components = false;
                 }
             }
@@ -1665,9 +1678,11 @@ module.exports = function (RED) {
                         }
                     });
                     if (not_added) {
+                        node.error(RED._("alexa-device.error.no_toggle_controller"))
                         node.config.i_toggle_controller = false;
                     }
                 } else {
+                    node.error(RED._("alexa-device.error.no_toggle_controller"))
                     node.config.i_toggle_controller = false;
                 }
             }
@@ -1683,6 +1698,7 @@ module.exports = function (RED) {
                         }
                     });
                 } else {
+                    node.error(RED._("alexa-device.error.no_wake_on_lan_controller"))
                     node.config.i_wake_on_lan_controller = false
                 }
             }

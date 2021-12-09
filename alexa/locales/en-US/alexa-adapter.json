@@ -42,11 +42,11 @@
             "scope": "Scope"
         },
         "error": {
-            "missing-config": "Missing SmartHome configuration",
-            "missing-bridge": "Missing SmartHome",
+            "missing-config": "Missing SmartHome configuration.",
+            "missing-bridge": "Missing SmartHome.",
             "login-error": "Invalid username or password.",
-            "invalid-directive": "Invalid directive",
-            "accept-grant-directive": "Failed to handle the AcceptGrant directive"
+            "invalid-directive": "Invalid directive.",
+            "accept-grant-directive": "Failed to handle the AcceptGrant directive."
         }
     }
 }
