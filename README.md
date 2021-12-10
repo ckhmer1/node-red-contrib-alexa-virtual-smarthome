@@ -26,8 +26,8 @@ This module does NOT directly interface with devices made by Amazon.
 3. A reverse proxy, like nginx, forwarding the Amazon request to the Node-RED server.
 4. Forward TCP traffic coming in from the Internet to your reverse proxy server.
 5. Node-RED installed using an updated NodeJS version.
-6. An Amazon developer account [Amazon Developer](https://developer.amazon.com) (use the same username used in the Amazon Alexa App or devices).
-7. An Amazon Web Service (AWS) account [AWS console](https://console.aws.amazon.com) (use the same username used in the Amazon Alexa App or devices).
+6. An [Amazon Developer](https://developer.amazon.com) account (use the same username used in the Amazon Alexa App or Alexa devices).
+7. An [Amazon Web Service (AWS)](https://console.aws.amazon.com) account (use the same username used in the Amazon Alexa App or Alexa devices).
 
 ---
 ## Setup Instructions
