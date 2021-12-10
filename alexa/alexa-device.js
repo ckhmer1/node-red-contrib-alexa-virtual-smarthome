@@ -396,6 +396,7 @@ module.exports = function (RED) {
                 }
                 // node.sendState(modified, msg.payload);
             }
+            node.updateStatusIcon();
         }
 
         setupCapabilities() {
@@ -2285,6 +2286,7 @@ module.exports = function (RED) {
 
             if (send_state_in_out && modified !== undefined) {
                 node.sendState(modified, payload, namespace, name, other_data);
+                node.updateStatusIcon();
             }
 
             if (node.isVerbose()) node._debug("execDirective event_payload " + name + "/" + namespace + " " + JSON.stringify(event_payload));
