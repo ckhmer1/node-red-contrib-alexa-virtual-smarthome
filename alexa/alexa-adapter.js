@@ -1835,43 +1835,6 @@ module.exports = function (RED) {
         //
         //
         //
-        /*get_state(endpointId) {
-            const node = this;
-            const messageId = node.tokgen.generate();
-            if (endpointId) {
-                if (node.devices[endpointId]) {
-                    const state = {
-                        event: {
-                            header: {
-                                namespace: "Alexa",
-                                name: "StateReport",
-                                messageId: messageId,
-                                payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION,
-                            },
-                            endpoint: {
-                                endpoints: endpointId,
-                                scope: {
-                                    type: "BearerToken",
-                                    token: node.tokens.evn.access_token
-                                },
-                            },
-                            payload: {},
-                        },
-                        context: {
-                            properties: node.devices[endpointId].getProperties()
-                        }
-                    };
-                    if (node.config.verbose) node._debug("CCHI state " + JSON.stringify(state));
-                }
-            } else {
-                // TODO all states??
-            }
-        }*/
-
-        //
-        //
-        //
-        //
         get_tokens_sync() {
             const node = this;
             if (node.tokens === undefined) {

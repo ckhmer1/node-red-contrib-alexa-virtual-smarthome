@@ -21,12 +21,13 @@ This module does NOT directly interface with devices made by Amazon.
 ---
 ## Prerequisites
 
-1. A 'real' SSL certificate e.g. from [Let’s Encrypt](https://letsencrypt.org).
-2. A reverse proxy, like nginx, forwarding the Amazon request to the Node-RED server.
-3. Forward TCP traffic coming in from the Internet to your reverse proxy server.
-4. An updated NodeJS version.
-5. An Amazon developer account (use the same username used in the Amazon Alexa App or devices).
-6. An Amazon Web Service (AWS) account (use the same username used in the Amazon Alexa App or devices).
+1. A host reachable from Amazon Alexa with a fixed IP address or a domain name with a fixed IP address or a domain name with the dynamic DNS server (refers to this in instructions as YOUR_DOMAIN) e.g. your_domain.it.
+2. A 'real' SSL certificate for the host e.g. from [Let’s Encrypt](https://letsencrypt.org).
+3. A reverse proxy, like nginx, forwarding the Amazon request to the Node-RED server.
+4. Forward TCP traffic coming in from the Internet to your reverse proxy server.
+5. Node-RED installed using an updated NodeJS version.
+6. An Amazon developer account [Amazon Developer](https://developer.amazon.com) (use the same username used in the Amazon Alexa App or devices).
+7. An Amazon Web Service (AWS) account [AWS console](https://console.aws.amazon.com) (use the same username used in the Amazon Alexa App or devices).
 
 ---
 ## Setup Instructions
@@ -43,7 +44,7 @@ To create the Security Profile, use the following steps ([Register for Login wit
 * Click on the "Create a New Security Profile" button.
 * Fill in the "Security Profile Name", e.g.: "Smart Home".
 * Fill in the "Security Profile Description", e.g.: "Smart Home Node-RED".
-* Fill in the "Consent Privacy Notice URL", e.g.: "https://YOUR_DOMAIN.COM/alexa/oauth?policy".
+* Fill in the "Consent Privacy Notice URL", e.g.: "https://YOUR_DOMAIN/alexa/oauth?policy".
 * Fill in the "Consent Logo Image", if You wish.
 * Click on the "Save" button.
 
@@ -51,8 +52,8 @@ To create the Security Profile, use the following steps ([Register for Login wit
 
 * Click on the "Gears wheels" and select "Web Settings".
 * Click on the "Edit" button.
-* Fill in the "Allowed Origins" field, e.g.: "https://YOUR_DOMAIN.COM".
-* Fill in the "Allowed Return URLs" field, e.g.: "https://YOUR_DOMAIN.COM/alexa/oauth".
+* Fill in the "Allowed Origins" field, e.g.: "https://YOUR_DOMAIN".
+* Fill in the "Allowed Return URLs" field, e.g.: "https://YOUR_DOMAIN/alexa/oauth".
 * Click on the "Save" button.
 * Click on the "Show Secret" button, and copy the "Client ID" (1) and "Client Secret" (2). You will need it later in the Node-RED configuration.
 
@@ -195,7 +196,7 @@ def lambda_handler(event, context):
 * Click on the "Edit" button.
 * Click on the "Add environment variable" button.
 * Enter "BASE_URL" as the "Key".
-* Enter "https://YOUR_DOMAIN.COM" as the Value.
+* Enter "https://YOUR_DOMAIN" as the Value.
 * Click on the "Add environment variable" button.
 * Enter "DEBUG" as the "Key".
 * Enter "True" as the Value.
@@ -212,8 +213,8 @@ def lambda_handler(event, context):
 * If your skill only supports one language/region, provide the same ARN for the default ARN and the selected regional ARN.
 * Click on the "Save" button.
 * Click on the "Setup Account Linking" button.
-* Enter the "Your Web Authorization URI" field as "https://YOUR_DOMAIN.COM/alexa/oauth".
-* Enter the "Access Token URI" field as "https://YOUR_DOMAIN.COM/alexa/token".
+* Enter the "Your Web Authorization URI" field as "https://YOUR_DOMAIN/alexa/oauth".
+* Enter the "Access Token URI" field as "https://YOUR_DOMAIN/alexa/token".
 * Enter the "Your Client ID" field with a Client ID of your choice (5). You need it in the Node-RED configuration.
 * Enter the "Your Secret" field with a password of your choice (6). You need it in the Node-RED configuration.
 * Select "Credential in the request body" as "Your Authentication Scheme".
@@ -291,24 +292,24 @@ This is a checklist for the config:
 
 ### Check the forward rule for /alexa/oauth
 
-* Open your browser at "https://YOUR_DOMAIN.COM/alexa/oauth"
+* Open your browser at "https://YOUR_DOMAIN/alexa/oauth"
 * You should get the message "Wrong client id". If not, check your port forwarding the reverse proxy or reverse proxy config.
 
 
 ### Check the forward rule for /alexa/token
 * Enable the debug log in the Node-Red Alexa node configuration.
-* Open your browser at "https://YOUR_DOMAIN.COM/alexa/token"
-* You should get the message "https://YOUR_DOMAIN.COM/alexa/token". If not, check your port forwarding to the reverse proxy  or reverse proxy config.
+* Open your browser at "https://YOUR_DOMAIN/alexa/token"
+* You should get the message "https://YOUR_DOMAIN/alexa/token". If not, check your port forwarding to the reverse proxy  or reverse proxy config.
 
 ### Check the forward rule for /alexa/smarthome
 * Enable the debug log in the Node-Red Alexa node configuration.
-* Open your browser at "https://YOUR_DOMAIN.COM/alexa/smarthome"
+* Open your browser at "https://YOUR_DOMAIN/alexa/smarthome"
 * You should get the following message:
 
 ```
 Alexa SmartHome test page
 
-Url: https://YOUR_DOMAIN.COM/alexa/smarthome
+Url: https://YOUR_DOMAIN/alexa/smarthome
 Post: {"ok":"ok"}
 ```
 
