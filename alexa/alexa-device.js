@@ -1694,7 +1694,7 @@ module.exports = function (RED) {
                 if (node.config.mac_addresses.length > 0) {
                     node.addCapability("Alexa.WakeOnLANController", undefined, {
                         configuration: {
-                            mac_addresses: node.config.mac_addresses
+                            MACAddresses: node.config.mac_addresses
                         }
                     });
                 } else {
