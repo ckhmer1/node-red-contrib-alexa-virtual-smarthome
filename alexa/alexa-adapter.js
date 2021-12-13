@@ -501,8 +501,8 @@ module.exports = function (RED) {
             if (node.config.verbose) node._debug('token_post');
             if (node.config.verbose) node._debug('token_post CCHI ' + JSON.stringify(req.body));
             const grant_type = req.body.grant_type || '';
-            const client_id = req.body.client_id || '';
-            const client_secret = req.body.client_secret || '';
+            const client_id = unescape(req.body.client_id || '');
+            const client_secret = unescape(req.body.client_secret || '');
             if (grant_type === 'refresh_token') {
                 if (node.config.verbose) node.error('token_post refresh_token');
                 const refresh_token = req.body.refresh_token || '';

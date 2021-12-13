@@ -65,9 +65,8 @@ To create a smart home skill, use the following steps ([Steps to Build a Smart H
 * Click on the "Create Skill" button.
 * Enter the "Skill name", e.g. "Smart Home".
 * Select the "Default language".
-* Under Choose a model to add to your skill page, select "Smart Home", and then click the "Create skill" button.
+* Under "Choose a model to add to your skill" page, select "Smart Home", and then click the "Create skill" button.
 * Under Payload Version, select "v3".
-* Click the "Save" button.
 * Copy Your Skill ID (3) to the clipboard, clicking the "Copy to clipboard" button.
 
 #### Create a Lambda Function
@@ -81,7 +80,7 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 * Select "AWS service" under "Select type of trusted entity".
 * Select "AWS Lambda" under "AWS Service Role".
 * Click the "Next: Permissions" button.
-* Type "basic" in the filter box and choose the "AWSLambdaBasicExecutionRole", and click on the "Next: Tags" button.
+* Type "basic" in the filter box and choose the "AWSLambdaBasicExecutionRole", check it, and click on the "Next: Tags" button.
 * Click on the "Next: Review" button.
 * Enter a name that identifies this role and click Create role, e.g.: "lambda_basic_execution".
 * Click on the "Create Role" button.
@@ -93,7 +92,7 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 * Click on the "Create Function" button.
 * Select "Author from scratch".
 * Enter the "Function name, e.g.: "SmartHome".
-* Select "Python 3.8" as "Runtime".
+* Select "Python 3.9" as "Runtime".
 * Expand the "Change default execution role".
 * Select "Use an existing role".
 * Select the role created before, "lambda_basic_execution".
@@ -209,7 +208,7 @@ def lambda_handler(event, context):
 ##### Configure the service endpoint
 
 * Navigate back to your skill in the developer console.
-* Under Smart Home service endpoint, in the Default endpoint box, provide the ARN number (4) from the Lambda function you created and click Save.
+* Under "Smart Home service endpoint", in the "Default endpoint" box, provide the ARN number (4) from the Lambda function you created and click Save.
 * If your skill only supports one language/region, provide the same ARN for the default ARN and the selected regional ARN.
 * Click on the "Save" button.
 * Click on the "Setup Account Linking" button.
