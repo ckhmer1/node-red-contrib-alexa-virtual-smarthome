@@ -1175,7 +1175,7 @@ module.exports = function (RED) {
         // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-response.html
         get_report_state(endpointId, correlationToken, access_token, messageId) {
             const node = this;
-            const state = {
+            const msg = {
                 event: {
                     header: {
                         namespace: "Alexa",
@@ -1198,7 +1198,7 @@ module.exports = function (RED) {
                     properties: node.devices[endpointId].getProperties()
                 }
             }
-            return state;
+            return msg;
         }
 
         //
@@ -1261,7 +1261,7 @@ module.exports = function (RED) {
 
             node.get_access_token('evn')
                 .then(access_token => {
-                    const state = {
+                    const msg = {
                         context: {},
                         event: {
                             header: {
@@ -1285,12 +1285,12 @@ module.exports = function (RED) {
                             }
                         },
                     };
-                    if (node.config.verbose) node._debug('send_doorbell_press ' + JSON.stringify(state));
+                    if (node.config.verbose) node._debug('send_doorbell_press ' + JSON.stringify(msg));
                     superagent
                         .post(node.config.event_endpoint)
                         .use(throttle.plugin())
                         .set('Authorization', 'Bearer ' + access_token)
-                        .send(state)
+                        .send(msg)
                         .end((err, res) => {
                             if (err) {
                                 node.error('send_doorbell_press err ' + JSON.stringify(err));
