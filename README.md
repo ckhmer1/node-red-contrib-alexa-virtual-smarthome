@@ -76,6 +76,7 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 ##### Create an IAM Role for Lambda
 
 * Sign in to your [IAM console](https://console.aws.amazon.com/iam/home?#/home)
+* From the upper-right menù, select the correct region for your region and skill language. See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
 * Choose "Roles" and click "Create role".
 * Select "AWS service" under "Select type of trusted entity".
 * Select "AWS Lambda" under "AWS Service Role".
@@ -87,8 +88,9 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 
 ##### Create a Lambda function and add code
 
-* On the [AWS Console](https://console.aws.amazon.com/console/home), Select "Services", under "Compute", select "Lambda"
-* From the upper-left menù, select the correct Lambda function region for your region and skill language. See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
+* On the [AWS Console](https://console.aws.amazon.com/console/home)
+* From the upper-right menù, select the correct region for your region and skill language. See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
+* Expand "Services", under "Compute", select "Lambda"
 * Click on the "Create Function" button.
 * Select "Author from scratch".
 * Enter the "Function name, e.g.: "SmartHome".
