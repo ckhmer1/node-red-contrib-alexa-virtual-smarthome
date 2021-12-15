@@ -71,12 +71,12 @@ To create a smart home skill, use the following steps ([Steps to Build a Smart H
 
 #### Create a Lambda Function
 
-To create a lambda function for the skill, use the following steps ([Host a Custom Skill as an AWS Lambda Function](https://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-an-aws-lambda-function.html) for more info):
+To create a lambda function for the skill, use the following steps ([Host a Custom Skill as an AWS Lambda Function](https://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-an-aws-lambda-function.html) and [Steps to Build a Smart Home Skill: Add a Lambda Function](https://developer.amazon.com/en-US/docs/alexa/smarthome/steps-to-build-a-smart-home-skill.html#add-a-lambda-function) for more info):
 
 ##### Create an IAM Role for Lambda
 
 * Sign in to your [IAM console](https://console.aws.amazon.com/iam/home?#/home)
-* From the upper-right menù, select the correct region for your region and skill language. See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
+* From the upper-right menù, select the correct region for your region and skill language. For discovery of smart home devices to succeed, you must choose the region where the devices are located. See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
 * Choose "Roles" and click "Create role".
 * Select "AWS service" under "Select type of trusted entity".
 * Select "AWS Lambda" under "AWS Service Role".
