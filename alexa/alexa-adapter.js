@@ -596,25 +596,23 @@ module.exports = function (RED) {
         smarthome_post_verify(req, res) {
             const node = this;
             if (node.config.verbose) node._debug("smarthome_post_verify");
-            if (!node.config.verbose) {
-                new SkillRequestSignatureVerifier()
-                    .verify(req.body, req.header)
-                    .then(() => {
-                        new TimestampVerifier()
-                            .verify(req.body)
-                            .then(() => {
-                                node.smarthome_post(req, res);
-                            })
-                            .catch(err => {
-                                node.error("smarthome_post_verify: TimestampVerifier error " + err.stack);
-                                return res.status(401).send('Bad request');
-                            });
-                    })
-                    .catch(err => {
-                        node.error("smarthome_post_verify: SkillRequestSignatureVerifier error " + err.stack);
-                        return res.status(401).send('Bad request');
-                    });
-            }
+            new SkillRequestSignatureVerifier()
+                .verify(req.body, req.header)
+                .then(() => {
+                    new TimestampVerifier()
+                        .verify(req.body)
+                        .then(() => {
+                            node.smarthome_post(req, res);
+                        })
+                        .catch(err => {
+                            node.error("smarthome_post_verify: TimestampVerifier error " + err.stack);
+                            return res.status(401).send('Bad request');
+                        });
+                })
+                .catch(err => {
+                    node.error("smarthome_post_verify: SkillRequestSignatureVerifier error " + err.stack);
+                    return res.status(401).send('Bad request');
+                });
         }
 
         //
