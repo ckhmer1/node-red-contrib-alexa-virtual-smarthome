@@ -17,7 +17,7 @@
             "secirity_profile_web_settings": "Security Profile Web Settings",
             "local_credentials": "Local credentials",
             "http_server": "HTTP(s) Server",
-            "skill_info": "Skill info",
+            "skill_info": "Alexa Skill info",
             "emails": "Allowed emails",
             "event_endpoint": "Event endpoint",
             "scope": "Scope",

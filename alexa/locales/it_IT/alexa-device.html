@@ -1,0 +1,347 @@
+<script type="text/html" data-help-name="alexa-device">
+<p>Un dispositivo Alexa Smart Home.</p>
+
+<h3>Ingressi</h3>
+    <dl class="message-properties">
+        <dt class="optional">topic 
+            <span class="property-type">stringa | vuoto</span>
+        </dt>
+        <ul>
+            <li><dd> Il nome della prorpietà da mofidicare.</dd></li>
+            <li><dd> Il nome del comando da eseguire.</dd></li>
+            <li><dd> Il nome di un attributo da modificare.</dd></li>
+        </ul>
+
+        <dt>payload
+            <span class="property-type">stringa | JSON | intero | buleano</span>
+        </dt>
+        <ul>
+            <li><dd> Il nuovo valore per la proprietà da modificare (e da inviare alla skill Alexa), se il topic è un nome di una proprietà. </dd></li>
+            <li><dd> I parametri per il comando da eseguire, se l'argomento è un comando. </dd></li>
+            <li><dd> Il nuovo valore dell'attributo da modificare, se il topic è un nome di un attributo. </dd></li>
+            <li><dd> Un JSON che ha come chiavi i nomi degli attributi da modificare e come valori i nuovi valor, se nessuna delle regole precedenti corrisponde. </dd></li>
+        </ul>
+    </dl>
+
+    
+<h3>Uscita</h3>
+    <dl class="message-properties">
+        <dt class="optional">topic 
+            <span class="property-type">stringa | vuoto</span>
+        </dt>
+            <dd> L'argomento configurato, se viene ricevuta una direttiva da Alexa.</dd>
+
+        <dt>payload
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> Le proprietà aggiornate del dispositivo o un output di comando. </dd>
+
+        <dt>inputs
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> gli input della direttiva, se viene ricevuta una direttiva di Alexa. </dd>
+
+        <dt>modified
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> i nomi delle proprietà modificate, se le nuovi valori per le proprietà vengono ricevute nel payload in ingresso o se viene ricevuta una direttiva Alexa. </dd>
+    
+        <dt>device
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> il nome del dispositivo, se viene ricevuta una direttiva Alexa. </dd>
+
+        <dt>name
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> il nome della direttiva, se viene ricevuta una direttiva Alexa. </dd>
+
+        <dt>namespace
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> lo spazio dei nomi della direttiva, se viene ricevuta una direttiva Alexa. </dd>
+    </dl>
+
+                    
+<h3>Dettagli</h3>
+    <p><code>msg.topic</code> viene utilizzato per capire se è necessario aggiornare lo stato del dispositivo, gli attributi del dispositivo o eseguire un comando.
+        Se l'argomento è un nome di comando, il comando verrà eseguito.
+        Se l'argomento è un nome di un attributo, l'attributo del dispositivo verrà aggiornato.
+        Se l'argomento è un nome di proprietà, la proprietà del dispositivo verrà aggiornata.
+        Se nessuna corrispondenza, il payload deve essere una struttura JSON con chiavi corrispondenti ai nomi delle proprietà e valorizzare il valore della proprietà.
+    </p>
+    <p><code>msg.payload</code> viene utilizzato come parametro di input per i nuovi valori di stato o i nuovi valori di attributo o gli input di comando.</p>
+
+<h3>Proprietà del dispositivo</h3>
+    <dl class="message-properties">
+        <dt class="optional">brightness 
+            <span class="property-type">numero | vuoto</span>
+        </dt>
+            <dd> È la proprietà per la luminosità. Rappresenta la luminosità del dispositivo. È un numero intero. I valori validi sono da 0 a 100 inclusi.</dd>
+
+        <dt class="optional">channel 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per i canali. È una struttura avente attributi <code>number</code>, <code>callSign</code>, <code>affiliateCallSign</code> e <code>uri</code>.</dd>
+
+        <dt class="optional">channelMetadata 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per i canali. Fornisce informazioni aggiuntive su un canale. È una struttura avente attributi <code>name</code> e <code>image</code>.</dd>
+
+        <dt class="optional">color 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per il colore. Rappresenta il colore del dispositivo. È una struttura avente attributi <code>hue</code>, <code>saturation</code> e <code>brightness</code>.</dd>
+
+        <dt class="optional">colorTemperatureInKelvin 
+            <span class="property-type">numero</span>
+        </dt>
+            <dd> È di proprietà per la temperatura colore. Rappresenta la temperatura del colore in gradi Kelvin del dispositivo. I valori validi sono da 1,000 a 10,000 inclusi.</dd>
+
+        <dt class="optional">contactDetectionState 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà per il sensore di contatto. Rappresenta lo stato del contatto. I valori validi sono <code>DETECTED</code> e <code>NOT_DETECTED</code>.</dd>
+
+        <dt class="optional">connectivity 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per la Salute del dispositivo. Rappresenta lo stato di connettività di un dispositivo. È una struttura avente attributi <code>value</code> e <code>reason</code>.</dd>
+    
+        <dt class="optional">battery 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per la Salute del dispositivo. Usa questa proprietà per segnalare lo stato di salute della batteria del dispositivo e/o lo stato di carica del dispositivo. È una struttura avente attributi <code>health</code>, <code>chargingHealth</code> e <code>levelPercentage</code>.</dd>
+
+        <dt class="optional">RadioDiagnostics 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per la Salute del dispositivo. Usa questa proprietà per segnalare la potenza del segnale e altri dati diagnostici della rete radio a cui si connette il dispositivo. È una struttura avente attributi <code>radioType</code>, <code>signalStrength</code> e <code>signalToNoiseRatio</code>.</dd>
+    
+        <dt class="optional">SignalStrength 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per la Salute del dispositivo. Usa questa proprietà per riportare informazioni sulla potenza del segnale della rete radio a cui si connette il dispositivo. È una struttura avente attributi <code>quality</code> e <code>rssiInDBM</code>.</dd>
+
+        <dt class="optional">SignalToNoiseRatio 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per la Salute del dispositivo. Usa questa proprietà per riportare il rapporto segnale/rumore della rete radio a cui si connette il dispositivo. È una struttura avente attributi <code>quality</code> e <code>snrInDB</code>.</dd>
+    
+        <dt class="optional">networkThroughput 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per la Salute del dispositivo. Usa questa proprietà per segnalare il throughput calcolato della rete a cui si connette il dispositivo e come il throughput influisce sul dispositivo. È una struttura avente attributi <code>quality</code> e <code>bitsPerSecond</code>.</dd>
+
+        <dt class="optional">bands 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per l'equalizzatore. Questa proprietà rappresenta le diverse bande e il livello di ciascuna per l'equalizzatore su un dispositivo. È un array di bande. Ogni band è una struttura avente attributi <code>name</code> e <code>value</code>.</dd>
+
+        <dt class="optional">mode 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà per l'equalizzatore. Questa proprietà rappresenta la modalità dell'equalizzatore del dispositivo se ne è impostata una.</dd>
+
+        <dt class="optional">humanPresenceDetectionState 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per il Sensore di rilevamento eventi. Usa questa proprietà per segnalare la presenza umana. È una struttura avente attributi <code>value</code>, <code>detectionMethods</code> e <code>media</code>.</dd>
+
+        <dt class="optional">input 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà per gli ingressi. Questa proprietà rappresenta l'ingresso selezionato del dispositivo.</dd>
+
+        <dt class="optional">levels 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà del Sensore di livello. Questa proprietà rappresenta, per ogni istanza, la quantità corrente di un materiale di consumo che un dispositivo ha rimanente.</dd>
+    
+        <dt class="optional">lockState 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà della Serratura. Rappresenta lo stato di una serratura. I valori validi sono <code>LOCKED</code>, <code>UNLOCKED</code> e <code>JAMMED</code>.</dd>
+    
+        <dt class="optional">modes 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per le modalità. Questa proprietà rappresenta, per ogni istanza, la modalità corrente del dispositivo.</dd>
+    
+        <dt class="optional">motionDetectionState 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà per il Sensore di movimento. Rappresenta lo stato del rilevamento del movimento. I valori validi sono <code>DETECTED</code> e <code>NOT_DETECTED</code>.</dd>
+    
+        <dt class="optional">percentage 
+            <span class="property-type">numero</span>
+        </dt>
+            <dd> È di proprietà per i valori percentuali. Rappresenta la percentuale del dispositivo. I valori validi vanno da 0 a 100 inclusi.</dd>
+    
+        <dt class="optional">playbackState 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per lo stato della riproduzione. Questa proprietà indica se il contenuto è in riproduzione <code>PLAYING</code>, pausa <code>PAUSED</code> o fermato <code>STOPPED</code>. È una struttura avente l'attributo <code>state</code>.</dd>
+    
+        <dt class="optional">powerState 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà per il Controllo dell'alimentazione. Questa proprietà indica se il dispositivo è acceso <code>ON</code> o spento <code>OFF</code>.</dd>
+
+        <dt class="optional">powerLevel 
+            <span class="property-type">numero</span>
+        </dt>
+            <dd> È di proprietà per Regolatore del livello di potenza. Rappresenta il livello di potenza di un dispositivo espresso come percentuale intera compresa tra 0 e 100 inclusi.</dd>
+    
+        <dt class="optional">ranges 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per i Valori in intervallo. Questa proprietà rappresenta, per ogni istanza, un numero all'interno di un intervallo minimo e massimo.</dd>
+    
+        <dt class="optional">armState 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà per the Security Panel Controller. Rappresenta lo stato del sistema di sicurezza. I valori validi sono <code>DISARMED</code>, <code>ARMED_AWAY</code>, <code>ARMED_STAY</code> e <code>ARMED_NIGHT</code>.</dd>
+    
+        <dt class="optional">burglaryAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per the Security Panel Controller. Questa proprietà indica lo stato attuale dell'allarme antifurto. I valori validi sono <code>OK</code> or <code>ALARM</code>. È una struttura avente l'attributo <code>value</code>.</dd>
+
+        <dt class="optional">carbonMonoxideAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per the Security Panel Controller. Questa proprietà indica lo stato attuale dell'allarme monossido di carbonio. I valori validi sono <code>OK</code> or <code>ALARM</code>. È una struttura avente l'attributo <code>value</code>.</dd>
+
+        <dt class="optional">fireAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per the Security Panel Controller. Questa proprietà indica lo stato corrente dell'allarme antincendio. I valori validi sono <code>OK</code> or <code>ALARM</code>. È una struttura avente l'attributo <code>value</code>.</dd>
+
+        <dt class="optional">waterAlarm 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per the Security Panel Controller. Questa proprietà indica lo stato attuale di un allarme acqua. I valori validi sono <code>OK</code> or <code>ALARM</code>. È una struttura avente l'attributo <code>value</code>.</dd>
+    
+        <dt class="optional">volume 
+            <span class="property-type">numero</span>
+        </dt>
+            <dd> È di proprietà per the Color Speaker Interface. Rappresenta il livello del volume audio di un dispositivo espresso come un numero intero compreso tra 0 e 100 inclusi.</dd>
+    
+        <dt class="optional">muted 
+            <span class="property-type">boolean</span>
+        </dt>
+            <dd> È di proprietà per the Color Speaker Interface. Questa proprietà indica se l'audio di un dispositivo è disattivato o meno. La prorpietà è <code>true</code> se l'audio del dispositivo è disattivato, <code>false</code> se l'audio del dispositivo è attivo.</dd>
+    
+        <dt class="optional">temperature 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per il sensore di temperatura. Rappresenta una temperatura. È una struttura avente attributi <code>value</code> e <code>scale</code>.</dd>
+
+        <dt class="optional">targetSetpoint 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà il termostato. Rappresenta una temperatura. Il termostato dovrebbe mantenere la temperatura a questo valore. I termostati a punto di regolazione singolo utilizzano questa proprietà. È una struttura avente attributi <code>value</code> e <code>scale</code> attributes.</dd>
+
+        <dt class="optional">lowerSetpoint 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà il termostato. Rappresenta una temperatura. Il termostato dovrebbe mantenere la temperatura al di sopra di questo valore. I termostati a doppio punto di regolazione utilizzano questa proprietà. È una struttura avente attributi <code>value</code> e <code>scale</code> attributes.</dd>
+
+        <dt class="optional">upperSetpoint 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà il termostato. Rappresenta una temperatura. Il termostato dovrebbe mantenere la temperatura al di sotto di questo valore. I termostati a doppio punto di regolazione utilizzano questa proprietà. È una struttura avente attributi <code>value</code> e <code>scale</code> attributes.</dd>
+    
+        <dt class="optional">thermostatMode 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà il termostato. It represents the current mode of the thermostat. I valori validi sono auto <code>AUTO</code>, freddo <code>COOL</code>, caldo <code>HEAT</code>, eco <code>ECO</code> e spento <code>OFF</code>.</dd>
+
+        <dt class="optional">adaptiveRecoveryStatus 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà il termostato. Rappresenta lo stato attuale di preriscaldamento o preraffreddamento. I valori validi sono preriscaldamento <code>PREHEATING</code>, preraffreddamento <code>PRECOOLING</code> ed inattivo <code>INACTIVE</code>.</dd>
+
+        <dt class="optional">primaryHeaterOperation 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà il termostato HVAC. It represents the current operating stage of the primary heating component. Usually the main heating mechanism is a heat pump. I valori validi sono <code>OFF</code>, <code>STAGE_1</code>, <code>STAGE_2</code> and <code>STAGE_3</code>.</dd>
+
+        <dt class="optional">auxiliaryHeaterOperation 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà il termostato HVAC. Questa proprietà indica se il riscaldamento ausiliario è acceso o spento. I valori validi sono acceso <code>ON</code> e spento <code>OFF</code>. Di solito il meccanismo di riscaldamento ausiliario utilizza il riscaldamento a resistenza elettrica.</dd>
+
+        <dt class="optional">coolerOperation 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà il termostato HVAC. Rappresenta l'attuale fase di funzionamento del componente di raffreddamento. I valori validi sono spento <code>OFF</code>, fase 1 <code>STAGE_1</code>, fase 2 <code>STAGE_2</code> e fase 3 <code>STAGE_3</code>.</dd>
+
+        <dt class="optional">fanOperation 
+            <span class="property-type">stringa</span>
+        </dt>
+            <dd> È di proprietà il termostato HVAC. Rappresenta l'attuale fase di funzionamento del componente di ventilazione. I valori validi sono spento <code>OFF</code>, fase 1 <code>STAGE_1</code>, fase 2 <code>STAGE_2</code> e fase 3 <code>STAGE_3</code>.</dd>
+    
+        <dt class="optional">toggles 
+            <span class="property-type">JSON</span>
+        </dt>
+            <dd> È di proprietà per Attiva/disattiva. Questa proprietà rappresenta, per ogni istanza, lo stato del dispositivo. I valori validi sono acceso <code>ON</code> e spento <code>OFF</code>.</dd>
+    </dl>
+
+<h3>Comandi o Attributi</h3>
+    <dl class="message-properties">
+        <dt class="optional">ReportState</dt>
+            <dd> Invia i valori delle proprietà correnti ad Alexa.</dd>
+
+        <dt class="optional">GetState</dt>
+            <dd> Invia all'output del nodo un messaggio con il payload contenente i valori delle proprietà del nodo.</dd>
+
+        <dt class="optional">GetAllStates</dt>
+            <dd> Invia all'output del nodo un messaggio con il payload contenente tutti i valori delle proprietà correnti dei nodi.</dd>
+
+        <dt class="optional">GetNames</dt>
+            <dd> Invia all'output del nodo un messaggio con il payload contenente tutti i nomi dei nodi.</dd>
+
+        <dt class="optional">DorrBellPress</dt>
+            <dd> Invia ad Alexa un evento di pressione del campanello per notificare che il campanello è stato premuto.</dd>
+
+        <dt class="optional">CameraStreams</dt>
+            <dd> Imposta gli URL dello stream della fotocamera.</dd>
+
+        <dt class="optional">SetMedia</dt>
+            <dd> Imposta la registrazione multimediale corrente disponibile e notifica ad Alexa che è stata creata o aggiornata una registrazione multimediale. Il payload contiene informazioni multimediali o una serie di informazioni multimediali che sostituiscono la registrazione multimediale corrente.</dd>
+
+        <dt class="optional">AddOrUpdateMedia</dt>
+            <dd> Aggiungi o aggiorna la registrazione multimediale corrente disponibile e notifica ad Alexa che è stata creata o aggiornata una registrazione multimediale. Il payload contiene informazioni multimediali o una serie di informazioni multimediali da aggiungere o aggiornare.</dd>
+
+        <dt class="optional">RemoveMedia</dt>
+            <dd> Rimuovi la registrazione multimediale specificata e notifica ad Alexa che una registrazione multimediale è stata rimossa. Il payload contiene un ID media o un array di ID media da rimuovere.</dd>
+
+        <dt class="optional">SetSecurityDeviceNamesInError</dt>
+            <dd> Imposta il dispositivo di sicurezza corrente in errore. Il payload contiene un nome di dispositivo o un array di nomi di dispositivo che sostituisce quello attuale.</dd>
+
+        <dt class="optional">AddSecurityDeviceNamesInError</dt>
+            <dd> Aggiungi o aggiorna l'attuale dispositivo di sicurezza in errore. Il payload contiene un nome di dispositivo o una serie di nomi di dispositivo da aggiungere.</dd>
+
+        <dt class="optional">RemoveSecurityDeviceNamesInError</dt>
+            <dd> Rimuovere il dispositivo di sicurezza specificato in errore. Il payload contiene un nome di dispositivo o una serie di nomi di dispositivo da rimuovere.</dd>
+
+        <dt class="optional">MeasurementsReport</dt>
+            <dd> Invia un evento MeasurementsReport per segnalare in modo proattivo ad Alexa una o più misurazioni del consumo energetico.</dd>
+
+        <dt class="optional">InventoryConsumed</dt>
+            <dd> Invia un evento InventoryConsumed per segnalare in modo proattivo ad Alexa la quantità di materiale di consumo che il tuo dispositivo ha già consumato.</dd>
+
+        <dt class="optional">ExecDirective</dt>
+            <dd> Simula la ricezione di una direttiva da Alexa. Usato per effettuare i test.</dd>
+    </dl>
+    
+
+<h3>References</h3>
+    <ul>
+        <li><a href="https://developer.amazon.com/en-US/docs/alexa/device-apis/list-of-interfaces.html">Alexa</a> - Lista delle interfacce di Alexa e dei linguaggi disponibili</li>
+        <li><a href="https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome#the-config-node">GitHub</a> - il link del progetto su GitHub</li>
+    </ul>
+</script>

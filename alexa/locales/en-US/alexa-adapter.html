@@ -29,9 +29,9 @@
 
     <p><code>Event endpoint</code>: the endpoint for your region. See <a href="https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#send-events-to-the-correct-url">Send Events to the Correct URL</a>.</p>
 
-    <p><code>HTTP Port</code>: the server port waiting for Alexa messages. If filled, the node starts the server to the specified port, if empty or 0, use the same Node-RED port. You need to redirect the <code>/alexa/</code> HTTPS traffic on this port.</p>
+    <p><code>HTTP Port</code>: the server port waiting for Alexa messages. If filled, the node starts the server to the specified port, if empty or 0, use the same Node-RED port. You need to redirect to this port the HTTPS traffic sent to the path specified in the <code>HTTP Path</code>.</p>
 
-    <p><code>HTTP Path</code>: the server path prefix. The default value is <code>alexa</code>. If You change it, You need to adapt all the uri in the Amazon configuration.</p>
+    <p><code>HTTP Path</code>: the server path prefix. The default value is <code>alexa</code>. If You change it, You need to adapt all the URI in the Amazon configuration.</p>
 
     <p><code>Verbose log</code>: enable it only for troubleshooting.</p>
 

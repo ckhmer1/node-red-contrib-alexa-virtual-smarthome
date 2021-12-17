@@ -1,0 +1,44 @@
+<script type="text/html" data-help-name="alexa-adapter">
+<p>Un nodo di interfaccia con la tua skill di Alexa Smart Home.</p>
+
+<h3>Dettagli</h3>
+
+    <p><code>Nome</code> un nome per la configurazione, ad esempio: <code>Alexa</code>.</p>
+
+    <p><code>Accedi con le credenziali di Amazon</code>, se abilitato, usa la <code>Login with Amazon</code> per collegare la tua skill Alexa, altrimenti usa il <code>Nome utente</code> e la <code>Password</code> specificata.</p>
+
+    <p><code>ID Cliente</code>: L'ID cliente del profilo di sicurezza Amazon. Il valore copiato in (1). Visibile soltanto se <code>Accedi con le credenziali di Amazon</code>, è selezionato.</p>
+
+    <p><code>Segreto</code>: Il segreto del profilo di sicurezza Amazon. Il valore copiato in (2). Visibile soltanto se <code>Accedi con le credenziali di Amazon</code>, è selezionato.</p>
+
+    <p><code>Email consentite</code>: una lista di indirizzi email a cui è consentito collegare la tua skill di Alexa. Visibile soltanto se <code>Accedi con le credenziali di Amazon</code>, è selezionato.</p>
+
+    <p><code>Nome utente</code>: il nome utente usato per autenticarsi e collegare la tua skill Alexa. Visibile soltanto se <code>Accedi con le credenziali di Amazon</code>, non è selezionato.</p>
+
+    <p><code>Password</code>: la password usata per autenticarsi e collegare la tua skill di Alexa. Visibile soltanto se <code>Accedi con le credenziali di Amazon</code>, non è selezionato.</p>
+
+    <p><code>ID Cliente della skill Alexa</code>: l'ID cliente della skill di Alexa. Il valore copiato in (9).</p>
+
+    <p><code>Segreto della skill Alexa</code>: il segreto della skill di Alexa. Il valore copiato in (10).</p>
+
+    <p><code>Il tuo ID cliente</code>: il tuo ID cliente generato casualmente. Il valore copiato in (5).</p>
+
+    <p><code>Il tuo segreto</code>: il tuo segreto generato casualmente. Il valore copiato in (6).</p>
+
+    <p><code>Scopo</code>: lo scopo. Il valore copiato in (7), per esempio: <code>smart_home</code>.</p>
+
+    <p><code>URL dell'Event endpoint</code>: l'URL dell'Event endpoint relativo alla tua zona geografica. Per l'Europa è <code>https://api.eu.amazonalexa.com/v3/events</code>. Vedi <a href="https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#send-events-to-the-correct-url">Send Events to the Correct URL</a> per ulteriori informazioni.</p>
+
+    <p><code>Porta del server HTTP</code>: la porta del server HTTP che riceve i messaggi di Alexa. Se specificata, il nodo crea un server in ascolto sulla porta specificata, se vuoto o 0, usa la stessa porta di Node-REDt. Devi ridirigere a questa porta il traffico HTTPS inviato al percorso specificato in <code>/Percorso del server HTTP/</code>.</p>
+
+    <p><code>Percorso del server HTTP</code>: il percorso del server HTTP. Il valore predefinito è <code>alexa</code>. Se diverso, devi adattare tutti gli URI nella configurazione fatta sui server di Amazon.</p>
+
+    <p><code>Log dettagliato</code>: fornisce più informazioni, abilitalo solo per la risoluzione dei problemi.</p>
+
+
+<h3>Riferimenti</h3>
+    <ul>
+        <li><a href="https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome#the-config-node">GitHub</a> - il link del progetto su GitHub</li>
+    </ul>
+
+</script>

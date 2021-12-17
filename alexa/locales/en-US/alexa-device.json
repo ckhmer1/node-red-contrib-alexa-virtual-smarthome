@@ -145,7 +145,7 @@
             "alarms": "Alarms",
             "burglary_alarm": "Burglary alarm",
             "carbon_monoxide_alarm": "CarbonMonoxide alarm",
-            "fire_alarm": "FireA alarm",
+            "fire_alarm": "Fire alarm",
             "water_alarm": "Water alarm",
             "pin_code": "PIN code",
             "exit_delay": "Exit delay (s)",
