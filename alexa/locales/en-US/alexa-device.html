@@ -29,12 +29,20 @@
         <dt class="optional">topic 
             <span class="property-type">string | empty</span>
         </dt>
-            <dd> The topic configured, if an Alexa directive is received.</dd>
+        <ul>
+            <li><dd> the topic configured, if an Alexa directive is received. </dd></li>
+            <li><dd> the value 'SecurityPanelControllerPinCode' if the security system receives a disarm command and a PIN code is wrong.</dd></li>
+            <li><dd> a value related to the command, if a command is received in input.</dd></li>
+        </ul>
 
         <dt>payload
             <span class="property-type">JSON</span>
         </dt>
-            <dd> the updated device properties or a command output. </dd>
+        <ul>
+            <li><dd> the updated device properties, if an Alexa directive is received.</dd></li>
+            <li><dd> an object containing in <code>name</code> the device name, in <code>pin_code</code> the PIN code and in <code>topic</code> the topic configured in the node, if the security system receives a disarm command and a PIN code is wrong.</dd></li>
+            <li><dd> the command output, if a command is received in input.</dd></li>
+        </ul>
 
         <dt>inputs
             <span class="property-type">JSON</span>
@@ -64,7 +72,7 @@
 
                     
 <h3>Details</h3>
-    <p><code>msg.topic</code> is used to understand if need to update the device state, the device attributes, or execute a command.
+    <p>The <code>msg.topic</code> received in an input message is used to understand if it needs to update the device state, the device attributes, or execute a command.
         If the topic is a known command name, the command will be executed.
         If the topic is a known attribute name, the device attribute will be updated.
         If the topic is a known property name, the device property will be updated.
@@ -333,6 +341,9 @@
 
         <dt class="optional">InventoryConsumed</dt>
             <dd> Send an InventoryConsumed event to proactively report to Alexa the amount of a consumable that your device has already consumed.</dd>
+
+        <dt class="optional">SetSecurityPanelControllerPinCode</dt>
+            <dd> Sets the Security Panel PIN Code. The payload contains the new PIN Code, empty to remove it.</dd>
 
         <dt class="optional">ExecDirective</dt>
             <dd> Simulate receiving a directive from Alexa.</dd>

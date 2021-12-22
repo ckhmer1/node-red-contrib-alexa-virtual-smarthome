@@ -29,12 +29,20 @@
         <dt class="optional">topic 
             <span class="property-type">stringa | vuoto</span>
         </dt>
-            <dd> L'argomento configurato, se viene ricevuta una direttiva da Alexa.</dd>
+        <ul>
+            <li><dd> l'argomento configurato, se viene ricevuta una direttiva da Alexa.</dd></li>
+            <li><dd> il valore 'SecurityPanelControllerPinCode' se il sistema di sicurezza riceve un comando di disattivazione ed un codice PIN è errato.</dd></li>
+            <li><dd> un valore relativo al comando da eseguire.</dd></li>
+        </ul>
 
         <dt>payload
             <span class="property-type">JSON</span>
         </dt>
-            <dd> Le proprietà aggiornate del dispositivo o un output di comando. </dd>
+        <ul>
+            <li><dd> le proprietà aggiornate del dispositivo se viene ricevuta una direttiva da Alexa.</dd></li>
+            <li><dd> un oggetto contenente in <code>name</code> il nome del dispositivo, in <code>pin_code</code> il codice PIN ed in <code>topic</code> il topic configurato nel nodo, se il sistema di sicurezza riceve un comando di disattivazione ed un codice PIN è errato.</dd></li>
+            <li><dd> l'output di comando se un messaggio con un comando è ricevuto in ingresso.</dd></li>
+        </ul>
 
         <dt>inputs
             <span class="property-type">JSON</span>
@@ -64,7 +72,7 @@
 
                     
 <h3>Dettagli</h3>
-    <p><code>msg.topic</code> viene utilizzato per capire se è necessario aggiornare lo stato del dispositivo, gli attributi del dispositivo o eseguire un comando.
+    <p>il <code>msg.topic</code> di un messaggio in ingresso viene utilizzato per capire se è necessario aggiornare lo stato del dispositivo, gli attributi del dispositivo o eseguire un comando.
         Se l'argomento è un nome di comando, il comando verrà eseguito.
         Se l'argomento è un nome di un attributo, l'attributo del dispositivo verrà aggiornato.
         Se l'argomento è un nome di proprietà, la proprietà del dispositivo verrà aggiornata.
@@ -333,6 +341,9 @@
 
         <dt class="optional">InventoryConsumed</dt>
             <dd> Invia un evento InventoryConsumed per segnalare in modo proattivo ad Alexa la quantità di materiale di consumo che il tuo dispositivo ha già consumato.</dd>
+
+        <dt class="optional">SetSecurityPanelControllerPinCode</dt>
+            <dd> Imposta il codice PIN del pannello di sicurezza. Il payload contiene il nuovo codice PIN, vuoto per rimuoverlo.</dd>
 
         <dt class="optional">ExecDirective</dt>
             <dd> Simula la ricezione di una direttiva da Alexa. Usato per effettuare i test.</dd>

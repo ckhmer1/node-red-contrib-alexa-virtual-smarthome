@@ -332,9 +332,7 @@ module.exports = function (RED) {
             } else if (topic === 'INVENTORYCONSUMED') {
                 if (node.state_types_inventory_usage_sensors) {
                     let new_state = {};
-                    console.log("CCHI state_types_inventory_usage_sensors " + JSON.stringify(node.state_types_inventory_usage_sensors));
                     for (const [instance, state_type] of Object.entries(node.state_types_inventory_usage_sensors)) {
-                        console.log("CCHI instance " + instance + " " + JSON.stringify(state_type));
                         new_state[instance] = {
                             "@type": state_type.attributes['@type'].values[0],
                         };
@@ -364,6 +362,8 @@ module.exports = function (RED) {
                         });
                     }
                 }
+            } else if (topic === 'SETSECURITYPANELCONTROLLERPINCODE') {
+                node.config.pin_code = String(msg.payload || '').trim();
             } else if (topic === 'EXECDIRECTIVE') { // test
                 if (node.isVerbose()) {
                     node._debug(" CCHI execDirective " + msg.namespace + " " + msg.name + " " + JSON.stringify(msg.payload));
@@ -607,7 +607,7 @@ module.exports = function (RED) {
                     energy_sources['electricity'] = {
                         unit: node.config.electricity_measuring_method,
                         measuringMethod: node.config.electricity_unit,
-                        defaultResolution: parseInt(node.config.electricity_default_resolution) || 3600
+                        defaultResolution: node.to_int(node.config.electricity_default_resolution, 3600)
                     };
                 }
                 if (node.config.natural_gas_measuring_method && node.config.natural_gas_unit) {
@@ -615,7 +615,7 @@ module.exports = function (RED) {
                     energy_sources['naturalGas'] = {
                         unit: node.config.natural_gas_measuring_method,
                         measuringMethod: node.config.natural_gas_unit,
-                        defaultResolution: parseInt(node.config.natural_gas_default_resolution) || 3600
+                        defaultResolution: node.to_int(node.config.natural_gas_default_resolution, 3600)
                     };
                 }
                 if (add_interface) {
@@ -1794,6 +1794,7 @@ module.exports = function (RED) {
             let event_payload = {};
             let res_payload = {};
             let other_data = {};
+            let node_config = {};
             cmd_res['event'] = {
                 payload: event_payload
             }
@@ -2098,10 +2099,14 @@ module.exports = function (RED) {
 
                 case "Alexa.SecurityPanelController": // SecurityPanelController
                     if (name === 'Arm') {
+                        const exit_delay = node.to_int(node.config.exit_delay, 0);
                         cmd_res['namespace'] = 'Alexa.SecurityPanelController';
                         cmd_res['name'] = 'Arm.Response';
                         if (node.state['armState'] === payload['armState']) {
                             modified = [];
+                            if (exit_delay > 0) {
+                                node_config['exit_delay'] = exit_delay;
+                            }
                         } else if (node.state['armState'] === 'DISARMED') {
                             node._debug("CCHI event_payload security_device_names_in_error " + JSON.stringify(node.security_device_names_in_error));
                             if (node.security_device_names_in_error.length > 0) {
@@ -2115,9 +2120,9 @@ module.exports = function (RED) {
                                 if ('BYPASS_ALL' === (payload['bypassType'] || '')) {
                                     event_payload['bypassedEndpoints'] = security_device_in_error;
                                     modified = node.setValues({ armState: payload['armState'] }, node.state);
-                                    const exit_delay = parseInt(node.config.exit_delay || 0);
                                     if (exit_delay > 0) {
                                         event_payload['exitDelayInSeconds'] = exit_delay;
+                                        node_config['exit_delay'] = exit_delay;
                                     }
                                 } else {
                                     event_payload['endpointsNeedingBypass'] = security_device_in_error;
@@ -2128,9 +2133,9 @@ module.exports = function (RED) {
                                 }
                             } else {
                                 modified = node.setValues({ armState: payload['armState'] }, node.state);
-                                const exit_delay = parseInt(node.config.exit_delay || 0);
                                 if (exit_delay > 0) {
                                     event_payload['exitDelayInSeconds'] = exit_delay;
+                                    node_config['exit_delay'] = exit_delay;
                                 }
                             }
                         } else {
@@ -2150,6 +2155,14 @@ module.exports = function (RED) {
                                 modified = node.setValues({ armState: 'DISARMED' }, node.state);
                                 // TODO Check Add alarms if any
                             } else {
+                                node.send({
+                                    topic: 'SecurityPanelControllerPinCode',
+                                    payload: {
+                                        name: node.config.name,
+                                        pin_code: node.config.pin_code.trim(),
+                                        topic: node.config.topic,
+                                    }
+                                });
                                 cmd_res['name'] = 'ErrorResponse';
                                 event_payload['type'] = 'UNAUTHORIZED';
                                 event_payload['message'] = 'The PIN code is missing or not correct.';
@@ -2285,7 +2298,7 @@ module.exports = function (RED) {
 
 
             if (send_state_in_out && modified !== undefined) {
-                node.sendState(modified, payload, namespace, name, other_data);
+                node.sendState(modified, payload, namespace, name, other_data, node_config);
                 node.updateStatusIcon();
             }
 
@@ -2299,7 +2312,7 @@ module.exports = function (RED) {
         //
         //
         //
-        sendState(modified, inputs, namespace, name, other_data) {
+        sendState(modified, inputs, namespace, name, other_data, config) {
             const node = this;
             if (modified === undefined) {
                 modified = [];
@@ -2312,7 +2325,8 @@ module.exports = function (RED) {
                 payload: node.state,
                 modified: modified,
                 topic: node.config.topic,
-                device: node.config.name
+                device: node.config.name,
+                config: config,
             };
             if (name) {
                 msg.name = name;
