@@ -473,7 +473,6 @@ module.exports = function (RED) {
                         affiliateCallSign: ""
                     }
                 });
-                // TODO one of channel or channelMetadata must be filled
                 state_types['channel'] = {
                     type: Formats.OBJECT,
                     attributes: {
@@ -486,13 +485,14 @@ module.exports = function (RED) {
                         uri: Formats.STRING,
                     },
                 };
-                state_types['channelMetadata'] = {
+                // TODO REMOVE one of channel or channelMetadata must be filled
+                /*state_types['channelMetadata'] = {
                     type: Formats.OBJECT,
                     attributes: {
                         name: Formats.STRING,
                         image: Formats.STRING,
                     }
-                };
+                };*/
             }
             // ColorController
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-colorcontroller.html
