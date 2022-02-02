@@ -44,14 +44,6 @@ module.exports = function (RED) {
         COPY_OBJECT: 256,
     };
 
-    const EXCLUSIVE_STATES = {
-        color: ['colorTemperatureInKelvin'],
-        colorTemperatureInKelvin: ['color'],
-        lowerSetpoint: ['targetSetpoint'],
-        upperSetpoint: ['targetSetpoint'],
-        targetSetpoint: ['lowerSetpoint', 'upperSetpoint'],
-    };
-
     const DEEP_STATES = {
         levels: 'level',
         modes: 'mode',
@@ -266,7 +258,7 @@ module.exports = function (RED) {
                     node.alexa.send_doorbell_press(node.id, msg.payload || '');
                 });
             } else if (topic === 'CAMERASTREAMS') {
-                node.updateState(msg.payload || {}, node.cameraStreams, CAMERASTREAMS_STATE_TYPE, {});
+                node.updateState(msg.payload || {}, node.cameraStreams, CAMERASTREAMS_STATE_TYPE);
                 // node.cameraStreams = msg.payload;
                 if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
             } else if (topic === 'SETMEDIA') {
@@ -340,7 +332,7 @@ module.exports = function (RED) {
                             new_state[instance]['unit'] = state_type.attributes['unit'].values[0];
                         }
                     }
-                    const modified = node.updateState(msg.payload || {}, new_state, node.state_types_inventory_usage_sensors, {});
+                    const modified = node.updateState(msg.payload || {}, new_state, node.state_types_inventory_usage_sensors);
                     if (modified.length > 0) {
                         modified.forEach(m => {
                             const time_of_sample = (new Date()).toISOString();
@@ -386,7 +378,7 @@ module.exports = function (RED) {
 
                 // if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
                 // const modified = node.setValues(msg1.payload || {}, node.state);
-                const modified = node.updateState(msg1.payload || {}, node.state, node.state_types, EXCLUSIVE_STATES);
+                const modified = node.updateState(msg1.payload || {}, node.state, node.state_types);
                 // if (node.isVerbose()) node._debug("CCHI " + node.id + " modified " + JSON.stringify(modified));
                 // if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
                 if (modified.length > 0) {
@@ -2466,7 +2458,7 @@ module.exports = function (RED) {
         //
         //
         //
-        updateState(new_states, current_state, state_types, exclusive_states) {
+        updateState(new_states, current_state, state_types) {
             const node = this;
             let modified = [];
             if (node.isVerbose()) node._debug("CCHI updateState state_types " + JSON.stringify(state_types));
@@ -2475,7 +2467,7 @@ module.exports = function (RED) {
                 if (new_states.hasOwnProperty(key)) {
                     // console.log("CCHI found key " + key);
                     // TODO DEEP_STATES
-                    let o_modified = node.setState(key, new_states[key], current_state, state_types[key], exclusive_states[key] || {});
+                    let o_modified = node.setState(key, new_states[key], current_state, state_types[key]);
                     if (o_modified) {
                         node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified.push(o_modified);
@@ -2492,15 +2484,12 @@ module.exports = function (RED) {
         //
         //
         //
-        cloneObject(cur_obj, new_obj, state_values, exclusive_states) {
+        cloneObject(cur_obj, new_obj, state_values) {
             const node = this;
             let differs = false;
-            if (exclusive_states === undefined) {
-                exclusive_states = {};
-            }
             Object.keys(state_values).forEach(function (key) {
                 if (typeof new_obj[key] !== 'undefined' && new_obj[key] != null) {
-                    if (node.setState(key, new_obj[key], cur_obj, state_values[key] || {}, exclusive_states[key] || {})) {
+                    if (node.setState(key, new_obj[key], cur_obj, state_values[key] || {})) {
                         differs = true;
                     }
                 } else if (!(state_values[key].type & Formats.MANDATORY)) {
@@ -2606,7 +2595,7 @@ module.exports = function (RED) {
         //
         //
         //
-        setState(key, value, state, state_type, exclusive_states) {
+        setState(key, value, state, state_type) {
             const node = this;
             let differs = false;
             let old_state = typeof state === 'object' ? state[key] : {};
@@ -2616,7 +2605,7 @@ module.exports = function (RED) {
                     type: state_type
                 };
             }
-            exclusive_states = state_type.exclusive_states || {};
+            let exclusive_states = state_type.exclusive_states || {};
             let exclusive_states_arr = [];
             if (Array.isArray(exclusive_states)) {
                 exclusive_states_arr = exclusive_states;
@@ -2712,7 +2701,7 @@ module.exports = function (RED) {
                             }
                         }
                         if (cur_obj !== undefined) {
-                            if (node.cloneObject(cur_obj, new_obj, state_type.attributes, exclusive_states)) {
+                            if (node.cloneObject(cur_obj, new_obj, state_type.attributes)) {
                                 differs = key;
                             }
                             if (Object.keys(cur_obj).length > 0) {
@@ -2746,7 +2735,7 @@ module.exports = function (RED) {
                             if (typeof old_state[ikey] == 'undefined') {
                                 old_state[ikey] = {};
                             }
-                            if (node.setState(ikey, value[ikey], old_state, state_type.attributes[ikey], exclusive_states[ikey] || {})) {
+                            if (node.setState(ikey, value[ikey], old_state, state_type.attributes[ikey])) {
                                 o_differs.push(ikey);
                                 differs = o_differs;
                             }
@@ -2791,7 +2780,7 @@ module.exports = function (RED) {
                 } else {
                     Object.keys(old_state).forEach(function (ikey) {
                         if (typeof value[ikey] !== 'undefined') {
-                            if (node.setState(ikey, value[ikey], old_state, state_type.type - Formats.COPY_OBJECT, {})) {
+                            if (node.setState(ikey, value[ikey], old_state, state_type.type - Formats.COPY_OBJECT)) {
                                 differs = key;
                             }
                         }
@@ -2836,7 +2825,7 @@ module.exports = function (RED) {
         //
         setValues(from_object, to_object) {
             const node = this;
-            return node.updateState(from_object, node.state, node.state_types, EXCLUSIVE_STATES);
+            return node.updateState(from_object, node.state, node.state_types);
         }
 
         //
