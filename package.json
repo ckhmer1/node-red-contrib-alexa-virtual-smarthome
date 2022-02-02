@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-alexa-virtual-smarthome",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "Node Red Alexa Smarthome node",
   "main": "index.js",
   "scripts": {
@@ -24,9 +24,9 @@
       "alexa-device": "alexa/alexa-device.js"
     }
   },
-	"engines": {
-		"node": ">=12.0.0"
-	},
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "author": {
     "name": "Claudio Chimera"
   },
@@ -37,20 +37,20 @@
   "homepage": "https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome#readme",
   "devDependencies": {
     "http-proxy": "^1.18.1",
-    "mocha": "^8.3.2",
+    "mocha": "^9.2.0",
     "node-red": "^2.0.5",
     "node-red-node-test-helper": "^0.2.7"
   },
   "dependencies": {
-    "ask-sdk-core": "^2.11.0",
-    "ask-sdk-express-adapter": "^2.11.0",
-    "ask-sdk-model": "^1.36.1",
+    "ask-sdk-core": "^2.12.0",
+    "ask-sdk-express-adapter": "^2.12.0",
+    "ask-sdk-model": "^1.37.2",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "helmet": "^4.4.1",
+    "express": "^4.17.2",
+    "helmet": "^5.0.2",
     "morgan": "^1.10.0",
     "stoppable": "^1.1.0",
-    "superagent": "^3.8.3",
+    "superagent": "^7.1.1",
     "superagent-throttle": "^1.0.1",
     "uuid-token-generator": "^1.0.0"
   },
