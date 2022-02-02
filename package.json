@@ -18,12 +18,18 @@
     "node-red"
   ],
   "node-red": {
+    "version": ">=2.0.0",
     "nodes": {
       "alexa-adapter": "alexa/alexa-adapter.js",
       "alexa-device": "alexa/alexa-device.js"
     }
   },
-  "author": "Claudio Chimera",
+	"engines": {
+		"node": ">=12.0.0"
+	},
+  "author": {
+    "name": "Claudio Chimera"
+  },
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome/issues"
