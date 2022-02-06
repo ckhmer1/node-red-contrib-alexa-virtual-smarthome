@@ -18,14 +18,14 @@
     "node-red"
   ],
   "node-red": {
-    "version": ">=2.0.0",
+    "version": ">=1.0.0",
     "nodes": {
       "alexa-adapter": "alexa/alexa-adapter.js",
       "alexa-device": "alexa/alexa-device.js"
     }
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=10"
   },
   "author": {
     "name": "Claudio Chimera"

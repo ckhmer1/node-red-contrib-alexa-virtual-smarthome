@@ -2379,77 +2379,81 @@ module.exports = function (RED) {
             let text = '';
             let fill = 'blue';
             let shape = 'dot';
-            if (node.state.connectivity && node.state.connectivity.value !== undefined) {
-                if (node.state.connectivity.value === 'OK') {
-                    fill = 'green';
-                } else {
-                    fill = 'red';
+            const state = node.state;
+            if (state.connectivity && state.connectivity.value && state.connectivity.value !== 'OK') {
+                fill = 'red';
+                text = "Offline";
+            } else {
+                fill = 'green';
+                if (state.powerState !== undefined) {
+                    if (state.powerState === 'ON') {
+                        text = 'ON';
+                    } else {
+                        text = 'OFF';
+                    }
                 }
-            }
-            if (node.state.powerState !== undefined) {
-                if (node.state.powerState === 'ON') {
-                    text = 'ON';
-                } else {
-                    text = 'OFF';
+                if (state.powerLevel !== undefined) {
+                    text += " P: " + state.powerLevel;
                 }
-            }
-            if (node.state.powerLevel !== undefined) {
-                text += " P: " + node.state.powerLevel;
-            }
-            if (node.state.brightness !== undefined) {
-                text += " bri: " + node.state.brightness;
-            }
-            if (node.state.colorTemperatureInKelvin !== undefined) {
-                text += ' temp: ' + node.state.colorTemperatureInKelvin;
-            }
-            if (node.state.color !== undefined) {
-                text += ' H: ' + node.state.color.hue +
-                    ' S: ' + node.state.color.saturation +
-                    ' B: ' + node.state.color.brightness;
-            }
-            if (node.state.lockState !== undefined) {
-                text += ' ' + node.state.lockState;
-            }
-            if (node.state.armState !== undefined) {
-                text += ' ' + node.state.armState;
-            }
-            if (node.state.percentage !== undefined) {
-                text += ' ' + node.state.percentage + "% ";
-            }
-            if (node.state.volume !== undefined) {
-                text += ' vol: ' + node.state.volume;
-            }
-            if (node.state.muted !== undefined && node.state.muted) {
-                text += ' M';
-            }
-            if (node.state.temperature !== undefined) {
-                text += ' T: ' + node.state.temperature.value;
-            }
-            if (node.state.targetSetpoint !== undefined) {
-                text += ' TS: ' + node.state.targetSetpoint.value;
-            }
+                if (state.brightness !== undefined) {
+                    text += " bri: " + state.brightness;
+                }
+                if (state.colorTemperatureInKelvin !== undefined) {
+                    text += ' temp: ' + state.colorTemperatureInKelvin;
+                }
+                if (state.color !== undefined) {
+                    text += ' H: ' + state.color.hue +
+                        ' S: ' + state.color.saturation +
+                        ' B: ' + state.color.brightness;
+                }
+                if (state.lockState !== undefined) {
+                    text += ' ' + state.lockState;
+                }
+                if (state.armState !== undefined) {
+                    text += ' ' + state.armState;
+                }
+                if (state.percentage !== undefined) {
+                    text += ' ' + state.percentage + "% ";
+                }
+                if (state.volume !== undefined) {
+                    text += ' vol: ' + state.volume;
+                }
+                if (state.muted !== undefined && state.muted) {
+                    text += ' M';
+                }
+                if (state.temperature !== undefined) {
+                    text += ' T: ' + state.temperature.value;
+                }
+                if (state.targetSetpoint !== undefined) {
+                    text += ' TS: ' + state.targetSetpoint.value;
+                }
 
-            if (node.state.lowerSetpoint !== undefined && node.state.upperSetpoint !== undefined) {
-                text += ' TS: [' + node.state.lowerSetpoint.value + ',' + node.state.upperSetpoint.value + ']';
-            }
+                if (state.lowerSetpoint !== undefined && state.upperSetpoint !== undefined) {
+                    text += ' TS: [' + state.lowerSetpoint.value + ',' + state.upperSetpoint.value + ']';
+                }
 
-            if (node.state.motionDetectionState !== undefined) {
-                text += node.state.motionDetectionState === 'DETECTED' ? ' MOTION' : ' NO MOTION';
-            }
+                if (state.motionDetectionState !== undefined) {
+                    text += state.motionDetectionState === 'DETECTED' ? ' MOTION' : ' NO MOTION';
+                }
 
-            if (node.state.contactDetectionState !== undefined) {
-                text += node.state.contactDetectionState === 'DETECTED' ? ' CONTACT' : ' NO CONTACT';
-            }
-            if (node.state.connectivity !== undefined) {
-                if (node.state.connectivity.value === 'UNREACHABLE') {
-                    fill = 'red';
-                } else if (fill !== 'red') {
-                    fill = 'green';
+                if (state.contactDetectionState !== undefined) {
+                    text += state.contactDetectionState === 'DETECTED' ? ' CONTACT' : ' NO CONTACT';
+                }
+                if (state.connectivity !== undefined) {
+                    if (state.connectivity.value === 'UNREACHABLE') {
+                        fill = 'red';
+                    } else if (fill !== 'red') {
+                        fill = 'green';
+                    }
                 }
             }
 
             if (!text) {
-                text = 'Unknown';
+                if (node.config.i_scene_controller) {
+                    text = "OK";
+                } else {
+                    text = 'Unknown';
+                }
             }
             node.status({ fill: fill, shape: shape, text: text });
         }
