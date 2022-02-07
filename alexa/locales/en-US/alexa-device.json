@@ -5,6 +5,7 @@
             "alexa": "Alexa",
             "name": "Name",
             "topic": "Out topic",
+            "passthru": "If msg arrives on input, pass through to output:",
             "username": "Username",
             "password": "Password",
             "secret": "Secret",

@@ -386,6 +386,9 @@ module.exports = function (RED) {
                         node.alexa.send_change_report(node.id, modified).then(() => { });
                     });
                 }
+                if (node.config.passthru) {
+                    node.send(msg);
+                }
                 // node.sendState(modified, msg.payload);
             }
             node.updateStatusIcon();
@@ -2382,6 +2385,7 @@ module.exports = function (RED) {
             const state = node.state;
             if (state.connectivity && state.connectivity.value && state.connectivity.value !== 'OK') {
                 fill = 'red';
+                shape = 'ring';
                 text = "Offline";
             } else {
                 fill = 'green';
