@@ -170,7 +170,7 @@ def lambda_handler(event, context):
 
     response = http.request(
         'POST',
-        '{}/alexa/smarthome'.format(base_url),
+        base_url,
         headers={
             'Authorization': 'Bearer {}'.format(token),
             'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ def lambda_handler(event, context):
 * Click on the "Edit" button.
 * Click on the "Add environment variable" button.
 * Enter "BASE_URL" as the "Key".
-* Enter "https://YOUR_DOMAIN" as the Value.
+* Enter "https://YOUR_DOMAIN/alexa/smarthome" as the Value.
 * Click on the "Add environment variable" button.
 * Enter "DEBUG" as the "Key".
 * Enter "True" as the Value.
