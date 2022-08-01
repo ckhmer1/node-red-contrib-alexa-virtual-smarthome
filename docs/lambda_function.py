@@ -32,23 +32,6 @@ def lambda_handler(event, context):
     base_url = os.environ.get('BASE_URL')
     assert base_url is not None, 'Please set BASE_URL environment variable'
 
-    directive = event.get('directive')
-    assert directive is not None, 'Malformatted request - missing directive'
-    assert directive.get('header', {}).get('payloadVersion') == '3', \
-        'Only support payloadVersion == 3'
-
-    scope = directive.get('endpoint', {}).get('scope')
-    if scope is None:
-        token is in grantee for Linking directive
-        scope = directive.get('payload', {}).get('grantee')
-    if scope is None:
-        token is in payload for Discovery directive
-        scope = directive.get('payload', {}).get('scope')
-    assert scope is not None, 'Malformatted request - missing endpoint.scope'
-    assert scope.get('type') == 'BearerToken', 'Only support BearerToken'
-
-    token = scope.get('token')
-
     http = urllib3.PoolManager(
         cert_reqs='CERT_REQUIRED',
         timeout=urllib3.Timeout(connect=2.0, read=10.0)
@@ -58,7 +41,6 @@ def lambda_handler(event, context):
         'POST',
         base_url,
         headers={
-            'Authorization': 'Bearer {}'.format(token),
             'Content-Type': 'application/json',
         },
         body=json.dumps(event).encode('utf-8'),
