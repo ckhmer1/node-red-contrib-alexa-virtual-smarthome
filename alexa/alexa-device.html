@@ -65,6 +65,7 @@
                 name: { value: "", required: true },
                 display_categories: { value: [], required: true, validate: function (dc) { return dc && dc.length > 0 } },
                 topic: { value: "", required: false },
+                topic_filter: { value: false, required: false },
                 passthru: { value: false, required: false },
                 a_inputs: { value: ['AUX_1', 'AUX_2', 'AUX_3', 'AUX_4', 'AUX_5', 'AUX_6', 'AUX_7', 'BLURAY', 'CABLE', 'CD', 'COAX_1', 'COAX_2', 'COMPOSITE_1', 'DVD', 'GAME', 'HD_RADIO', 'HDMI_1', 'HDMI_2', 'HDMI_3', 'HDMI_4', 'HDMI_5', 'HDMI_6', 'HDMI_7', 'HDMI_8', 'HDMI_9', 'HDMI_10', 'HDMI_ARC', 'INPUT_1', 'INPUT_2', 'INPUT_3', 'INPUT_4', 'INPUT_5', 'INPUT_6', 'INPUT_7', 'INPUT_8', 'INPUT_9', 'INPUT_10', 'IPOD', 'LINE_1', 'LINE_2', 'LINE_3', 'LINE_4', 'LINE_5', 'LINE_6', 'LINE_7', 'MEDIA_PLAYER', 'OPTICAL_1', 'OPTICAL_2', 'PHONO', 'PLAYSTATION', 'PLAYSTATION_3', 'PLAYSTATION_4', 'SATELLITE', 'SMARTCAST', 'TUNER', 'TV', 'USB_DAC', 'VIDEO_1', 'VIDEO_2', 'VIDEO_3', 'XBOX'], required: false },
                 i_automation_management: { value: false, required: false },
@@ -1291,9 +1292,15 @@
         </select>
     </div>
 
+    <!-- Filter by Topic -->
+    <div class="form-row">
+        <label style="width:auto" for="node-input-topic_filter"><i class="fa fa-arrow-right"></i> <span data-i18n="alexa-device.label.topic_filter"></span></label>
+        <input type="checkbox" id="node-input-topic_filter" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    
     <div class="form-row">
         <label style="width:auto" for="node-input-passthru"><i class="fa fa-arrow-right"></i> <span data-i18n="alexa-device.label.passthru"></span></label>
-        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
+        <input type="checkbox" id="node-input-passthru" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
 
     <div class="form-row red-ui-editableList-border div_trait" hidden id="i_automation_management" style="background: #fbfbfb; padding: 5px;">

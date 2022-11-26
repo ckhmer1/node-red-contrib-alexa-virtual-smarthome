@@ -224,7 +224,8 @@ module.exports = function (RED) {
         //
         onInput(msg) {
             const node = this;
-            const topicArr = String(msg.topic || '').split('/');
+            const topic_str = String(msg.topic || '');
+            const topicArr = topic_str.split('/');
             const topic = topicArr[topicArr.length - 1].toUpperCase();
             if (node.isVerbose()) node._debug("onInput " + JSON.stringify(msg));
             if (node.isVerbose()) node._debug("onInput " + topic);
@@ -366,6 +367,10 @@ module.exports = function (RED) {
                 }
             } else {
                 let msg1 = msg;
+                console.log("CCHI topic " + node.config.topic + " msg.topic " + topic_str);
+                if (node.config.topic_filter && !topic_str.startsWith(node.config.topic)) {
+                    return;
+                }
                 Object.keys(node.state_types).forEach(function (key) {
                     if (topic == key.toUpperCase()) {
                         msg1 = {
