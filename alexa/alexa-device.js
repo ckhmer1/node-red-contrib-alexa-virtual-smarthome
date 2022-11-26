@@ -367,7 +367,6 @@ module.exports = function (RED) {
                 }
             } else {
                 let msg1 = msg;
-                console.log("CCHI topic " + node.config.topic + " msg.topic " + topic_str);
                 if (node.config.topic_filter && !topic_str.startsWith(node.config.topic)) {
                     return;
                 }
