@@ -6,6 +6,7 @@
             "name": "Nome",
             "topic": "Topic in uscita",
 			"passthru": "Se un messaggio arriva in ingresso, invialo in uscita:",
+			"topic_filter": "Filtra i messaggi in ingresso",
             "username": "Nome utente",
             "password": "Password",
             "secret": "Segreto",
