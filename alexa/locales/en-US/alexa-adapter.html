@@ -29,9 +29,17 @@
 
     <p><code>Event endpoint</code>: the endpoint for your region. See <a href="https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#send-events-to-the-correct-url">Send Events to the Correct URL</a>.</p>
 
-    <p><code>HTTP Port</code>: the server port waiting for Alexa messages. If filled, the node starts the server to the specified port, if empty or 0, use the same Node-RED port. You need to redirect to this port the HTTPS traffic sent to the path specified in the <code>HTTP Path</code>.</p>
+    <p><code>HTTP(s) Port</code>: the server port waiting for Alexa messages. If filled, the node starts the server to the specified port, if empty or 0, use the same Node-RED port. You need to redirect to this port the HTTPS traffic sent to the path specified in the <code>HTTP(s) Path</code>.</p>
 
-    <p><code>HTTP Path</code>: the server path prefix. The default value is <code>alexa</code>. If You change it, You need to adapt all the URI in the Amazon configuration.</p>
+    <p><code>HTTP(s) Path</code>: the server path prefix. The default value is <code>alexa</code>. If You change it, You need to adapt all the URI in the Amazon configuration.</p>
+
+    <p><code>Use http Node-RED root path</code>: If enabled, use the same http root path prefix configured for Node-RED. Otherwise, no prefix will be used.<p>
+
+    <p><code>HTTPS server</code>: If enabled, the smarthome service will use HTTPS instead of HTTP. Uncheck if you want to do SSL termination on a reverse proxy.</p>
+    
+    <p><code>Public Key</code>: Path to the file containing the certificate public SSL key, e.g. `fullchain.pem` from Let's Encrypt. Can be an absolute path or a path relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).</p>
+
+    <p><code>Private Key</code>: Path to the file containing the certificate private SSL key, e.g. `privkey.pem` from Let's Encrypt. Can be an absolute path or a path relative to Node-REDs user dir (where your settings.js, flows.json etc. are stored).</p>
 
     <p><code>Verbose log</code>: enable it only for troubleshooting.</p>
 

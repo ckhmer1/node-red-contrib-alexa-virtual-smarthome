@@ -77,7 +77,7 @@ module.exports = function (RED) {
     const TOKEN_PATH = 'token';
     const SMART_HOME_PATH = "smarthome";
     const TOKENS_FILENAME = "alexa-tokens_%s.json";
-    const GRACE_MILLISECONDS = 500;
+    const GRACE_MILLISECONDS = 0;
     const LWA_TOKEN_URI = 'https://api.amazon.com/auth/o2/token';
     const LWA_USER_PROFILE = 'https://api.amazon.com/user/profile';
     const LWA_AP_OA = 'https://www.amazon.com/ap/oa';
@@ -133,6 +133,8 @@ module.exports = function (RED) {
             const node = this;
             node.http_path = config.http_path || '';
             node.http_port = config.port || '';
+            node.https_server = config.https_server || false;
+            node.usehttpnoderoot = config.usehttpnoderoot || false;
             node.http_root = node.Path_join('/', node.http_path.trim());
             node.http_server = RED.httpNode || RED.httpAdmin;
             node.app = node.http_server;
@@ -223,7 +225,39 @@ module.exports = function (RED) {
                 node.handler = node.app.listen(parseInt(node.http_port), () => {
                     if (node.config.verbose) node._debug(`setup server listening at http://localhost:${node.http_port}${node.http_root}/` + OAUTH_PATH + "|" + TOKEN_PATH + "|" + SMART_HOME_PATH);
                 });
-                node.http_server = stoppable(http.createServer(node.app), GRACE_MILLISECONDS);
+                let options = {};
+                if (node.https_server) {
+                    try {
+                        let filename = node.credentials.privatekey;
+                        if(!filename) {
+                            node.error('No certificate private SSL key file specified in configuration.');
+                            return;
+                        }
+                        if (!filename.startsWith(path.sep)) {
+                            filename = path.join(node.user_dir, filename);
+                        }
+                        options.key = fs.readFileSync(filename)
+                    } catch (error) {
+                        node.error(`Error while loading private SSL key from file "${this.filename}" (${error})`);
+                        return;
+                    }
+
+                    try {
+                        let filename = node.credentials.pubblickey;
+                        if(!filename) {
+                            node.error('No certificate public SSL key file specified in configuration.');
+                            return;
+                        }
+                        if (!filename.startsWith(path.sep)) {
+                            filename = path.join(node.user_dir, filename);
+                        }
+                        options.cert = fs.readFileSync(filename)
+                    } catch (error) {
+                        node.error(`Error while loading public SSL key from file "${this.filename}" (${error})`);
+                        return;
+                    }
+                }
+                node.http_server = stoppable(http.createServer(options, node.app), GRACE_MILLISECONDS);
             } else {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
             }
@@ -306,6 +340,7 @@ module.exports = function (RED) {
             node.UnregisterUrl();
             if (node.handler) {
                 if (node.config.verbose) node._debug("Stopping server");
+                node.http_server.closeAllConnections();
                 node.http_server.stop(function (err, grace) {
                     if (node.config.verbose) node._debug("Server stopped " + grace + " " + err);
                 });
@@ -2172,6 +2207,8 @@ module.exports = function (RED) {
         credentials: {
             username: { type: "text" },
             password: { type: "password" },
+            publickey: { type: "text" },
+            privatekey: { type: "text" },
             your_client_id: { type: "text" },
             your_secret: { type: "password" },
             oa2_client_id: { type: "text" },

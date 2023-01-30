@@ -11,6 +11,8 @@
             emails: { value: [], required: false },
             msg_check: { value: false, required: false },
             verbose: { value: false, required: false },
+            https_server: { value: false, required: false },
+            usehttpnoderoot: { value: false, required: false },
             port: {
                 value: '', required: false, validate: function (v) {
                     const n = parseInt(v);
@@ -22,6 +24,8 @@
         credentials: {
             username: { type: "text" },
             password: { type: "password" },
+            publickey: { type: "text" },
+            privatekey: { type: "text" },
             your_client_id: { type: "text" },
             your_secret: { type: "password" },
             oa2_client_id: { type: "text" },
@@ -81,6 +85,32 @@
             }
             loginWithAmazon();
             $("#node-config-input-login_with_amazon").change(loginWithAmazon);
+            
+            // Use same NODE-Red port
+            let useNODERedPort = function () {
+                let input_port = $('#node-config-input-port').val();
+                input_port = isNaN(input_port) ? 0 : +input_port;
+                if ((input_port <= 0)) { //  || (RED.settings.uiPort === node)) {
+                    $('#connectioninfo').hide();
+                } else {
+                    $('#connectioninfo').show();
+                }
+            };
+            useNODERedPort();
+            $('#node-config-input-port').change(useNODERedPort);
+            
+            // Use external SSL offload on / off
+            let sslOffLoadKeys = function () {
+                let https_server = $("#node-config-input-https_server").prop('checked');
+                if (https_server) {
+                    $("#ssloffloadkeys").show();
+                } else {
+                    $("#ssloffloadkeys").hide();
+                }
+            };
+            sslOffLoadKeys();
+            $("#node-config-input-https_server").change(sslOffLoadKeys);
+
         },
         oneditsave: function () {
             var node = this;
@@ -227,6 +257,33 @@
             <label for="node-config-input-http_path"><i class="fa fa-globe"></i> <span data-i18n="alexa-adapter.label.http_path"></span></label>
             <input type="text" id="node-config-input-http_path" data-i18n="[placeholder]alexa-adapter.placeholder.http_path">
         </div>
+
+        <div class="form-row hidden" id="connectioninfo" style="background: #fbfbfb">
+
+            <div class="form-row">
+                <label style="width:auto" for="node-config-input-usehttpnoderoot"><i class="fa fa-arrow-right"></i> <span data-i18n="alexa-adapter.label.usehttpnoderoot"></span></label>
+                <input type="checkbox" id="node-config-input-usehttpnoderoot" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+        
+            <div class="form-row">
+                <label style="width:auto" for="node-config-input-https_server"><i class="fa fa-arrow-right"></i> <span data-i18n="alexa-adapter.label.https_server"></span></label>
+                <input type="checkbox" id="node-config-input-https_server" style="display:inline-block; width:auto; vertical-align:top;">
+            </div>
+
+            <div class="form-row hidden" id="ssloffloadkeys" style="background: #fbfbfb">
+
+                <div class="form-row">
+                    <label for="node-config-input-publickey"><i class="fa fa-folder"></i> <span data-i18n="alexa-adapter.label.publickey"></span></label>
+                    <input type="text" id="node-config-input-publickey" data-i18n="[placeholder]alexa-adapter.placeholder.publickey">
+                </div>
+
+                <div class="form-row">
+                    <label for="node-config-input-privatekey"><i class="fa fa-folder"></i> <span data-i18n="alexa-adapter.label.privatekey"></span></label>
+                    <input type="text" id="node-config-input-privatekey" data-i18n="[placeholder]alexa-adapter.placeholder.privatekey">
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">

@@ -29,9 +29,17 @@
 
     <p><code>URL dell'Event endpoint</code>: l'URL dell'Event endpoint relativo alla tua zona geografica. Per l'Europa è <code>https://api.eu.amazonalexa.com/v3/events</code>. Vedi <a href="https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#send-events-to-the-correct-url">Send Events to the Correct URL</a> per ulteriori informazioni.</p>
 
-    <p><code>Porta del server HTTP</code>: la porta del server HTTP che riceve i messaggi di Alexa. Se specificata, il nodo crea un server in ascolto sulla porta specificata, se vuoto o 0, usa la stessa porta di Node-REDt. Devi ridirigere a questa porta il traffico HTTPS inviato al percorso specificato in <code>/Percorso del server HTTP/</code>.</p>
+    <p><code>Porta del server HTTP(s)</code>: la porta del server HTTP(s) che riceve i messaggi di Alexa. Se specificata, il nodo crea un server in ascolto sulla porta specificata, se vuoto o 0, usa la stessa porta di Node-REDt. Devi ridirigere a questa porta il traffico HTTPS inviato al percorso specificato in <code>/Percorso del server HTTP(s)/</code>.</p>
 
-    <p><code>Percorso del server HTTP</code>: il percorso del server HTTP. Il valore predefinito è <code>alexa</code>. Se diverso, devi adattare tutti gli URI nella configurazione fatta sui server di Amazon.</p>
+    <p><code>Percorso del server HTTP(s)</code>: il percorso del server HTTP(s). Il valore predefinito è <code>alexa</code>. Se diverso, devi adattare tutti gli URI nella configurazione fatta sui server di Amazon.</p>
+
+    <p><code>Usa il percorso radice http di Node-RED</code>: Se abilitato, usa come prefizzo del percorso il perforso configurato per Node-RED, altrimenti usa /.</p>
+
+    <p><code>Server HTTPS</code>: Se disabilitato, la cifratura SSL non sarà gestita da questo nodo e deve essere configurata altrove, ad esempio usando un reverse proxy.</p>
+
+    <p><code>Chiave pubblica</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave pubblica del certificato, es:. `fullchain.pem` scaricato da Let's Encrypt.</p>
+
+    <p><code>Chiave privata</code>: Percorso (assoluto o relativo alla cartella di Node-RED) del file contenente la chiave privata del certificato, es:.  `privkey.pem` scaricato da Let's Encrypt.</p>
 
     <p><code>Log dettagliato</code>: fornisce più informazioni, abilitalo solo per la risoluzione dei problemi.</p>
 
