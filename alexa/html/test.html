@@ -17,6 +17,7 @@
     <script>
         let page_url;
         let api_url = "alexa_smarthome_url";
+        if (!api_url.endsWith("/")) api_url = api_url + '/';
         const timestamp = server_timestamp;
         const test_data = {
             directive: {
@@ -176,7 +177,7 @@
             });
         }
         function startTest() {
-            test_oauth_get(api_url + '/', true);
+            test_oauth_get(api_url, true);
         }
         function test_smarthome_post_test(url) {
             $.ajax({
@@ -204,7 +205,7 @@
             const time_diff = Math.floor((now - timestamp) / 1000);
             test_success("time_difference", time_diff + " sec " + (time_diff < 10 ? "OK" : "ERROR"));
             page_url = window.location.href.split('?')[0];
-            test_smarthome_post_test(api_url + '/smarthome');
+            test_smarthome_post_test(api_url + 'smarthome');
         });
     </script>
 </head>

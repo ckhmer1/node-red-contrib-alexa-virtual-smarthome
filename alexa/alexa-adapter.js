@@ -71,6 +71,7 @@ module.exports = function (RED) {
     });
     const stoppable = require('stoppable');
     const http = require('http');
+    const https = require('https');
     const { SkillRequestSignatureVerifier, TimestampVerifier } = require('ask-sdk-express-adapter');
     //
     const OAUTH_PATH = 'oauth';
@@ -131,13 +132,13 @@ module.exports = function (RED) {
         //
         init(config) {
             const node = this;
-            node.http_path = config.http_path || '';
+            node.httpNodeRoot = RED.settings.httpNodeRoot || '/';
+            node.usehttpnoderoot = config.usehttpnoderoot || false;
+            node.http_path = node.usehttpnoderoot ? node.Path_join(node.httpNodeRoot, config.http_path || '') : config.http_path || '';
             node.http_port = config.port || '';
             node.https_server = config.https_server || false;
-            node.usehttpnoderoot = config.usehttpnoderoot || false;
             node.http_root = node.Path_join('/', node.http_path.trim());
-            node.http_server = RED.httpNode || RED.httpAdmin;
-            node.app = node.http_server;
+            node.http_server = null;
             node.user_dir = RED.settings.userDir || '.';
             node.handler = null;
             node.tokgen = new TokenGenerator(256, TokenGenerator.BASE58);
@@ -203,7 +204,7 @@ module.exports = function (RED) {
         //
         setup() {
             const node = this;
-            if (node.config.verbose) node._debug("setup server path " + node.http_server.path());
+            if (node.config.verbose) node._debug("setup server");
             node.get_tokens_sync();
             node.get_tokens()
                 .then(() => {
@@ -216,20 +217,17 @@ module.exports = function (RED) {
             node.UnregisterUrl();
             if (node.http_port.trim()) {
                 if (node.config.verbose) node._debug("setup listen port " + node.http_port);
-                node.app = express();
-                node.app.disable('x-powered-by');
-                node.app.use(helmet());
-                node.app.use(cors());
-                node.app.use(morgan('dev'));
-                node.app.set('trust proxy', 1); // trust first proxy
-                node.handler = node.app.listen(parseInt(node.http_port), () => {
-                    if (node.config.verbose) node._debug(`setup server listening at http://localhost:${node.http_port}${node.http_root}/` + OAUTH_PATH + "|" + TOKEN_PATH + "|" + SMART_HOME_PATH);
-                });
+                const app = express();
+                app.disable('x-powered-by');
+                app.use(helmet());
+                app.use(cors());
+                app.use(morgan('dev'));
+                app.set('trust proxy', 1); // trust first proxy
                 let options = {};
                 if (node.https_server) {
                     try {
                         let filename = node.credentials.privatekey;
-                        if(!filename) {
+                        if (!filename) {
                             node.error('No certificate private SSL key file specified in configuration.');
                             return;
                         }
@@ -243,8 +241,8 @@ module.exports = function (RED) {
                     }
 
                     try {
-                        let filename = node.credentials.pubblickey;
-                        if(!filename) {
+                        let filename = node.credentials.publickey;
+                        if (!filename) {
                             node.error('No certificate public SSL key file specified in configuration.');
                             return;
                         }
@@ -256,27 +254,28 @@ module.exports = function (RED) {
                         node.error(`Error while loading public SSL key from file "${this.filename}" (${error})`);
                         return;
                     }
+                    if (node.config.verbose) node._debug('Use HTTPS certificate');
+                    node.http_server = stoppable(https.createServer(options, app), GRACE_MILLISECONDS);
+                } else {
+                    node.http_server = stoppable(http.createServer(app), GRACE_MILLISECONDS);
                 }
-                node.http_server = stoppable(http.createServer(options, node.app), GRACE_MILLISECONDS);
+
+                node.handler = node.http_server.listen(parseInt(node.http_port), () => {
+                    const proto = Object.keys(options).length > 0 ? 'https' : 'http';
+                    const host = node.http_server.address().address;
+                    const port = node.http_server.address().port;
+                    if (node.config.verbose) node._debug(`Server listening at ${proto}://${host}:${port}`);
+                });
+
+                this.http_server.on('error', function (err) {
+                    const proto = Object.keys(options).length > 0 ? 'https' : 'http';
+                    node.error(`${proto} server error: ` + err);
+                });
+                node.RegisterUrl(app);
             } else {
                 if (node.config.verbose) node._debug("Use the Node-RED port");
+                node.RegisterUrl(RED.httpNode || RED.httpAdmin);
             }
-            let urlencodedParser = express.urlencoded({ extended: false })
-            let jsonParser = express.json()
-
-            node.app.get(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
-            node.app.post(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
-            node.app.post(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
-            if (node.config.verbose) {
-                node.app.get(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
-                node.app.get(node.Path_join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
-            }
-            if (node.config.msg_check) {
-                node.app.post(node.Path_join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post_verify(req, res); });
-            } else {
-                node.app.post(node.Path_join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post(req, res); });
-            }
-            if (node.config.verbose) node._debug("setup listen path " + node.http_root);
         }
 
         //
@@ -293,13 +292,46 @@ module.exports = function (RED) {
             return 'unknown';
         }
 
+
+        //
+        //
+        //
+        //
+        RegisterUrl(http_server) {
+            // httpNodeRoot is the root url for nodes that provide HTTP endpoints. If set to false, all node-based HTTP endpoints are disabled. 
+            if (RED.settings.httpNodeRoot !== false) {
+                const node = this;
+
+                if (node.config.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, OAUTH_PATH));
+                if (node.config.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, TOKEN_PATH));
+                if (node.config.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, SMART_HOME_PATH));
+
+                let urlencodedParser = express.urlencoded({ extended: false })
+                let jsonParser = express.json()
+
+                http_server.get(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
+                http_server.post(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
+                http_server.post(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
+                if (node.config.verbose) {
+                    http_server.get(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
+                    http_server.get(node.Path_join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
+                }
+                if (node.config.msg_check) {
+                    http_server.post(node.Path_join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post_verify(req, res); });
+                } else {
+                    http_server.post(node.Path_join(node.http_root, SMART_HOME_PATH), jsonParser, function (req, res) { node.smarthome_post(req, res); });
+                }
+            }
+        }
+
         //
         //
         //
         //
         UnregisterUrl() {
             const node = this;
-            if (node._httpNodeRoot !== false && node.app._router) {
+            const REDhttp = RED.httpNode || RED.httpAdmin;
+            if (RED.settings.httpNodeRoot !== false && REDhttp._router) {
                 if (node.config.verbose) node._debug("Removing url");
                 var get_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
                 var post_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
@@ -312,21 +344,22 @@ module.exports = function (RED) {
                 }
 
                 let to_remove = [];
-                node.app._router.stack.forEach(function (route, i) {
+                REDhttp._router.stack.forEach(function (route, i) {
                     if (route.route && (
                         (route.route.methods['get'] && get_urls.includes(route.route.path)) ||
                         (route.route.methods['post'] && post_urls.includes(route.route.path)) ||
                         (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
                         (all_urls.includes(route.route.path))
                     )) {
-                        node.debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                        if (node.config.verbose) node._debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
                         to_remove.unshift(i);
                     }
                 });
-                to_remove.forEach(i => node.app._router.stack.splice(i, 1));
-                node.app._router.stack.forEach(function (route) {
-                    if (route.route) node.debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.GetRouteType(route));
-                });
+                to_remove.forEach(i => REDhttp._router.stack.splice(i, 1));
+                if (node.config.verbose)
+                    REDhttp._router.stack.forEach(function (route) {
+                        if (route.route) node._debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                    });
             }
         }
 
@@ -338,16 +371,21 @@ module.exports = function (RED) {
             const node = this;
             if (node.config.verbose) node._debug("(on-close)");
             node.UnregisterUrl();
-            if (node.handler) {
+            if (node.http_server !== null) {
                 if (node.config.verbose) node._debug("Stopping server");
-                node.http_server.closeAllConnections();
                 node.http_server.stop(function (err, grace) {
                     if (node.config.verbose) node._debug("Server stopped " + grace + " " + err);
                 });
-                node.handler.close(() => {
-                    if (node.config.verbose) node._debug("Server stopped");
+                setImmediate(function () {
+                    node.http_server.emit('close');
+                    node.http_server = null;
                 });
-                node.handler = null;
+                if (node.handler !== null) {
+                    node.handler.close(() => {
+                        if (node.config.verbose) node._debug("Server stopped");
+                    });
+                    node.handler = null;
+                }
             }
             if (removed) {
                 // this node has been deleted
@@ -618,8 +656,8 @@ module.exports = function (RED) {
         //
         smarthome_get(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug('smarthome_get');
-            const uri = 'https://' + node.Path_join(req.get('Host'), node.http_root);
+            const uri = 'https:/' + node.Path_join(req.get('Host'), node.http_root);
+            if (node.config.verbose) node._debug('smarthome_get base url ' + uri);
             // res.status(200).send(node.Path_join(uri, SMART_HOME_PATH));
             node.show_test_page(res, uri);
         }
