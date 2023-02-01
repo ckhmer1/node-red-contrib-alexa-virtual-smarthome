@@ -1,26 +1,27 @@
+---
 name: NPM Publish
 
 on:
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   publish-npm:
+    name: Publish Node-RED package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-
-  update-nodered:
-    runs-on: ubuntu-latest
-    needs: [publish-npm]
-    steps:
-      - uses: hacksore/node-red-flow@v2
+          node-version: latest
+          cache: npm
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{secrets.NPM_TOKEN}}
+      - name: Publish to Node-RED Library
+        uses: Hacksore/node-red-flow@v2
         with:
           repo: node-red-contrib-alexa-virtual-smarthome
