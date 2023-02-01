@@ -5,3 +5,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    versioning-strategy: 'increase'
+    directory: "/"
+    schedule:
+      interval: "daily"
