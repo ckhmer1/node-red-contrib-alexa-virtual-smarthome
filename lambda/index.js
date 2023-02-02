@@ -31,6 +31,7 @@ if (d) {
   console.log('pathname: ' + pathname)
   console.log('port: ' + s_port)
   console.log('protocol: ' + protocol)
+  console.log('not_verify_ssl: ' + not_verify_ssl)
 }
 
 const options = {
