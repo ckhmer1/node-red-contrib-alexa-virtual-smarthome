@@ -151,23 +151,26 @@ module.exports = function (RED) {
             node.state = {};
             node.state_types = {};
 
-            node.alexa = RED.nodes.getNode(node.config.alexa);
-
             if (!node.config.alexa) {
                 node.error(RED._("alexa-device.error.missing-config"));
                 node.status({ fill: "red", shape: "dot", text: RED._("alexa-device.error.missing-config") });
                 return;
-            } else if (typeof node.alexa.register !== 'function') {
+            }
+
+            node.alexa = RED.nodes.getNode(node.config.alexa);
+            if (typeof node.alexa.register !== 'function') {
                 node.error(RED._("alexa-device.error.missing-bridge"));
                 node.status({ fill: "red", shape: "dot", text: RED._("alexa-device.error.missing-bridge") });
                 return;
             }
+
             if (node.config.display_categories.length === 0) {
                 node.error(RED._("alexa-device.error.missing-display_categories"));
                 node.status({ fill: "red", shape: "dot", text: RED._("alexa-device.error.missing-display_categories") });
                 return;
             }
-            if (node.isVerbose()) node._debug("config " + JSON.stringify(config));
+
+            if (node.isVerbose()) node._debug("config " + JSON.stringify(config.name));
             if (node.isVerbose()) node._debug("display_categories " + JSON.stringify(node.config.display_categories));
             let names = node.config.display_categories.map(dt => RED._("alexa-device.display_category." + dt));
             node.device_desc = names.join();
@@ -191,7 +194,7 @@ module.exports = function (RED) {
         //
         //
         isVerbose() {
-            return this.config.alexa && this.alexa.config.verbose;
+            return this.config.verbose || this.alexa.verbose || false;
         }
 
         //
@@ -381,11 +384,12 @@ module.exports = function (RED) {
                 });
 
                 // if (node.isVerbose()) node._debug("CCHI Before " + node.id + " state " + JSON.stringify(node.state));
-                // const modified = node.setValues(msg1.payload || {}, node.state);
+                // const modified = node.setStateValues(msg1.payload || {});
                 const modified = node.updateState(msg1.payload || {}, node.state, node.state_types);
                 // if (node.isVerbose()) node._debug("CCHI " + node.id + " modified " + JSON.stringify(modified));
                 // if (node.isVerbose()) node._debug("CCHI After " + node.id + " state " + JSON.stringify(node.state));
                 if (modified.length > 0) {
+                    node.alexa.scheduleGetState();
                     process.nextTick(() => {
                         node.alexa.send_change_report(node.id, modified).then(() => { });
                     });
@@ -1804,11 +1808,11 @@ module.exports = function (RED) {
             switch (namespace) {
                 case "Alexa.BrightnessController": // BrightnessController
                     if (name === 'SetBrightness') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     } else if (name === 'AdjustBrightness') {
-                        const modified = node.setValues({
+                        const modified = node.setStateValues({
                             brightness: node.state['brightness'] + payload.brightnessDelta
-                        }, node.state);
+                        });
                     }
                     break;
 
@@ -1854,7 +1858,7 @@ module.exports = function (RED) {
                     }
                 case "Alexa.ChannelController": // ChannelController
                     if (name === 'ChangeChannel') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     else if (name === 'SkipChannels') {
                         const channelCount = payload.channelCount;
@@ -1870,23 +1874,23 @@ module.exports = function (RED) {
 
                 case "Alexa.ColorController": // ColorController
                     if (name === 'SetColor') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     break;
 
                 case "Alexa.ColorTemperatureController": // ColorTemperatureController
                     if (name === 'SetColorTemperature') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     else if (name === 'IncreaseColorTemperature') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             brightness: node.state['colorTemperatureInKelvin'] + 100
-                        }, node.state);
+                        });
                     }
                     else if (name === 'DecreaseColorTemperature') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             brightness: node.state['colorTemperatureInKelvin'] - 100
-                        }, node.state);
+                        });
                     }
                     break;
                 case "Alexa.DeviceUsage.Meter": // DeviceUsage.Meter
@@ -1904,9 +1908,9 @@ module.exports = function (RED) {
 
                 case "Alexa.EqualizerController": // EqualizerController
                     if (name === 'SetMode') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     } else if (name === 'SetBands') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     break;
 
@@ -1943,9 +1947,9 @@ module.exports = function (RED) {
                     if (name === 'SetMode') {
                         let modes = {};
                         modes[instance] = payload['mode'];
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             modes: modes
-                        }, node.state);
+                        });
                         if (modified.length > 0) {
                             modified = [{
                                 modes: [instance]
@@ -1965,9 +1969,9 @@ module.exports = function (RED) {
                         const new_value = values[idx];
                         let modes = {};
                         modes[instance] = new_value;
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             modes: modes
-                        }, node.state);
+                        });
                         if (modified.length > 0) {
                             modified = [{
                                 modes: [instance]
@@ -1978,7 +1982,7 @@ module.exports = function (RED) {
 
                 case "Alexa.InputController": // InputController
                     if (name === 'SelectInput') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     break;
 
@@ -1992,24 +1996,24 @@ module.exports = function (RED) {
                     // TODO DeferredResponse
                     // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-response.html#deferred
                     if (name === 'Lock') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             lockState: 'LOCKED'
-                        }, node.state);
+                        });
                     }
                     else if (name === 'Unlock') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             lockState: 'UNLOCKED'
-                        }, node.state);
+                        });
                     }
                     break;
 
                 case "Alexa.PercentageController": // PercentageController
                     if (name === 'SetPercentage') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     } else if (name === 'AdjustPercentage') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             percentage: node.state['percentage'] - payload['percentageDelta']
-                        }, node.state);
+                        });
                     }
                     break;
 
@@ -2034,9 +2038,9 @@ module.exports = function (RED) {
                                     'Alexa.WakeOnLANController', 'WakeUp')
                                     .then(res => {
                                         if (node.isVerbose()) node._debug("execDirective send_change_report for WakeUp OK");
-                                        modified = node.setValues({
+                                        modified = node.setStateValues({
                                             powerState: 'ON'
-                                        }, node.state);
+                                        });
                                         node.sendState(modified, payload, namespace, name);
                                         node.alexa.send_change_report(node.id, [], "VOICE_INTERACTION",
                                             {
@@ -2054,15 +2058,15 @@ module.exports = function (RED) {
                                     });
                             });
                         } else {
-                            modified = node.setValues({
+                            modified = node.setStateValues({
                                 powerState: 'ON'
-                            }, node.state);
+                            });
                         }
                     }
                     else if (name === 'TurnOff') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             powerState: 'OFF'
-                        }, node.state);
+                        });
                     }
                     break;
 
@@ -2118,7 +2122,7 @@ module.exports = function (RED) {
                                 }
                                 if ('BYPASS_ALL' === (payload['bypassType'] || '')) {
                                     event_payload['bypassedEndpoints'] = security_device_in_error;
-                                    modified = node.setValues({ armState: payload['armState'] }, node.state);
+                                    modified = node.setStateValues({ armState: payload['armState'] });
                                     if (exit_delay > 0) {
                                         event_payload['exitDelayInSeconds'] = exit_delay;
                                         node_config['exit_delay'] = exit_delay;
@@ -2131,7 +2135,7 @@ module.exports = function (RED) {
                                     modified = [];
                                 }
                             } else {
-                                modified = node.setValues({ armState: payload['armState'] }, node.state);
+                                modified = node.setStateValues({ armState: payload['armState'] });
                                 if (exit_delay > 0) {
                                     event_payload['exitDelayInSeconds'] = exit_delay;
                                     node_config['exit_delay'] = exit_delay;
@@ -2151,7 +2155,7 @@ module.exports = function (RED) {
                             modified = [];
                         } else if (node.config.pin_code.trim().length > 0) {
                             if (payload.authorization && payload.authorization.type === 'FOUR_DIGIT_PIN' && payload.authorization.value === node.config.pin_code) {
-                                modified = node.setValues({ armState: 'DISARMED' }, node.state);
+                                modified = node.setStateValues({ armState: 'DISARMED' });
                                 // TODO Check Add alarms if any
                             } else {
                                 node.send({
@@ -2168,7 +2172,7 @@ module.exports = function (RED) {
                                 modified = [];
                             }
                         } else {
-                            modified = node.setValues({ armState: 'DISARMED' }, node.state);
+                            modified = node.setStateValues({ armState: 'DISARMED' });
                             // TODO Check Add alarms if any??
                         }
                     }
@@ -2178,9 +2182,9 @@ module.exports = function (RED) {
                     if (name === 'SetRangeValue') {
                         let ranges = {};
                         ranges[instance] = payload['rangeValue'];
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             ranges: ranges
-                        }, node.state);
+                        });
                         if (modified.length > 0) {
                             modified = [{
                                 ranges: [instance]
@@ -2192,9 +2196,9 @@ module.exports = function (RED) {
                         if (new_value >= node.to_int(range.min, 0) && new_value <= node.to_int(range.max, 100)) {
                             let ranges = {};
                             ranges[instance] = new_value;
-                            modified = node.setValues({
+                            modified = node.setStateValues({
                                 ranges: ranges
-                            }, node.state);
+                            });
                             if (modified.length > 0) {
                                 modified = [{
                                     ranges: [instance]
@@ -2206,15 +2210,15 @@ module.exports = function (RED) {
 
                 case "Alexa.Speaker": // Speaker
                     if (name === 'SetVolume') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     else if (name === 'AdjustVolume') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             volume: node.state['volume'] + payload['volume']
-                        }, node.state);
+                        });
                     }
                     else if (name === 'SetMute') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                     }
                     break;
 
@@ -2226,7 +2230,7 @@ module.exports = function (RED) {
 
                 case "Alexa.ThermostatController": // ThermostatController
                     if (name === 'SetTargetTemperature') {
-                        modified = node.setValues(payload, node.state);
+                        modified = node.setStateValues(payload);
                         /*
                         if (payload.targetSetpoint === undefined) {
                             delete node.state.targetSetpoint;
@@ -2258,9 +2262,9 @@ module.exports = function (RED) {
                         }
                     }
                     else if (name === 'SetThermostatMode') {
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             thermostatMode: payload.thermostatMode.value
-                        }, node.state);
+                        });
                     }
                     else if (name === 'ResumeSchedule') {
                         modified = []
@@ -2280,9 +2284,9 @@ module.exports = function (RED) {
                     if (name === 'TurnOn' || name === 'TurnOff') {
                         let toggles = {};
                         toggles[instance] = name === 'TurnOn' ? 'ON' : 'OFF';
-                        modified = node.setValues({
+                        modified = node.setStateValues({
                             toggles: toggles
-                        }, node.state);
+                        });
                         if (modified.length > 0) {
                             modified = [{
                                 toggles: [instance]
@@ -2835,9 +2839,13 @@ module.exports = function (RED) {
         //
         //
         //
-        setValues(from_object, to_object) {
+        setStateValues(from_object) {
             const node = this;
-            return node.updateState(from_object, node.state, node.state_types);
+            const modified = node.updateState(from_object, node.state, node.state_types);
+            if (modified.length > 0) {
+                node.alexa.scheduleGetState();
+            }
+            return modified;
         }
 
         //

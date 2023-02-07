@@ -1,0 +1,43 @@
+<script type="text/javascript">
+    RED.nodes.registerType('alexa-management', {
+        category: 'alexa-home',
+        color: '#3FADB5',
+        defaults: {
+            name: { value: "Alexa", required: true },
+            alexa: { value: "Alexa", type: "alexa-adapter" },
+            set_state_type: { value: 'filtered_by_id', required: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "alexa-home.png",
+        label: function () {
+            return this.name.trim().length > 0 ? this.name : this._('alexa-management.name');
+        },
+        paletteLabel: function () {
+            return this._("alexa-management.name");
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="alexa-management">
+    <div class="form-row">
+        <label for="node-input-alexa"><i class="fa fa-globe"></i> <span data-i18n="alexa-management.label.alexa"></span></label>
+        <input type="text" id="node-input-alexa" data-i18n="[placeholder]alexa-management.placeholder.alexa">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="alexa-management.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]alexa-management.placeholder.name">
+    </div>
+
+    <div class="form-row">
+        <label style="width:auto" for="node-input-set_state_type"><i class="fa fa-tag"></i> <span data-i18n="alexa-management.label.set_state_type"></span></label>
+        <select id="node-input-set_state_type" >
+            <option value="no_nodes" data-i18n="alexa-management.label.no_nodes"></option>
+            <option value="all_by_id" data-i18n="alexa-management.label.all_by_id"></option>
+            <option value="all_by_name" data-i18n="alexa-management.label.all_by_name"></option>
+            <option value="filtered_by_id" data-i18n="alexa-management.label.filtered_by_id"></option>
+            <option value="filtered_by_name" data-i18n="alexa-management.label.filtered_by_name"></option>
+        </select>
+    </div>
+</script>

@@ -116,8 +116,9 @@ module.exports = function (RED) {
             RED.nodes.createNode(this, config);
             const node = this;
             node.config = config;
-            if (node.config.verbose) node._debug("config " + JSON.stringify(config));
-            if (node.config.verbose) node._debug("credentials " + JSON.stringify(node.credentials));
+            node.verbose = node.config.verbose || false;
+            if (node.verbose) node._debug("config " + JSON.stringify(config));
+            if (node.verbose) node._debug("credentials " + JSON.stringify(node.credentials));
             try {
                 node.init(config);
             } catch (err) {
@@ -132,6 +133,8 @@ module.exports = function (RED) {
         //
         init(config) {
             const node = this;
+            node._getStateScheduled = false;
+            node._setStateDelay = config.set_state_delay * 1000; // TODO CCHI
             node.httpNodeRoot = RED.settings.httpNodeRoot || '/';
             node.usehttpnoderoot = config.usehttpnoderoot || false;
             node.http_path = node.usehttpnoderoot ? node.Path_join(node.httpNodeRoot, config.http_path || '') : config.http_path || '';
@@ -144,36 +147,37 @@ module.exports = function (RED) {
             node.tokgen = new TokenGenerator(256, TokenGenerator.BASE58);
             node.auth_code = undefined;
             node.devices = {};
+            node.managements = {};
             node.tokens_filename = util.format(TOKENS_FILENAME, node.id);
 
-            if (node.config.verbose) node._debug("New " + node.config.name);
+            if (node.verbose) node._debug("New " + node.config.name);
 
             node.on('close', node.shutdown);
 
             node.setup();
-            if (node.config.verbose) node._debug("init completed");
+            if (node.verbose) node._debug("init completed");
         }
 
-        // Register a new device, called bu the alexa-device
+        // Register a new device, called by the alexa-device
         //
         //
         //
         register(device) {
             const node = this;
-            if (node.config.verbose) node._debug("register device id " + device.id + " " + device.type);
+            if (node.verbose) node._debug("register device id " + device.id + " " + device.type);
             node.devices[device.id] = device;
             process.nextTick(() => {
                 node.send_add_or_update_report(device.id);
             });
         }
 
-        // Unregister a device, called bu the alexa-device
+        // Unregister a device, called by the alexa-device
         //
         //
         //
         deregister(device, removed) {
             const node = this;
-            if (node.config.verbose) node._debug("deregister device id " + device.id + " removed " + removed);
+            if (node.verbose) node._debug("deregister device id " + device.id + " removed " + removed);
             if (node.device[device.id]) {
                 delete node.device[device.id];
             }
@@ -183,10 +187,32 @@ module.exports = function (RED) {
                 });
             }*/
             /*if (node.app != node.http_server) {
-                if (node.config.verbose) node._debug("Stopping server");
+                if (node.verbose) node._debug("Stopping server");
                 node.http_server.stop();
                 node.http_server = RED.httpNode || RED.httpAdmin;
             }*/
+        };
+
+        // Register a new management node, called by the alexa-management
+        //
+        //
+        //
+        registerManagement(management) {
+            const node = this;
+            if (node.verbose) node._debug("register Management id " + management.id);
+            node.managements[management.id] = management;
+        }
+
+        // Unregister a management, called by the alexa-management
+        //
+        //
+        //
+        deregisterManagement(device, removed) {
+            const node = this;
+            if (node.verbose) node._debug("deregister Management id " + device.id + " removed " + removed);
+            if (node.managements[management.id]) {
+                delete node.managements[management.id];
+            }
         };
 
         //
@@ -204,11 +230,11 @@ module.exports = function (RED) {
         //
         setup() {
             const node = this;
-            if (node.config.verbose) node._debug("setup server");
+            if (node.verbose) node._debug("setup server");
             node.get_tokens_sync();
             node.get_tokens()
                 .then(() => {
-                    if (node.config.verbose) node._debug("setup Tokens loaded");
+                    if (node.verbose) node._debug("setup Tokens loaded");
                 })
                 .catch(err => {
                     node.error("setup Tokens load error " + err);
@@ -216,7 +242,7 @@ module.exports = function (RED) {
 
             node.UnregisterUrl();
             if (node.http_port.trim()) {
-                if (node.config.verbose) node._debug("setup listen port " + node.http_port);
+                if (node.verbose) node._debug("setup listen port " + node.http_port);
                 const app = express();
                 app.disable('x-powered-by');
                 app.use(helmet());
@@ -254,7 +280,7 @@ module.exports = function (RED) {
                         node.error(`Error while loading public SSL key from file "${this.filename}" (${error})`);
                         return;
                     }
-                    if (node.config.verbose) node._debug('Use HTTPS certificate');
+                    if (node.verbose) node._debug('Use HTTPS certificate');
                     node.http_server = stoppable(https.createServer(options, app), GRACE_MILLISECONDS);
                 } else {
                     node.http_server = stoppable(http.createServer(app), GRACE_MILLISECONDS);
@@ -264,7 +290,7 @@ module.exports = function (RED) {
                     const proto = Object.keys(options).length > 0 ? 'https' : 'http';
                     const host = node.http_server.address().address;
                     const port = node.http_server.address().port;
-                    if (node.config.verbose) node._debug(`Server listening at ${proto}://${host}:${port}`);
+                    if (node.verbose) node._debug(`Server listening at ${proto}://${host}:${port}`);
                 });
 
                 this.http_server.on('error', function (err) {
@@ -273,7 +299,7 @@ module.exports = function (RED) {
                 });
                 node.RegisterUrl(app);
             } else {
-                if (node.config.verbose) node._debug("Use the Node-RED port");
+                if (node.verbose) node._debug("Use the Node-RED port");
                 node.RegisterUrl(RED.httpNode || RED.httpAdmin);
             }
         }
@@ -302,9 +328,9 @@ module.exports = function (RED) {
             if (RED.settings.httpNodeRoot !== false) {
                 const node = this;
 
-                if (node.config.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, OAUTH_PATH));
-                if (node.config.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, TOKEN_PATH));
-                if (node.config.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, SMART_HOME_PATH));
+                if (node.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, OAUTH_PATH));
+                if (node.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, TOKEN_PATH));
+                if (node.verbose) node._debug('Register URL ' + node.Path_join(node.http_root, SMART_HOME_PATH));
 
                 let urlencodedParser = express.urlencoded({ extended: false })
                 let jsonParser = express.json()
@@ -312,7 +338,7 @@ module.exports = function (RED) {
                 http_server.get(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_get(req, res); });
                 http_server.post(node.Path_join(node.http_root, OAUTH_PATH), urlencodedParser, function (req, res) { node.oauth_post(req, res); });
                 http_server.post(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_post(req, res); });
-                if (node.config.verbose) {
+                if (node.verbose) {
                     http_server.get(node.Path_join(node.http_root, TOKEN_PATH), urlencodedParser, function (req, res) { node.token_get(req, res); });
                     http_server.get(node.Path_join(node.http_root, SMART_HOME_PATH), urlencodedParser, function (req, res) { node.smarthome_get(req, res); });
                 }
@@ -332,13 +358,13 @@ module.exports = function (RED) {
             const node = this;
             const REDhttp = RED.httpNode || RED.httpAdmin;
             if (RED.settings.httpNodeRoot !== false && REDhttp._router) {
-                if (node.config.verbose) node._debug("Removing url");
+                if (node.verbose) node._debug("Removing url");
                 var get_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
                 var post_urls = [node.Path_join(node.http_root, OAUTH_PATH), node.Path_join(node.http_root, TOKEN_PATH), node.Path_join(node.http_root, SMART_HOME_PATH)];
                 var options_urls = [];
                 var all_urls = [];
 
-                if (node.config.verbose) {
+                if (node.verbose) {
                     node._debug("get_urls " + JSON.stringify(get_urls));
                     node._debug("post_urls " + JSON.stringify(post_urls));
                 }
@@ -351,12 +377,12 @@ module.exports = function (RED) {
                         (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
                         (all_urls.includes(route.route.path))
                     )) {
-                        if (node.config.verbose) node._debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                        if (node.verbose) node._debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
                         to_remove.unshift(i);
                     }
                 });
                 to_remove.forEach(i => REDhttp._router.stack.splice(i, 1));
-                if (node.config.verbose)
+                if (node.verbose)
                     REDhttp._router.stack.forEach(function (route) {
                         if (route.route) node._debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.GetRouteType(route));
                     });
@@ -369,12 +395,12 @@ module.exports = function (RED) {
         //
         shutdown(removed, done) {
             const node = this;
-            if (node.config.verbose) node._debug("(on-close)");
+            if (node.verbose) node._debug("(on-close)");
             node.UnregisterUrl();
             if (node.http_server !== null) {
-                if (node.config.verbose) node._debug("Stopping server");
+                if (node.verbose) node._debug("Stopping server");
                 node.http_server.stop(function (err, grace) {
-                    if (node.config.verbose) node._debug("Server stopped " + grace + " " + err);
+                    if (node.verbose) node._debug("Server stopped " + grace + " " + err);
                 });
                 setImmediate(function () {
                     node.http_server.emit('close');
@@ -382,17 +408,17 @@ module.exports = function (RED) {
                 });
                 if (node.handler !== null) {
                     node.handler.close(() => {
-                        if (node.config.verbose) node._debug("Server stopped");
+                        if (node.verbose) node._debug("Server stopped");
                     });
                     node.handler = null;
                 }
             }
             if (removed) {
                 // this node has been deleted
-                if (node.config.verbose) node._debug("shutdown: removed");
+                if (node.verbose) node._debug("shutdown: removed");
             } else {
                 // this node is being restarted
-                if (node.config.verbose) node._debug("shutdown: stopped");
+                if (node.verbose) node._debug("shutdown: stopped");
             }
             if (typeof done === 'function') {
                 done();
@@ -403,10 +429,25 @@ module.exports = function (RED) {
         //
         //
         //
+        scheduleGetState() {
+            const node = this;
+            if (node._setStateDelay && !node._getStateScheduled) {
+                node._getStateScheduled = true;
+                setTimeout(() => {
+                    node._getStateScheduled = false;
+                    Object.keys(node._mgmtNode.mgmtNodes).forEach(key => node._mgmtNode.mgmtNodes[key].sendSetState()); // TODO CCHI
+                }, node._setStateDelay);
+            }
+        }
+
+        //
+        //
+        //
+        //
         oauth_get(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug('oauth_get');
-            if (node.config.verbose) node._debug('oauth_get CCHI ' + JSON.stringify(req.query));
+            if (node.verbose) node._debug('oauth_get');
+            if (node.verbose) node._debug('oauth_get CCHI ' + JSON.stringify(req.query));
 
             if (typeof req.query.policy !== 'undefined') {
                 return node.show_policy_page(res);
@@ -419,14 +460,14 @@ module.exports = function (RED) {
                 // Second request
                 if (node.skill_link_req && req.query.access_token && req.query.token_type === 'bearer' && req.query.scope &&
                     req.query.expires_in && Number.isInteger(parseInt(req.query.expires_in))) {
-                    if (node.config.verbose) node.error('oauth_get access_token');
+                    if (node.verbose) node.error('oauth_get access_token');
                     // Get User Profile
                     node.get_user_profile(req.query.access_token)
                         .then(pres => {
-                            if (node.config.verbose) node._debug("get_user_profile CCHI pres " + JSON.stringify(pres));
+                            if (node.verbose) node._debug("get_user_profile CCHI pres " + JSON.stringify(pres));
                             if (node.config.emails.includes(pres.email)) {
                                 const oauth_redirect_uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, OAUTH_PATH);
-                                if (node.config.verbose) node._debug('oauth_get CCHI oauth_redirect_uri ' + JSON.stringify(oauth_redirect_uri));
+                                if (node.verbose) node._debug('oauth_get CCHI oauth_redirect_uri ' + JSON.stringify(oauth_redirect_uri));
                                 const state = node.tokgen.generate();
                                 node.login_with_amazon = { // TODO REMOVE
                                     state: state
@@ -441,11 +482,11 @@ module.exports = function (RED) {
                     return;
                 }
                 if (node.skill_link_req && req.query.code && req.query.scope === 'profile') {
-                    if (node.config.verbose) node.error('oauth_get profile');
+                    if (node.verbose) node.error('oauth_get profile');
                     return node.manage_login_with_amazon_access_token(req, res);
                 }
             }
-            if (node.config.verbose) node.error('oauth_get login');
+            if (node.verbose) node.error('oauth_get login');
             node.skill_link_req = {};
             const client_id = req.query.client_id || '';
             const response_type = req.query.response_type || '';
@@ -489,8 +530,8 @@ module.exports = function (RED) {
         //
         oauth_post(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug('oauth_post');
-            if (node.config.verbose) node._debug('oauth_post CCHI ' + JSON.stringify(req.body));
+            if (node.verbose) node._debug('oauth_post');
+            if (node.verbose) node._debug('oauth_post CCHI ' + JSON.stringify(req.body));
             const username = req.body.username || '';
             const password = req.body.password || '';
             const client_id = req.body.client_id || '';
@@ -498,7 +539,7 @@ module.exports = function (RED) {
             const state = req.body.state || '';
             const scope = req.body.scope || '';
             const redirect_uri = req.body.redirect_uri || '';
-            if (node.config.verbose) node.error('oauth_post username ' + username);
+            if (node.verbose) node.error('oauth_post username ' + username);
             if (node.config.login_with_amazon && (username || password)) {
                 node.error("oauth_post: Login with username is not enabled");
                 return res.status(500).send('Wrong request');
@@ -550,7 +591,7 @@ module.exports = function (RED) {
             else {
                 sep = '?';
             }
-            if (node.config.verbose) node._debug("oauth_post: redirect to " + util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), 'XXXXX'));
+            if (node.verbose) node._debug("oauth_post: redirect to " + util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), 'XXXXX'));
             return res.redirect(util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), encodeURIComponent(node.auth_code.code)));
         }
 
@@ -560,7 +601,7 @@ module.exports = function (RED) {
         //
         token_get(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug('token_get');
+            if (node.verbose) node._debug('token_get');
             const uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, TOKEN_PATH);
             res.status(200).send(uri);
         }
@@ -571,13 +612,13 @@ module.exports = function (RED) {
         //
         token_post(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug('token_post');
-            if (node.config.verbose) node._debug('token_post CCHI ' + JSON.stringify(req.body));
+            if (node.verbose) node._debug('token_post');
+            if (node.verbose) node._debug('token_post CCHI ' + JSON.stringify(req.body));
             const grant_type = req.body.grant_type || '';
             const client_id = unescape(req.body.client_id || '');
             const client_secret = unescape(req.body.client_secret || '');
             if (grant_type === 'refresh_token') {
-                if (node.config.verbose) node.error('token_post refresh_token');
+                if (node.verbose) node.error('token_post refresh_token');
                 const refresh_token = req.body.refresh_token || '';
                 if (refresh_token === node.tokens.own.refresh_token &&
                     client_id === node.credentials.your_client_id &&
@@ -586,7 +627,7 @@ module.exports = function (RED) {
                     node.tokens.own.expire_at = Date.now() + 3600 * 1000
                     node.save_tokens()
                         .then(() => {
-                            if (node.config.verbose) node._debug("token_post save_tokens ok");
+                            if (node.verbose) node._debug("token_post save_tokens ok");
                         })
                         .catch(err => {
                             node.error("token_post save_tokens error " + err);
@@ -597,7 +638,7 @@ module.exports = function (RED) {
                         "expires_in": 3600,
                         "refresh_token": node.tokens.own.refresh_token
                     };
-                    if (node.config.verbose) node._debug("Returns new access_token");
+                    if (node.verbose) node._debug("Returns new access_token");
                     res.json(tokens);
                     res.end();
                     return;
@@ -606,7 +647,7 @@ module.exports = function (RED) {
                 if (client_id !== node.credentials.your_client_id) node.error("Unauthorized client_id");
             }
             else if (grant_type === 'authorization_code') {
-                if (node.config.verbose) node.error('token_post authorization_code');
+                if (node.verbose) node.error('token_post authorization_code');
                 if (!node.auth_code) {
                     node.error("Wrong code");
                     return res.status(500).send('Wrong code');
@@ -625,15 +666,15 @@ module.exports = function (RED) {
                     };
                     node.save_tokens()
                         .then(() => {
-                            if (node.config.verbose) node._debug("token_post save_tokens ok");
+                            if (node.verbose) node._debug("token_post save_tokens ok");
                             const tokens = {
                                 "access_token": node.tokens.own.access_token,
                                 "token_type": "bearer",
                                 "expires_in": 3600,
                                 "refresh_token": node.tokens.own.refresh_token
                             };
-                            if (node.config.verbose) node._debug("Returns tokens");
-                            if (node.config.verbose) node._debug("Returns tokens " + JSON.stringify(tokens));
+                            if (node.verbose) node._debug("Returns tokens");
+                            if (node.verbose) node._debug("Returns tokens " + JSON.stringify(tokens));
                             res.json(tokens);
                             res.end();
                         })
@@ -657,7 +698,7 @@ module.exports = function (RED) {
         smarthome_get(req, res) {
             const node = this;
             const uri = 'https:/' + node.Path_join(req.get('Host'), node.http_root);
-            if (node.config.verbose) node._debug('smarthome_get base url ' + uri);
+            if (node.verbose) node._debug('smarthome_get base url ' + uri);
             // res.status(200).send(node.Path_join(uri, SMART_HOME_PATH));
             node.show_test_page(res, uri);
         }
@@ -668,7 +709,7 @@ module.exports = function (RED) {
         //
         smarthome_post_verify(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug("smarthome_post_verify");
+            if (node.verbose) node._debug("smarthome_post_verify");
             new SkillRequestSignatureVerifier()
                 .verify(req.body, req.header)
                 .then(() => {
@@ -694,15 +735,15 @@ module.exports = function (RED) {
         //
         smarthome_post(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug("smarthome_post");
-            if (node.config.verbose) node._debug('smarthome_post CCHI ' + JSON.stringify(req.body));
+            if (node.verbose) node._debug("smarthome_post");
+            if (node.verbose) node._debug('smarthome_post CCHI ' + JSON.stringify(req.body));
             if (!node.tokens) {
                 node.error("Wrong tokens");
                 return res.status(401).send('Wrong tokens');
             }
             let scope = {};
             let endpointId = undefined;
-            if (node.config.verbose && req.body.directive.header.namespace === 'Test') {
+            if (node.verbose && req.body.directive.header.namespace === 'Test') {
                 res.json({ ok: 'ok' });
                 return res.end();
             }
@@ -744,9 +785,9 @@ module.exports = function (RED) {
             const namespace = header.namespace;
             const name = header.name;
 
-            if (node.config.verbose) node._debug("CCHI received directive " + JSON.stringify(namespace) + " " + JSON.stringify(name) + " " + JSON.stringify(endpointId));
+            if (node.verbose) node._debug("CCHI received directive " + JSON.stringify(namespace) + " " + JSON.stringify(name) + " " + JSON.stringify(endpointId));
             if (namespace === "Alexa.Authorization" && name === 'AcceptGrant') {
-                if (node.config.verbose) node.error('smarthome_post: oauth_get AcceptGrant');
+                if (node.verbose) node.error('smarthome_post: oauth_get AcceptGrant');
                 // https://developer.amazon.com/en-US/docs/alexa/smarthome/authenticate-a-customer-permissions.html
                 return node.accept_grant(req, res);
             }
@@ -755,12 +796,12 @@ module.exports = function (RED) {
             let error_message = '';
             if (endpointId) {
                 if (node.devices[endpointId]) {
-                    if (node.config.verbose) node._debug("endpoint id " + endpointId + " name " + node.devices[endpointId].config.name);
+                    if (node.verbose) node._debug("endpoint id " + endpointId + " name " + node.devices[endpointId].config.name);
                     if (namespace === "Alexa" && name === 'ReportState') {
                         node.get_access_token('evn')
                             .then(access_token => {
                                 const report_state = node.get_report_state(endpointId, header.correlationToken, access_token, messageId);
-                                if (node.config.verbose) node._debug("CCHI report_state response " + JSON.stringify(report_state));
+                                if (node.verbose) node._debug("CCHI report_state response " + JSON.stringify(report_state));
                                 res.json(report_state);
                                 res.end();
                             })
@@ -770,7 +811,7 @@ module.exports = function (RED) {
                             });
                         return;
                     } else {
-                        if (node.config.verbose) node._debug(" CCHI directive " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
+                        if (node.verbose) node._debug(" CCHI directive " + namespace + " " + name + " " + JSON.stringify(req.body.directive.payload));
                         try {
                             let cmd_res = {};
                             const changed_property_names = node.devices[endpointId].execDirective(header, req.body.directive.payload, cmd_res);
@@ -783,11 +824,11 @@ module.exports = function (RED) {
                                         delete cmd_res['namespace'];
                                         let response = node.get_response_report(endpointId, header.correlationToken, access_token, r_namespace, r_name);
                                         node.objectMerge(response, cmd_res);
-                                        if (node.config.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
+                                        if (node.verbose) node._debug("CCHI " + namespace + " " + name + " response " + JSON.stringify(response));
                                         res.json(response);
                                         res.end();
                                         // const report_state = node.get_report_state(endpointId, header.correlationToken, access_token, messageId);
-                                        // if (node.config.verbose) node._debug("CCHI report_state async response NOT SENT YET " + JSON.stringify(report_state));
+                                        // if (node.verbose) node._debug("CCHI report_state async response NOT SENT YET " + JSON.stringify(report_state));
                                         if (r_name != 'DeferredResponse' && r_name != 'ErrorResponse' && r_namespace != "Alexa.SceneController") {
                                             process.nextTick(() => {
                                                 node.send_change_report(endpointId, changed_property_names, VOICE_INTERACTION, cmd_res).then(() => { });
@@ -842,7 +883,7 @@ module.exports = function (RED) {
                         const device = node.devices[key];
                         endpoints.push(device.endpoint);
                     });
-                    if (node.config.verbose) node._debug("CCHI discovery " + JSON.stringify(discovery));
+                    if (node.verbose) node._debug("CCHI discovery " + JSON.stringify(discovery));
                     res.json(discovery);
                     res.end();
                 } else {
@@ -862,15 +903,15 @@ module.exports = function (RED) {
         send_error_response(res, messageId, endpointId, error_type, error_message) {
             const node = this;
             const error_msg = node.get_error_response(error_type, error_message, endpointId, messageId);
-            if (node.config.verbose) node._debug("CCHI send_error_response " + JSON.stringify(error_msg));
+            if (node.verbose) node._debug("CCHI send_error_response " + JSON.stringify(error_msg));
             if (res) {
                 res.json(error_msg);
                 res.end();
             } else {
                 node.get_access_token('evn')
                     .then(access_token => {
-                        if (node.config.verbose) node._debug('send_error_response error_msg ' + JSON.stringify(error_msg));
-                        if (node.config.verbose) node._debug('send_error_response to event_endpoint ' + node.config.event_endpoint);
+                        if (node.verbose) node._debug('send_error_response error_msg ' + JSON.stringify(error_msg));
+                        if (node.verbose) node._debug('send_error_response to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
                             .use(throttle.plugin())
@@ -881,11 +922,11 @@ module.exports = function (RED) {
                                     node.error('send_error_response err ' + JSON.stringify(err));
                                     reject(err);
                                 } else {
-                                    if (node.config.verbose) node._debug('send_error_response res ' + JSON.stringify(res));
+                                    if (node.verbose) node._debug('send_error_response res ' + JSON.stringify(res));
                                     resolve(res);
                                 }
                             });
-                        if (node.config.verbose) node._debug('send_error_response sent');
+                        if (node.verbose) node._debug('send_error_response sent');
                     })
                     .catch(err => {
                         node.error('send_error_response get_access_token err ' + JSON.stringify(err));
@@ -944,7 +985,7 @@ module.exports = function (RED) {
                             "frame-src https://*.amazon.com"
                         )
                         .send(data.replace(/CLIENT_ID/g, node.credentials.oa2_client_id)
-                            .replace(/VERBOSE/g, node.config.verbose)
+                            .replace(/VERBOSE/g, node.verbose)
                             .replace(/LOGIN_WITH_AMAZON/g, '' + node.config.login_with_amazon)
                             .replace(/ERROR_MESSAGE/g, error_message));
                 }
@@ -1005,14 +1046,14 @@ module.exports = function (RED) {
             return new Promise((resolve, reject) => {
                 (access_token ? Promise.resolve({ access_token: access_token }) : node.get_access_token(type || 'lwa'))
                     .then(res => {
-                        if (node.config.verbose) node._debug("get_user_profile CCHI access_token res " + JSON.stringify(res));
+                        if (node.verbose) node._debug("get_user_profile CCHI access_token res " + JSON.stringify(res));
                         superagent
                             .get(LWA_USER_PROFILE)
                             .set("Authorization", "Bearer " + res.access_token)
                             .set("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
                             .accept('application/json')
                             .then(res => {
-                                if (node.config.verbose) node._debug("get_user_profile CCHI profile res " + JSON.stringify(res));
+                                if (node.verbose) node._debug("get_user_profile CCHI profile res " + JSON.stringify(res));
                                 if (res.status === 200) {
                                     resolve(JSON.parse(res.text));
                                 } else {
@@ -1037,7 +1078,7 @@ module.exports = function (RED) {
         //
         accept_grant(req, res) {
             const node = this;
-            if (node.config.verbose) node._debug('accept_grant');
+            if (node.verbose) node._debug('accept_grant');
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-authorization.html
             // https://developer.amazon.com/docs/login-with-amazon/web-docs.html
             // https://developer.amazon.com/docs/login-with-amazon/authorization-code-grant.html
@@ -1052,7 +1093,7 @@ module.exports = function (RED) {
 
                 node.get_access_token('evn', payload.grant.code)
                     .then(() => {
-                        if (node.config.verbose) node._debug("accept_grant tokens evn OK");
+                        if (node.verbose) node._debug("accept_grant tokens evn OK");
                         const ok_response = {
                             event: {
                                 header: {
@@ -1083,7 +1124,7 @@ module.exports = function (RED) {
         //
         send_accept_granterror(res, msg) {
             const node = this;
-            if (node.config.verbose) node._debug('send_accept_granterror');
+            if (node.verbose) node._debug('send_accept_granterror');
             const error_response = {
                 event: {
                     header: {
@@ -1109,23 +1150,23 @@ module.exports = function (RED) {
         //
         manage_login_with_amazon_access_token(oreq, ores) {
             const node = this;
-            if (node.config.verbose) node._debug('manage_login_with_amazon_access_token');
+            if (node.verbose) node._debug('manage_login_with_amazon_access_token');
             // https://developer.amazon.com/docs/login-with-amazon/authorization-code-grant.html
             const code = oreq.query.code || '';
             const state = oreq.query.state || '';
             const scope = oreq.query.scope || '';
 
-            if (node.config.verbose) node._debug("manage_login_with_amazon_access_token CCHI config " + JSON.stringify(node.config));
-            if (node.config.verbose) node._debug("manage_login_with_amazon_access_token CCHI credentials " + JSON.stringify(node.credentials));
+            if (node.verbose) node._debug("manage_login_with_amazon_access_token CCHI config " + JSON.stringify(node.config));
+            if (node.verbose) node._debug("manage_login_with_amazon_access_token CCHI credentials " + JSON.stringify(node.credentials));
             if (node.skill_link_req && code.trim() && scope === 'profile') {
                 node.get_access_token('lwa', code)
                     .then(res => {
-                        if (node.config.verbose) node._debug("mlwaat get_access_token CCHI res " + res);
+                        if (node.verbose) node._debug("mlwaat get_access_token CCHI res " + res);
                         node.get_user_profile(res)
                             .then(pres => {
-                                if (node.config.verbose) node._debug("get_user_profile CCHI res " + JSON.stringify(pres));
+                                if (node.verbose) node._debug("get_user_profile CCHI res " + JSON.stringify(pres));
                                 if (node.config.emails.includes(pres.email)) {
-                                    if (node.config.verbose) {
+                                    if (node.verbose) {
                                         node._debug(pres.email + ' OK');
                                         node.error("Username " + pres.email + " authorized");
                                     }
@@ -1133,10 +1174,10 @@ module.exports = function (RED) {
                                         code: node.tokgen.generate(),
                                         expire_at: Date.now() + 60 * 2 * 1000
                                     };
-                                    if (node.config.verbose) node._debug("manage_login_with_amazon_access_token CCHI auth_code " + JSON.stringify(node.auth_code));
+                                    if (node.verbose) node._debug("manage_login_with_amazon_access_token CCHI auth_code " + JSON.stringify(node.auth_code));
                                     node.redirect_to_amazon(ores, node.auth_code.code);
                                 } else {
-                                    if (node.config.verbose) node._debug(pres.email + ' NOK');
+                                    if (node.verbose) node._debug(pres.email + ' NOK');
                                     node.error("Username " + pres.email + " not authorized");
                                     node.redirect_to_login_page(ores, true);
                                 }
@@ -1157,7 +1198,7 @@ module.exports = function (RED) {
                         node.redirect_to_login_page(ores, true);
                     });
             } else {
-                if (node.config.verbose) node._debug("manage_login_with_amazon_access_token ERROR");
+                if (node.verbose) node._debug("manage_login_with_amazon_access_token ERROR");
                 node.redirect_to_login_page(ores, true);
             }
         }
@@ -1168,7 +1209,7 @@ module.exports = function (RED) {
         //
         redirect_to_login_page(res, err) {
             const node = this;
-            if (node.config.verbose) node._debug('redirect_to_login_page');
+            if (node.verbose) node._debug('redirect_to_login_page');
             return res.redirect(util.format(
                 '%s?client_id=%s&redirect_uri=%s&state=%s&response_type=code&scope=%s%s',
                 node.Path_join(node.http_root, OAUTH_PATH), encodeURIComponent(node.skill_link_req.client_id), encodeURIComponent(node.skill_link_req.redirect_uri),
@@ -1182,7 +1223,7 @@ module.exports = function (RED) {
         redirect_to_amazon(res, code) {
             const node = this;
             const url = util.format('%s?state=%s&code=%s', node.skill_link_req.redirect_uri, node.skill_link_req.state, code);
-            if (node.config.verbose) node._debug('redirect_to_amazon to ' + url);
+            if (node.verbose) node._debug('redirect_to_amazon to ' + url);
             return res.redirect(url);
         }
 
@@ -1328,7 +1369,7 @@ module.exports = function (RED) {
         send_doorbell_press(endpointId, cause) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-doorbelleventsource.html
             const node = this;
-            if (node.config.verbose) node._debug('send_doorbell_press' + cause);
+            if (node.verbose) node._debug('send_doorbell_press' + cause);
 
             node.get_access_token('evn')
                 .then(access_token => {
@@ -1356,7 +1397,7 @@ module.exports = function (RED) {
                             }
                         },
                     };
-                    if (node.config.verbose) node._debug('send_doorbell_press ' + JSON.stringify(msg));
+                    if (node.verbose) node._debug('send_doorbell_press ' + JSON.stringify(msg));
                     superagent
                         .post(node.config.event_endpoint)
                         .use(throttle.plugin())
@@ -1366,10 +1407,10 @@ module.exports = function (RED) {
                             if (err) {
                                 node.error('send_doorbell_press err ' + JSON.stringify(err));
                             } else {
-                                if (node.config.verbose) node._debug('send_doorbell_press res ' + JSON.stringify(res));
+                                if (node.verbose) node._debug('send_doorbell_press res ' + JSON.stringify(res));
                             }
                         });
-                    if (node.config.verbose) node._debug('send_doorbell_press sent');
+                    if (node.verbose) node._debug('send_doorbell_press sent');
                 })
                 .catch(err => {
                     node.error('send_doorbell_press get_access_token err ' + JSON.stringify(err));
@@ -1385,11 +1426,11 @@ module.exports = function (RED) {
             const node = this;
             const error_msg = node.get_error_response(error_type, error_message, endpointId, undefined);
             error_msg.event.header['correlationToken'] = correlationToken;
-            if (node.config.verbose) node._debug("CCHI send_error_response_to_event_gw " + JSON.stringify(error_msg));
+            if (node.verbose) node._debug("CCHI send_error_response_to_event_gw " + JSON.stringify(error_msg));
             node.get_access_token('evn')
                 .then(access_token => {
-                    if (node.config.verbose) node._debug('send_error_response_to_event_gw error_msg ' + JSON.stringify(error_msg));
-                    if (node.config.verbose) node._debug('send_error_response_to_event_gw to event_endpoint ' + node.config.event_endpoint);
+                    if (node.verbose) node._debug('send_error_response_to_event_gw error_msg ' + JSON.stringify(error_msg));
+                    if (node.verbose) node._debug('send_error_response_to_event_gw to event_endpoint ' + node.config.event_endpoint);
                     superagent
                         .post(node.config.event_endpoint)
                         .use(throttle.plugin())
@@ -1400,11 +1441,11 @@ module.exports = function (RED) {
                                 node.error('send_error_response_to_event_gw err ' + JSON.stringify(err));
                                 reject(err);
                             } else {
-                                if (node.config.verbose) node._debug('send_error_response_to_event_gw res ' + JSON.stringify(res));
+                                if (node.verbose) node._debug('send_error_response_to_event_gw res ' + JSON.stringify(res));
                                 resolve(res);
                             }
                         });
-                    if (node.config.verbose) node._debug('send_error_response_to_event_gw sent');
+                    if (node.verbose) node._debug('send_error_response_to_event_gw sent');
                 })
                 .catch(err => {
                     node.error('send_error_response_to_event_gw get_access_token err ' + JSON.stringify(err));
@@ -1421,7 +1462,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             const node = this;
             return new Promise((resolve, reject) => {
-                if (node.config.verbose) node._debug('send_event_gw ' + endpointId);
+                if (node.verbose) node._debug('send_event_gw ' + endpointId);
                 node.get_access_token('evn')
                     .then(access_token => {
                         let msg = {
@@ -1444,7 +1485,7 @@ module.exports = function (RED) {
                             context: {}
                         };
                         node.objectMerge(msg, other_data);
-                        if (node.config.verbose) node._debug('send_event_gw msg ' + JSON.stringify(msg));
+                        if (node.verbose) node._debug('send_event_gw msg ' + JSON.stringify(msg));
                         superagent
                             .post(node.config.event_endpoint)
                             .use(throttle.plugin())
@@ -1455,11 +1496,11 @@ module.exports = function (RED) {
                                     node.error('send_event_gw ' + node.config.event_endpoint + ' err ' + JSON.stringify(err));
                                     reject(err);
                                 } else {
-                                    if (node.config.verbose) node._debug('send_event_gw res ' + JSON.stringify(res));
+                                    if (node.verbose) node._debug('send_event_gw res ' + JSON.stringify(res));
                                     resolve(res);
                                 }
                             });
-                        if (node.config.verbose) node._debug('send_event_gw sent');
+                        if (node.verbose) node._debug('send_event_gw sent');
                     })
                     .catch(err => {
                         node.error('send_event_gw get_access_token err ' + JSON.stringify(err));
@@ -1478,7 +1519,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             const node = this;
             return new Promise((resolve, reject) => {
-                if (node.config.verbose) node._debug('send_change_report ' + endpointId);
+                if (node.verbose) node._debug('send_change_report ' + endpointId);
                 if (changed_property_names === undefined) {
                     changed_property_names = [];
                 }
@@ -1489,8 +1530,8 @@ module.exports = function (RED) {
                     .then(access_token => {
                         let msg = node.get_change_report(endpointId, namespace, name, undefined, changed_property_names, reason);
                         node.objectMerge(msg, cmd_res);
-                        if (node.config.verbose) node._debug('send_change_report msg ' + JSON.stringify(msg));
-                        if (node.config.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
+                        if (node.verbose) node._debug('send_change_report msg ' + JSON.stringify(msg));
+                        if (node.verbose) node._debug('send_change_report to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
                             .use(throttle.plugin())
@@ -1501,11 +1542,11 @@ module.exports = function (RED) {
                                     node.error('send_change_report err ' + JSON.stringify(err));
                                     reject(err);
                                 } else {
-                                    if (node.config.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
+                                    if (node.verbose) node._debug('send_change_report res ' + JSON.stringify(res));
                                     resolve(res);
                                 }
                             });
-                        if (node.config.verbose) node._debug('send_change_report sent');
+                        if (node.verbose) node._debug('send_change_report sent');
                     })
                     .catch(err => {
                         node.error('send_change_report get_access_token err ' + JSON.stringify(err));
@@ -1520,11 +1561,11 @@ module.exports = function (RED) {
         send_delete_report(endpointIds, correlationToken) {
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
             const node = this;
-            if (node.config.verbose) node._debug('send_delete_report ' + JSON.stringify(endpointIds));
+            if (node.verbose) node._debug('send_delete_report ' + JSON.stringify(endpointIds));
             node.get_access_token('evn')
                 .then(access_token => {
                     const report = node.get_delete_report(endpointIds, correlationToken, access_token);
-                    if (node.config.verbose) node._debug('send_delete_report report ' + JSON.stringify(report));
+                    if (node.verbose) node._debug('send_delete_report report ' + JSON.stringify(report));
                     superagent
                         .post(node.config.event_endpoint)
                         .use(throttle.plugin())
@@ -1534,10 +1575,10 @@ module.exports = function (RED) {
                             if (err) {
                                 node.error('send_delete_report err ' + JSON.stringify(err));
                             } else {
-                                if (node.config.verbose) node._debug('send_delete_report res ' + JSON.stringify(res));
+                                if (node.verbose) node._debug('send_delete_report res ' + JSON.stringify(res));
                             }
                         });
-                    if (node.config.verbose) node._debug('send_delete_report sent');
+                    if (node.verbose) node._debug('send_delete_report sent');
                 })
                 .catch(err => {
                     node.error('send_delete_report get_access_token err ' + JSON.stringify(err));
@@ -1617,13 +1658,13 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-discovery.html
             const node = this;
-            if (node.config.verbose) node._debug('send_add_or_update_report ' + endpointId);
+            if (node.verbose) node._debug('send_add_or_update_report ' + endpointId);
             node.get_access_token('evn')
                 .then(access_token => {
                     const state = node.get_add_or_update_report(endpointId);
                     state.event.header.namespace = "Alexa.Discovery";
-                    if (node.config.verbose) node._debug('send_add_or_update_report state ' + JSON.stringify(state));
-                    if (node.config.verbose) node._debug('send_add_or_update_report to event_endpoint ' + node.config.event_endpoint);
+                    if (node.verbose) node._debug('send_add_or_update_report state ' + JSON.stringify(state));
+                    if (node.verbose) node._debug('send_add_or_update_report to event_endpoint ' + node.config.event_endpoint);
                     superagent
                         .post(node.config.event_endpoint)
                         .use(throttle.plugin())
@@ -1633,14 +1674,14 @@ module.exports = function (RED) {
                             if (err) {
                                 node.error('send_add_or_update_report err ' + JSON.stringify(err));
                             } else {
-                                if (node.config.verbose) node._debug('send_add_or_update_report res ' + JSON.stringify(res));
+                                if (node.verbose) node._debug('send_add_or_update_report res ' + JSON.stringify(res));
                             }
                         });
                 })
                 .catch(err => {
                     node.error('send_add_or_update_report get_access_token err ' + JSON.stringify(err));
                 });
-            if (node.config.verbose) node._debug('send_add_or_update_report sent');
+            if (node.verbose) node._debug('send_add_or_update_report sent');
         }
 
         //
@@ -1657,12 +1698,12 @@ module.exports = function (RED) {
                 if (Array.isArray(media)) {
                     media.forEach(m => node.send_media_created_or_updated(endpointId, m));
                 } else {
-                    if (node.config.verbose) node._debug('send_media_created_or_updated ' + endpointId);
+                    if (node.verbose) node._debug('send_media_created_or_updated ' + endpointId);
                     node.get_access_token('evn')
                         .then(access_token => {
                             const msg = node.get_media_created_or_updated(endpointId, media);
-                            if (node.config.verbose) node._debug('send_media_created_or_updated msg ' + JSON.stringify(msg));
-                            if (node.config.verbose) node._debug('send_media_created_or_updated to event_endpoint ' + node.config.event_endpoint);
+                            if (node.verbose) node._debug('send_media_created_or_updated msg ' + JSON.stringify(msg));
+                            if (node.verbose) node._debug('send_media_created_or_updated to event_endpoint ' + node.config.event_endpoint);
                             superagent
                                 .post(node.config.event_endpoint)
                                 .use(throttle.plugin())
@@ -1672,10 +1713,10 @@ module.exports = function (RED) {
                                     if (err) {
                                         node.error('send_media_created_or_updated err ' + JSON.stringify(err));
                                     } else {
-                                        if (node.config.verbose) node._debug('send_media_created_or_updated res ' + JSON.stringify(res));
+                                        if (node.verbose) node._debug('send_media_created_or_updated res ' + JSON.stringify(res));
                                     }
                                 });
-                            if (node.config.verbose) node._debug('send_media_created_or_updated sent');
+                            if (node.verbose) node._debug('send_media_created_or_updated sent');
                         })
                         .catch(err => {
                             node.error('send_media_created_or_updated get_access_token err ' + JSON.stringify(err));
@@ -1694,7 +1735,7 @@ module.exports = function (RED) {
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
             // https://developer.amazon.com/en-US/docs/alexa/smarthome/send-events-to-the-alexa-event-gateway.html
             const node = this;
-            if (node.config.verbose) node._debug('send_media_deleted ' + endpointId);
+            if (node.verbose) node._debug('send_media_deleted ' + endpointId);
             if (mediaIds === undefined) {
                 mediaIds = [];
             }
@@ -1705,8 +1746,8 @@ module.exports = function (RED) {
                 node.get_access_token('evn')
                     .then(access_token => {
                         const msg = node.get_media_deleted(endpointId, mediaIds);
-                        if (node.config.verbose) node._debug('send_media_deleted msg ' + JSON.stringify(msg));
-                        if (node.config.verbose) node._debug('send_media_deleted to event_endpoint ' + node.config.event_endpoint);
+                        if (node.verbose) node._debug('send_media_deleted msg ' + JSON.stringify(msg));
+                        if (node.verbose) node._debug('send_media_deleted to event_endpoint ' + node.config.event_endpoint);
                         superagent
                             .post(node.config.event_endpoint)
                             .use(throttle.plugin())
@@ -1716,10 +1757,10 @@ module.exports = function (RED) {
                                 if (err) {
                                     node.error('send_media_deleted err ' + JSON.stringify(err));
                                 } else {
-                                    if (node.config.verbose) node._debug('send_media_deleted res ' + JSON.stringify(res));
+                                    if (node.verbose) node._debug('send_media_deleted res ' + JSON.stringify(res));
                                 }
                             });
-                        if (node.config.verbose) node._debug('send_media_deleted sent');
+                        if (node.verbose) node._debug('send_media_deleted sent');
                     })
                     .catch(err => {
                         node.error('send_media_deleted get_access_token err ' + JSON.stringify(err));
@@ -1786,7 +1827,7 @@ module.exports = function (RED) {
             let payload = {};
             const oauth2_bearer_token = node.tokens.evn.access_token;
             const properties = node.devices[endpointId].getProperties();
-            if (node.config.verbose) node._debug('get_change_report endpointId ' + endpointId + ' properties ' + JSON.stringify(properties));
+            if (node.verbose) node._debug('get_change_report endpointId ' + endpointId + ' properties ' + JSON.stringify(properties));
             if (changed_property_names.length > 0) {
                 properties.forEach(property => {
                     if (node.is_changed_property(property, changed_property_names)) {
@@ -1839,7 +1880,7 @@ module.exports = function (RED) {
         get_media_created_or_updated(endpointId, media, namespace, name, messageId) {
             const node = this;
             const oauth2_bearer_token = node.tokens.evn.access_token;
-            if (node.config.verbose) node._debug('get_media_created_or_updated endpointId ' + endpointId + ' media ' + JSON.stringify(media));
+            if (node.verbose) node._debug('get_media_created_or_updated endpointId ' + endpointId + ' media ' + JSON.stringify(media));
             const msg = {
                 event: {
                     header: {
@@ -1874,7 +1915,7 @@ module.exports = function (RED) {
         get_media_deleted(endpointId, mediaIds, namespace, name, messageId) {
             const node = this;
             const oauth2_bearer_token = node.tokens.evn.access_token;
-            if (node.config.verbose) node._debug('endpointId ' + endpointId + ' mediaIds ' + JSON.stringify(mediaIds));
+            if (node.verbose) node._debug('endpointId ' + endpointId + ' mediaIds ' + JSON.stringify(mediaIds));
             const msg = {
                 event: {
                     header: {
@@ -1967,13 +2008,13 @@ module.exports = function (RED) {
         // https://developer.amazon.com/docs/login-with-amazon/authorization-code-grant.html
         get_access_token(type, code) {
             const node = this;
-            if (node.config.verbose) node._debug("get_access_token " + type);
+            if (node.verbose) node._debug("get_access_token " + type);
             return new Promise((resolve, reject) => {
                 node.get_tokens()
                     .then(tokens => {
                         let params = false;
                         if (code) {
-                            if (node.config.verbose) node._debug("get_access_token request with code");
+                            if (node.verbose) node._debug("get_access_token request with code");
                             // access token not retrieved yet for the first time, so this should be an access token request
                             params = {
                                 grant_type: "authorization_code",
@@ -1983,13 +2024,13 @@ module.exports = function (RED) {
                         } else if (node.tokens[type]) {
                             if (node.tokens[type].access_token) {
                                 if (node.tokens[type].expire_at > Date.now()) {
-                                    if (node.config.verbose) node._debug("get_access_token use access_token " + type);
+                                    if (node.verbose) node._debug("get_access_token use access_token " + type);
                                     return resolve(node.tokens[type].access_token);
                                 }
                             }
                             if (node.tokens[type].refresh_token) {
                                 // access token already retrieved the first time, so this should be a token refresh request
-                                if (node.config.verbose) node._debug("get_access_token request with refresh_token " + type);
+                                if (node.verbose) node._debug("get_access_token request with refresh_token " + type);
                                 params = {
                                     grant_type: "refresh_token",
                                     refresh_token: node.tokens[type].refresh_token,
@@ -1998,7 +2039,7 @@ module.exports = function (RED) {
                             }
                         }
                         if (params) {
-                            if (node.config.verbose) node._debug("get_access_token request " + JSON.stringify(params));
+                            if (node.verbose) node._debug("get_access_token request " + JSON.stringify(params));
                             let client_id = type === 'evn' ? node.credentials.skill_client_id : node.credentials.oa2_client_id;
                             let secret = type === 'evn' ? node.credentials.skill_secret : node.credentials.oa2_secret;
                             superagent
@@ -2008,7 +2049,7 @@ module.exports = function (RED) {
                                 .set('Authorization', 'Basic ' + Buffer.from(client_id + ":" + secret).toString("base64"))
                                 // .set('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8')
                                 .then(res => {
-                                    if (node.config.verbose) node._debug("CCHI get_access_token res " + JSON.stringify(res));
+                                    if (node.verbose) node._debug("CCHI get_access_token res " + JSON.stringify(res));
                                     if (res.status === 200) {
                                         node.tokens[type] = {
                                             access_token: res.body.access_token,
@@ -2017,7 +2058,7 @@ module.exports = function (RED) {
                                         };
                                         return node.save_tokens()
                                             .then(() => {
-                                                if (node.config.verbose) node._debug("get_access_token tokens " + type + " saved");
+                                                if (node.verbose) node._debug("get_access_token tokens " + type + " saved");
                                                 return resolve(node.tokens[type].access_token);
                                             })
                                             .catch(err => {
@@ -2049,14 +2090,14 @@ module.exports = function (RED) {
         //
         loadJsonSync(text, filename, defaultValue, userDir) {
             const node = this;
-            if (node.config.verbose) node._debug('loadJsonSync: ' + text);
+            if (node.verbose) node._debug('loadJsonSync: ' + text);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
                 full_filename = path.join(userDir, filename);
             } else {
                 full_filename = filename;
             }
-            if (node.config.verbose) node._debug('loadJsonSync: filename ' + full_filename);
+            if (node.verbose) node._debug('loadJsonSync: filename ' + full_filename);
 
             try {
                 if (fs.existsSync(full_filename)) {
@@ -2068,16 +2109,16 @@ module.exports = function (RED) {
                         });
 
                     if (jsonFile === '') {
-                        if (node.config.verbose) node._debug('loadJsonSync: file ' + filename + ' is empty');
+                        if (node.verbose) node._debug('loadJsonSync: file ' + filename + ' is empty');
                         return defaultValue;
                     } else {
-                        if (node.config.verbose) node._debug('loadJsonSync: data loaded');
+                        if (node.verbose) node._debug('loadJsonSync: data loaded');
                         const json = JSON.parse(jsonFile);
-                        if (node.config.verbose) node._debug('loadJsonSync: json = ' + JSON.stringify(json));
+                        if (node.verbose) node._debug('loadJsonSync: json = ' + JSON.stringify(json));
                         return json;
                     }
                 } else {
-                    if (node.config.verbose) node._debug('loadJsonSync: file ' + filename + ' not found');
+                    if (node.verbose) node._debug('loadJsonSync: file ' + filename + ' not found');
                     return defaultValue;
                 }
             }
@@ -2093,11 +2134,11 @@ module.exports = function (RED) {
         //
         writeJsonSync(text, filename, value, userDir) {
             const node = this;
-            if (node.config.verbose) node._debug('writeJsonSync: ' + text);
+            if (node.verbose) node._debug('writeJsonSync: ' + text);
             if (!filename.startsWith(path.sep)) {
                 filename = path.join(userDir, filename);
             }
-            if (node.config.verbose) node._debug('writeJsonSync: filename ' + filename);
+            if (node.verbose) node._debug('writeJsonSync: filename ' + filename);
             if (typeof value === 'object') {
                 value = JSON.stringify(value);
             }
@@ -2110,7 +2151,7 @@ module.exports = function (RED) {
                         'flag': fs.constants.W_OK | fs.constants.O_CREAT | fs.constants.O_TRUNC
                     });
 
-                if (node.config.verbose) node._debug('writeJsonSync: ' + text + ' saved');
+                if (node.verbose) node._debug('writeJsonSync: ' + text + ' saved');
                 return true;
             }
             catch (err) {
@@ -2126,14 +2167,14 @@ module.exports = function (RED) {
         //
         loadJson(tag, filename, defaultValue, userDir) {
             const node = this;
-            if (node.config.verbose) node._debug('loadJson: ' + tag);
+            if (node.verbose) node._debug('loadJson: ' + tag);
             let full_filename;
             if (!filename.startsWith(path.sep)) {
                 full_filename = path.join(userDir, filename);
             } else {
                 full_filename = filename;
             }
-            if (node.config.verbose) node._debug('loadJson: filename ' + full_filename);
+            if (node.verbose) node._debug('loadJson: filename ' + full_filename);
 
             return new Promise((resolve, reject) => {
                 fs.readFile(full_filename,
@@ -2147,13 +2188,13 @@ module.exports = function (RED) {
                             return resolve(defaultValue);
                         }
                         if (data.trim() === '') {
-                            if (node.config.verbose) node._debug('loadJson: file ' + filename + ' is empty');
+                            if (node.verbose) node._debug('loadJson: file ' + filename + ' is empty');
                             return resolve(defaultValue);
                         }
-                        if (node.config.verbose) node._debug('loadJson: data loaded');
+                        if (node.verbose) node._debug('loadJson: data loaded');
                         try {
                             const json = JSON.parse(data);
-                            if (node.config.verbose) node._debug('loadJson: json = ' + JSON.stringify(json));
+                            if (node.verbose) node._debug('loadJson: json = ' + JSON.stringify(json));
                             return resolve(json);
                         } catch (err) {
                             node.error("loadJson " + tag + ' error ' + err.stack);
@@ -2168,11 +2209,11 @@ module.exports = function (RED) {
         //
         writeJson(tag, filename, data, userDir) {
             const node = this;
-            if (node.config.verbose) node._debug('writeJson: ' + tag);
+            if (node.verbose) node._debug('writeJson: ' + tag);
             if (!filename.startsWith(path.sep)) {
                 filename = path.join(userDir, filename);
             }
-            if (node.config.verbose) node._debug('writeJson: filename ' + filename);
+            if (node.verbose) node._debug('writeJson: filename ' + filename);
             if (typeof data === 'object') {
                 data = JSON.stringify(data);
             }
@@ -2188,7 +2229,7 @@ module.exports = function (RED) {
                             node.error('writeJson: Error on saving the filename + ' + filename + ': ' + err.toString());
                             return reject(err);
                         }
-                        if (node.config.verbose) node._debug('writeJson: ' + tag + ' saved');
+                        if (node.verbose) node._debug('writeJson: ' + tag + ' saved');
                         return resolve(data);
                     });
             });
