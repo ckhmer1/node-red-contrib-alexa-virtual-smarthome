@@ -74,6 +74,8 @@ module.exports = function (RED) {
     const https = require('https');
     const { SkillRequestSignatureVerifier, TimestampVerifier } = require('ask-sdk-express-adapter');
     //
+    const LOGIN_AMAZON = 'A';
+    const LOGIN_USERNAME = 'U';
     const OAUTH_PATH = 'oauth';
     const TOKEN_PATH = 'token';
     const SMART_HOME_PATH = "smarthome";
@@ -134,7 +136,7 @@ module.exports = function (RED) {
         init(config) {
             const node = this;
             node._getStateScheduled = false;
-            node._setStateDelay = config.set_state_delay * 1000; // TODO CCHI
+            node._setStateDelay = parseInt(config.set_state_delay || '0') * 1000;
             node.httpNodeRoot = RED.settings.httpNodeRoot || '/';
             node.usehttpnoderoot = config.usehttpnoderoot || false;
             node.http_path = node.usehttpnoderoot ? node.Path_join(node.httpNodeRoot, config.http_path || '') : config.http_path || '';
@@ -240,67 +242,13 @@ module.exports = function (RED) {
                     node.error("setup Tokens load error " + err);
                 });
 
-            node.UnregisterUrl();
+            node.unregisterUrl();
             if (node.http_port.trim()) {
-                if (node.verbose) node._debug("setup listen port " + node.http_port);
-                const app = express();
-                app.disable('x-powered-by');
-                app.use(helmet());
-                app.use(cors());
-                app.use(morgan('dev'));
-                app.set('trust proxy', 1); // trust first proxy
-                let options = {};
-                if (node.https_server) {
-                    try {
-                        let filename = node.credentials.privatekey;
-                        if (!filename) {
-                            node.error('No certificate private SSL key file specified in configuration.');
-                            return;
-                        }
-                        if (!filename.startsWith(path.sep)) {
-                            filename = path.join(node.user_dir, filename);
-                        }
-                        options.key = fs.readFileSync(filename)
-                    } catch (error) {
-                        node.error(`Error while loading private SSL key from file "${this.filename}" (${error})`);
-                        return;
-                    }
-
-                    try {
-                        let filename = node.credentials.publickey;
-                        if (!filename) {
-                            node.error('No certificate public SSL key file specified in configuration.');
-                            return;
-                        }
-                        if (!filename.startsWith(path.sep)) {
-                            filename = path.join(node.user_dir, filename);
-                        }
-                        options.cert = fs.readFileSync(filename)
-                    } catch (error) {
-                        node.error(`Error while loading public SSL key from file "${this.filename}" (${error})`);
-                        return;
-                    }
-                    if (node.verbose) node._debug('Use HTTPS certificate');
-                    node.http_server = stoppable(https.createServer(options, app), GRACE_MILLISECONDS);
-                } else {
-                    node.http_server = stoppable(http.createServer(app), GRACE_MILLISECONDS);
-                }
-
-                node.handler = node.http_server.listen(parseInt(node.http_port), () => {
-                    const proto = Object.keys(options).length > 0 ? 'https' : 'http';
-                    const host = node.http_server.address().address;
-                    const port = node.http_server.address().port;
-                    if (node.verbose) node._debug(`Server listening at ${proto}://${host}:${port}`);
-                });
-
-                this.http_server.on('error', function (err) {
-                    const proto = Object.keys(options).length > 0 ? 'https' : 'http';
-                    node.error(`${proto} server error: ` + err);
-                });
-                node.RegisterUrl(app);
+                const app = node.startServer();
+                node.registerUrl(app);
             } else {
                 if (node.verbose) node._debug("Use the Node-RED port");
-                node.RegisterUrl(RED.httpNode || RED.httpAdmin);
+                node.registerUrl(RED.httpNode || RED.httpAdmin);
             }
         }
 
@@ -308,7 +256,110 @@ module.exports = function (RED) {
         //
         //
         //
-        GetRouteType(route) {
+        startServer() {
+            const node = this;
+            if (node.verbose) node._debug("startServer port " + node.http_port);
+            const app = express();
+            app.disable('x-powered-by');
+            app.use(helmet());
+            app.use(cors());
+            app.use(morgan('dev'));
+            app.set('trust proxy', 1); // trust first proxy
+            let options = {};
+            if (node.https_server) {
+                try {
+                    let filename = node.credentials.privatekey;
+                    if (!filename) {
+                        node.error('No certificate private SSL key file specified in configuration.');
+                        return;
+                    }
+                    if (!filename.startsWith(path.sep)) {
+                        filename = path.join(node.user_dir, filename);
+                    }
+                    options.key = fs.readFileSync(filename)
+                } catch (error) {
+                    node.error(`Error while loading private SSL key from file "${this.filename}" (${error})`);
+                    return;
+                }
+
+                try {
+                    let filename = node.credentials.publickey;
+                    if (!filename) {
+                        node.error('No certificate public SSL key file specified in configuration.');
+                        return;
+                    }
+                    if (!filename.startsWith(path.sep)) {
+                        filename = path.join(node.user_dir, filename);
+                    }
+                    options.cert = fs.readFileSync(filename)
+                } catch (error) {
+                    node.error(`Error while loading public SSL key from file "${this.filename}" (${error})`);
+                    return;
+                }
+                if (node.verbose) node._debug('Use HTTPS certificate');
+                node.http_server = stoppable(https.createServer(options, app), GRACE_MILLISECONDS);
+            } else {
+                node.http_server = stoppable(http.createServer(app), GRACE_MILLISECONDS);
+            }
+
+            node.handler = node.http_server.listen(parseInt(node.http_port), () => {
+                const proto = Object.keys(options).length > 0 ? 'https' : 'http';
+                const host = node.http_server.address().address;
+                const port = node.http_server.address().port;
+                if (node.verbose) node._debug(`Server listening at ${proto}://${host}:${port}`);
+            });
+
+            this.http_server.on('error', function (err) {
+                const proto = Object.keys(options).length > 0 ? 'https' : 'http';
+                node.error(`${proto} server error: ` + err);
+            });
+            return app;
+        }
+
+        //
+        //
+        //
+        //
+        stopServer() {
+            const node = this;
+            if (node.http_server !== null) {
+                if (node.verbose) node._debug("Stopping server");
+                node.http_server.stop(function (err, grace) {
+                    if (node.verbose) node._debug("Server stopped " + grace + " " + err);
+                });
+                setImmediate(function () {
+                    node.http_server.emit('close');
+                    node.http_server = null;
+                });
+            }
+            if (node.handler !== null) {
+                if (node.verbose) node._debug("Close handler");
+                node.handler.close(() => {
+                    if (node.verbose) node._debug("Handler closed");
+                });
+                node.handler = null;
+            }
+        }
+
+        //
+        //
+        //
+        //
+        restartServer() {
+            const node = this;
+            if (node.http_port.trim()) {
+                node.unregisterUrl();
+                node.stopServer();
+                const app = node.startServer();
+                node.registerUrl(app);
+            }
+        }
+
+        //
+        //
+        //
+        //
+        getRouteType(route) {
             if (route) {
                 if (route.route.methods['get'] && route.route.methods['post']) return "all";
                 if (route.route.methods['get']) return "get";
@@ -323,7 +374,7 @@ module.exports = function (RED) {
         //
         //
         //
-        RegisterUrl(http_server) {
+        registerUrl(http_server) {
             // httpNodeRoot is the root url for nodes that provide HTTP endpoints. If set to false, all node-based HTTP endpoints are disabled. 
             if (RED.settings.httpNodeRoot !== false) {
                 const node = this;
@@ -354,7 +405,7 @@ module.exports = function (RED) {
         //
         //
         //
-        UnregisterUrl() {
+        unregisterUrl() {
             const node = this;
             const REDhttp = RED.httpNode || RED.httpAdmin;
             if (RED.settings.httpNodeRoot !== false && REDhttp._router) {
@@ -377,14 +428,14 @@ module.exports = function (RED) {
                         (route.route.methods['options'] && options_urls.includes(route.route.path)) ||
                         (all_urls.includes(route.route.path))
                     )) {
-                        if (node.verbose) node._debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                        if (node.verbose) node._debug('UnregisterUrl: removing url: ' + route.route.path + " registred for " + node.getRouteType(route));
                         to_remove.unshift(i);
                     }
                 });
                 to_remove.forEach(i => REDhttp._router.stack.splice(i, 1));
                 if (node.verbose)
                     REDhttp._router.stack.forEach(function (route) {
-                        if (route.route) node._debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.GetRouteType(route));
+                        if (route.route) node._debug('UnregisterUrl: remaining url: ' + route.route.path + " registred for " + node.getRouteType(route));
                     });
             }
         }
@@ -396,23 +447,8 @@ module.exports = function (RED) {
         shutdown(removed, done) {
             const node = this;
             if (node.verbose) node._debug("(on-close)");
-            node.UnregisterUrl();
-            if (node.http_server !== null) {
-                if (node.verbose) node._debug("Stopping server");
-                node.http_server.stop(function (err, grace) {
-                    if (node.verbose) node._debug("Server stopped " + grace + " " + err);
-                });
-                setImmediate(function () {
-                    node.http_server.emit('close');
-                    node.http_server = null;
-                });
-                if (node.handler !== null) {
-                    node.handler.close(() => {
-                        if (node.verbose) node._debug("Server stopped");
-                    });
-                    node.handler = null;
-                }
-            }
+            node.unregisterUrl();
+            node.stopServer();
             if (removed) {
                 // this node has been deleted
                 if (node.verbose) node._debug("shutdown: removed");
@@ -435,7 +471,7 @@ module.exports = function (RED) {
                 node._getStateScheduled = true;
                 setTimeout(() => {
                     node._getStateScheduled = false;
-                    Object.keys(node._mgmtNode.mgmtNodes).forEach(key => node._mgmtNode.mgmtNodes[key].sendSetState()); // TODO CCHI
+                    Object.keys(node.managements).forEach(key => node.managements[key].sendSetState());
                 }, node._setStateDelay);
             }
         }
@@ -456,7 +492,7 @@ module.exports = function (RED) {
                 return res.status(500).send(req.query.error);
             }
             // Manage Login with Amazon
-            if (node.config.login_with_amazon) {
+            if (LOGIN_AMAZON == node.config.login_type) {
                 // Second request
                 if (node.skill_link_req && req.query.access_token && req.query.token_type === 'bearer' && req.query.scope &&
                     req.query.expires_in && Number.isInteger(parseInt(req.query.expires_in))) {
@@ -486,6 +522,10 @@ module.exports = function (RED) {
                     return node.manage_login_with_amazon_access_token(req, res);
                 }
             }
+            if (LOGIN_USERNAME != node.config.login_type) {
+                return res.status(500).send('Login not allowed');
+            }
+
             if (node.verbose) node.error('oauth_get login');
             node.skill_link_req = {};
             const client_id = req.query.client_id || '';
@@ -540,7 +580,7 @@ module.exports = function (RED) {
             const scope = req.body.scope || '';
             const redirect_uri = req.body.redirect_uri || '';
             if (node.verbose) node.error('oauth_post username ' + username);
-            if (node.config.login_with_amazon && (username || password)) {
+            if (LOGIN_USERNAME !== node.config.login_type && (username || password)) {
                 node.error("oauth_post: Login with username is not enabled");
                 return res.status(500).send('Wrong request');
             }
@@ -986,7 +1026,7 @@ module.exports = function (RED) {
                         )
                         .send(data.replace(/CLIENT_ID/g, node.credentials.oa2_client_id)
                             .replace(/VERBOSE/g, node.verbose)
-                            .replace(/LOGIN_WITH_AMAZON/g, '' + node.config.login_with_amazon)
+                            .replace(/LOGIN_WITH_AMAZON/g, '' + (LOGIN_AMAZON === node.config.login_type))
                             .replace(/ERROR_MESSAGE/g, error_message));
                 }
             });
@@ -1241,6 +1281,84 @@ module.exports = function (RED) {
                 }
             });
             return states;
+        }
+
+        //
+        //
+        //
+        //
+        getStates(deviceIds, onlyPersistent, useNames) {
+            const node = this;
+            let states = {};
+
+            if (!deviceIds || !Object.keys(deviceIds).length) {
+                if (node.verbose) node._debug('getStates all deviceIds');
+                Object.keys(node.devices).forEach(function (deviceId) {
+                    const device = node.devices[deviceId];
+                    if (Object.keys(device.state).length > 0) {
+                        let include = true;
+                        let key = useNames === true ? device.name : deviceId;
+                        if (onlyPersistent === true) {
+                            include = device.config.persistent_state || false;
+                        }
+                        if (include) {
+                            states[key || deviceId] = device.state;
+                        }
+                    }
+                });
+            } else {
+                if (node.verbose) node._debug('getStates deviceIds ' + JSON.stringify(deviceIds));
+                for (let i = 0; i < deviceIds.length; i++) {
+                    const device = node.devices[deviceIds[i]] || {};
+                    if (Object.keys(device.state).length > 0) {
+                        states[deviceId] = device.states;
+                    }
+                }
+            }
+
+            return states;
+        }
+
+        //
+        //
+        //
+        setStates(states) {
+            let node = this;
+            const devicesByName = node.getAllDevicesByName();
+            Object.keys(states).forEach(deviceId => {
+                let device = node.devices[deviceId];
+                if (!device) {
+                    device = devicesByName[deviceId];
+                }
+                if (device) {
+                    device.onInput({ topic: device.config.topic, payload: states[deviceId] });
+                }
+            });
+        }
+
+        //
+        //
+        //
+        //
+        getAllDevicesByName() {
+            const node = this;
+            let devices = {};
+            Object.keys(node.devices).forEach(function (key) {
+                const device = node.devices[key];
+                devices[device.config.name] = device;
+            });
+            return devices;
+        }
+
+        //
+        //
+        //
+        //
+        sendAllChangeReports() {
+            const node = this;
+            Object.keys(node.devices).forEach(function (deviceId) {
+                node.send_change_report(deviceId).then(() => { });
+            });
         }
 
         //

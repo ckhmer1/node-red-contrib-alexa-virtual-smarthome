@@ -5,7 +5,7 @@
         defaults: {
             name: { value: "Alexa", required: true },
             http_path: { value: "alexa", required: false },
-            login_with_amazon: { value: true, required: false },
+            login_type: { value: '', required: false },
             event_endpoint: { value: "", requred: true },
             scope: { value: "smart_home", requred: true },
             emails: { value: [], required: false },
@@ -20,6 +20,13 @@
                     return v.trim().length == 0 || (!isNaN(v) && Number.isInteger(f) && n > 0);
                 }
             },
+            set_state_delay: {
+                value: '', required: false, validate: function (v) {
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return v.trim().length == 0 || (!isNaN(v) && Number.isInteger(f) && n > 0);
+                }
+            }
         },
         credentials: {
             username: { type: "text" },
@@ -72,20 +79,23 @@
                 $("#node-input-alexa-adapter-emails-container").editableList('addItem', { name: email });
             }
 
-            // Login with Amazon
-            var loginWithAmazon = function () {
-                var loginWithAmazon = $("#node-config-input-login_with_amazon").prop('checked');
-                if (loginWithAmazon == false) {
+            // Login Type
+            var loginType = function () {
+                let login_type = $("#node-config-input-login_type").val();
+                if (login_type == 'U') {
                     $("#login-with-amazon").hide();
                     $("#local-login").show();
-                } else {
+                } else if (login_type == 'A') {
                     $("#login-with-amazon").show();
+                    $("#local-login").hide();
+                } else {
+                    $("#login-with-amazon").hide();
                     $("#local-login").hide();
                 }
             }
-            loginWithAmazon();
-            $("#node-config-input-login_with_amazon").change(loginWithAmazon);
-            
+            loginType();
+            $("#node-config-input-login_type").change(loginType);
+
             // Use same NODE-Red port
             let useNODERedPort = function () {
                 let input_port = $('#node-config-input-port').val();
@@ -98,7 +108,7 @@
             };
             useNODERedPort();
             $('#node-config-input-port').change(useNODERedPort);
-            
+
             // Use external SSL offload on / off
             let sslOffLoadKeys = function () {
                 let https_server = $("#node-config-input-https_server").prop('checked');
@@ -159,8 +169,12 @@
     </div>
 
     <div class="form-row">
-        <input type="checkbox" id="node-config-input-login_with_amazon" style="display:inline-block; width:20px; vertical-align:baseline;">
-        <span data-i18n="alexa-adapter.label.login_with_amazon"></span>
+        <label for="node-config-input-login_type"><i class="fa fa-tag"></i> <span data-i18n="alexa-adapter.label.login_type"></span></label>
+        <select id="node-config-input-login_type" >
+            <option value='' data-i18n='alexa-adapter.label.disabled'></option>
+            <option value='A' data-i18n='alexa-adapter.label.login_amazon'></option>
+            <option value='U' data-i18n='alexa-adapter.label.login_username'></option>
+        </select>
     </div>
 
     <div class="form-row red-ui-editableList-border" id="local-login" style="background: #fbfbfb; padding: 5px;">
@@ -287,6 +301,15 @@
     </div>
 
     <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
+        <div class="form-row">
+            <span data-i18n="alexa-adapter.label.other_settings"></span>
+        </div>
+
+        <div class="form-row">
+            <label for="node-config-input-set_state_delay"><i class="fa fa-globe"></i> <span data-i18n="alexa-adapter.label.set_state_delay"></span></label>
+            <input type="text" id="node-config-input-set_state_delay" data-i18n="[placeholder]alexa-adapter.placeholder.set_state_delay">
+        </div>
+
         <div class="form-row">
             <input type="checkbox" id="node-config-input-msg_check" style="display:inline-block; width:20px; vertical-align:baseline;">
             <span data-i18n="alexa-adapter.label.msg_check"></span>

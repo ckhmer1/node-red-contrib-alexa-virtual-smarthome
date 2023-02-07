@@ -14,6 +14,10 @@
             "port": "Porta del server HTTP(s)",
             "http_path": "Percorso del server HTTP(s)",
             "login_with_amazon": "Accedi con le credenziali di Amazon",
+            "login_type": "Tipo di accesso",
+            "disabled": "Nessuno",
+            "login_amazon": "Credenziali di Amazon",
+            "login_username": "Nome utente e password",
             "secirity_profile_web_settings": "Impostazioni del profilo di sicurezza WEB",
             "local_credentials": "Credenziali locali",
             "http_server": "Server HTTP(s) ",
@@ -27,6 +31,8 @@
             "scope": "Scopo",
             "msg_check": "Verifica i messaggi di Alexa",
             "verbose": "Log dettagliato",
+            "other_settings": "Altre impostazioni",
+            "set_state_delay": "Ritardo invio del messaggio set_state (s)",
             "privacy_policy": "Politica sulla riservatezza",
             "privacy_policy_content": "Usando questa Skill accetti di condividere informazioni relative alla tua casa intelligente con Amazon."
         },
@@ -45,7 +51,8 @@
             "publickey": "File con la chiave pubblica del certificato",
             "privatekey": "File con la chiave privata del certificato",
             "event_endpoint": "URL dell'Event endpoint",
-            "scope": "Scopo, e.g.: smart_home"
+            "scope": "Scopo, e.g.: smart_home",
+            "set_state_delay": "Ritardo invio del messaggio set_state dopo un cambio di stato"
         },
         "error": {
             "missing-config": "Configurazione SmartHome mancante.",

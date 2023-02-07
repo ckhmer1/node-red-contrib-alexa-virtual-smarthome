@@ -99,54 +99,47 @@ module.exports = function (RED) {
         //
         onInput(msg) {
             const node = this;
+            if (node.isVerbose()) node._debug("onInput " + JSON.stringify(msg));
             const topic_str = String(msg.topic || '');
             const topicArr = topic_str.split('/');
             const topic = topicArr[topicArr.length - 1].toUpperCase();
-            if (node.isVerbose()) node._debug("onInput " + JSON.stringify(msg));
             if (node.isVerbose()) node._debug("onInput " + topic);
 
             if (topic === 'REPORTSTATE') {
-                node.alexa.send_change_report(node.id).then(() => { });
-            } else if (topic === 'GETSTATES') {
-                let state = node.alexa.get_all_states();
-                /* TOSO
-                    let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(node.set_state_type);
-                    let useNames = ['all_by_name', 'filtered_by_name'].includes(node.set_state_type);
-                    let deviceIds = undefined;
-                    if (typeof msg.payload === 'boolean') {
-                        onlyPersistent = msg.payload;
-                    } else if (typeof msg.payload === 'string') {
-                        deviceIds = [msg.payload];
-                    } else if (Array.isArray(msg.payload)) {
-                        deviceIds = msg.payload;
-                    } else if (typeof msg.payload === 'object') {
-                        if (typeof msg.payload.onlyPersistent === 'boolean') {
-                            onlyPersistent = msg.payload.onlyPersistent;
-                        }
-                        if (typeof msg.payload.useNames === 'boolean') {
-                            useNames = msg.payload.useNames;
-                        }
-                        if (typeof msg.payload.devices === 'string') {
-                            deviceIds = [msg.payload.devices];
-                        } else if (Array.isArray(msg.payload.devices)) {
-                            deviceIds = msg.payload.devices;
-                        }
+                node.alexa.sendAllChangeReports();
+            } else if (topic === 'GETSTATE') {
+                let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(node.config.set_state_type);
+                let useNames = ['all_by_name', 'filtered_by_name'].includes(node.config.set_state_type);
+                let deviceIds = undefined;
+                if (typeof msg.payload === 'boolean') {
+                    onlyPersistent = msg.payload;
+                } else if (typeof msg.payload === 'string') {
+                    deviceIds = [msg.payload];
+                } else if (Array.isArray(msg.payload)) {
+                    deviceIds = msg.payload;
+                } else if (typeof msg.payload === 'object') {
+                    if (typeof msg.payload.onlyPersistent === 'boolean') {
+                        onlyPersistent = msg.payload.onlyPersistent;
                     }
-                    let states = node.alexa.getStates(deviceIds, onlyPersistent, useNames);
-                    if (states) {
-                        ndoe.send({
-                            topic: topic,
-                            payload: states
-                        });
+                    if (typeof msg.payload.useNames === 'boolean') {
+                        useNames = msg.payload.useNames;
                     }
-                */
-                node.send({
-                    topic: "getAllStates",
-                    payload: state
-                })
-            } else if (topic_upper === 'SETSTATE') {
+                    if (typeof msg.payload.devices === 'string') {
+                        deviceIds = [msg.payload.devices];
+                    } else if (Array.isArray(msg.payload.devices)) {
+                        deviceIds = msg.payload.devices;
+                    }
+                }
+                let states = node.alexa.getStates(deviceIds, onlyPersistent, useNames);
+                if (states) {
+                    node.send({
+                        topic: topic,
+                        payload: states
+                    });
+                }
+            } else if (topic === 'SETSTATE') {
                 if (typeof msg.payload === 'object') {
-                    this.alexa.setStates(msg.payload); // TODO
+                    this.alexa.setStates(msg.payload);
                 }
             } else if (topic === 'GETNAMES') {
                 let names = node.alexa.get_all_names();
@@ -155,7 +148,7 @@ module.exports = function (RED) {
                     payload: names
                 })
             } else if (topic === 'RESTARTSERVER') {
-                this.alexa.restartServer(); // TODO
+                this.alexa.restartServer();
             }
         }
 
@@ -165,12 +158,13 @@ module.exports = function (RED) {
         //
         //
         sendSetState() {
-            if (this.set_state_type === 'no_nodes') return;
-            let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(this.set_state_type);
-            let useNames = ['all_by_name', 'filtered_by_name'].includes(this.set_state_type);
-            let states = this.alexa.getStates(undefined, onlyPersistent, useNames);
+            const node = this;
+            if (node.config.set_state_type === 'no_nodes') return;
+            let onlyPersistent = ['filtered_by_id', 'filtered_by_name'].includes(node.config.set_state_type);
+            let useNames = ['all_by_name', 'filtered_by_name'].includes(node.config.set_state_type);
+            let states = node.alexa.getStates(undefined, onlyPersistent, useNames);
             if (states) {
-                this.send({
+                node.send({
                     topic: 'set_state',
                     payload: states
                 });

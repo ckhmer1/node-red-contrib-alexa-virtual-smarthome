@@ -14,6 +14,10 @@
             "port": "HTTP Port",
             "http_path": "HTTP Path",
             "login_with_amazon": "Login with amazon",
+            "login_type": "Login type",
+            "disabled": "Disabled",
+            "login_amazon": "Login with Amazon",
+            "login_username": "Login with Username/Password",
             "secirity_profile_web_settings": "Security Profile Web Settings",
             "local_credentials": "Local credentials",
             "http_server": "HTTP(s) Server",
@@ -27,6 +31,8 @@
             "scope": "Scope",
             "msg_check": "Verify the Alexa message",
             "verbose": "Verbose log",
+            "other_settings": "Other settings",
+            "set_state_delay": "set_state message delay (s)",
             "privacy_policy": "Privacy policy",
             "privacy_policy_content": "Using this Skill You accept to share Smart Home info with Amazon."
         },
@@ -45,7 +51,8 @@
             "publickey": "Certificate public key filename",
             "privatekey": "Certificate private key filename",
             "event_endpoint": "Event endpoint",
-            "scope": "Scope"
+            "scope": "Scope",
+            "set_state_delay": "Delay for sending the set_state message after state changes"
         },
         "error": {
             "missing-config": "Missing SmartHome configuration.",
