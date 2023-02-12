@@ -53,3 +53,6 @@ https://www.home-assistant.io/integrations/alexa.smart_home/
 
 https://developer.amazon.com/en-US/docs/alexa/account-linking/configure-authorization-code-grant.html
 
+img
+https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_Alexa_logo.svg/320px-Amazon_Alexa_logo.svg.png
+https://nodered.org/about/resources/media/node-red-icon-2.svg
