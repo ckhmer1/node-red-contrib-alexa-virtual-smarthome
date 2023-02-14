@@ -14,6 +14,7 @@
             "port": "Porta del server HTTP(s)",
             "http_path": "Percorso del server HTTP(s)",
             "login_with_amazon": "Accedi con le credenziali di Amazon",
+            "login_with_username": "Accedi con nome utente e password",
             "login_type": "Tipo di accesso",
             "disabled": "Nessuno",
             "login_amazon": "Credenziali di Amazon",

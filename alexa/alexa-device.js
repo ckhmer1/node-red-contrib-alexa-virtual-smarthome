@@ -2485,7 +2485,7 @@ module.exports = function (RED) {
                     // TODO DEEP_STATES
                     let o_modified = node.setState(key, new_states[key], current_state, state_types[key]);
                     if (o_modified) {
-                        node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
+                        if (node.isVerbose()) node._debug('updateState set "' + key + '" to ' + JSON.stringify(new_states[key]));
                         modified.push(o_modified);
                     }
                     // console.log("CCHI set " + key + " val " + JSON.stringify(current_state[key]));

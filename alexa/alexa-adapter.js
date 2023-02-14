@@ -74,8 +74,6 @@ module.exports = function (RED) {
     const https = require('https');
     const { SkillRequestSignatureVerifier, TimestampVerifier } = require('ask-sdk-express-adapter');
     //
-    const LOGIN_AMAZON = 'A';
-    const LOGIN_USERNAME = 'U';
     const OAUTH_PATH = 'oauth';
     const TOKEN_PATH = 'token';
     const SMART_HOME_PATH = "smarthome";
@@ -492,7 +490,7 @@ module.exports = function (RED) {
                 return res.status(500).send(req.query.error);
             }
             // Manage Login with Amazon
-            if (LOGIN_AMAZON == node.config.login_type) {
+            if (node.config.login_with_amazon) {
                 // Second request
                 if (node.skill_link_req && req.query.access_token && req.query.token_type === 'bearer' && req.query.scope &&
                     req.query.expires_in && Number.isInteger(parseInt(req.query.expires_in))) {
@@ -502,6 +500,7 @@ module.exports = function (RED) {
                         .then(pres => {
                             if (node.verbose) node._debug("get_user_profile CCHI pres " + JSON.stringify(pres));
                             if (node.config.emails.includes(pres.email)) {
+                                // TODO check Host, get port
                                 const oauth_redirect_uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, OAUTH_PATH);
                                 if (node.verbose) node._debug('oauth_get CCHI oauth_redirect_uri ' + JSON.stringify(oauth_redirect_uri));
                                 const state = node.tokgen.generate();
@@ -522,8 +521,9 @@ module.exports = function (RED) {
                     return node.manage_login_with_amazon_access_token(req, res);
                 }
             }
-            if (LOGIN_USERNAME != node.config.login_type) {
-                return res.status(500).send('Login not allowed');
+            if (true !== node.config.login_with_username) {
+                // return res.status(500).send('Login not allowed');
+                return res.status(500).sendFile(path.join(__dirname, 'html/no_login.html'),);
             }
 
             if (node.verbose) node.error('oauth_get login');
@@ -580,7 +580,7 @@ module.exports = function (RED) {
             const scope = req.body.scope || '';
             const redirect_uri = req.body.redirect_uri || '';
             if (node.verbose) node.error('oauth_post username ' + username);
-            if (LOGIN_USERNAME !== node.config.login_type && (username || password)) {
+            if (!node.config.login_with_username && (username || password)) {
                 node.error("oauth_post: Login with username is not enabled");
                 return res.status(500).send('Wrong request');
             }
@@ -1017,16 +1017,17 @@ module.exports = function (RED) {
                     //.set("Content-Security-Policy", "default-src 'self'; style-src https://stackpath.bootstrapcdn.com; img-src *; 'unsafe-inline' *.alexa.com")
                     // .set("Content-Security-Policy", "default-src 'self'; style-src https://stackpath.bootstrapcdn.com 'unsafe-inline'; img-src *; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval' *.alexa.com")
                     res
-                        .set("Content-Security-Policy",
+                        /*.set("Content-Security-Policy",
                             "default-src 'self' 'unsafe-inline' *.alexa.com https://*.media-amazon.com ; " +
-                            "style-src https://stackpath.bootstrapcdn.com 'unsafe-inline' ; " +
-                            "img-src https://upload.wikimedia.org https://nodered.org https://images-na.ssl-images-amazon.com ; " +
+                            "style-src https://cdn.jsdelivr.net 'unsafe-inline' ; " +
+                            "img-src 'self' https://images-na.ssl-images-amazon.com 'unsafe-inline' ; " +
                             "script-src 'self' http://* https://assets.loginwithamazon.com 'unsafe-inline' ; " +
                             "frame-src https://*.amazon.com"
-                        )
+                        )*/
                         .send(data.replace(/CLIENT_ID/g, node.credentials.oa2_client_id)
                             .replace(/VERBOSE/g, node.verbose)
-                            .replace(/LOGIN_WITH_AMAZON/g, '' + (LOGIN_AMAZON === node.config.login_type))
+                            .replace(/LOGIN_WITH_AMAZON/g, '' + (true === node.config.login_with_amazon))
+                            .replace(/LOGIN_WITH_USERNAME/g, '' + (true === node.config.login_with_username))
                             .replace(/ERROR_MESSAGE/g, error_message));
                 }
             });

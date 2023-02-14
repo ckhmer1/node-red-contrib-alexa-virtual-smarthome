@@ -5,7 +5,8 @@
         defaults: {
             name: { value: "Alexa", required: true },
             http_path: { value: "alexa", required: false },
-            login_type: { value: '', required: false },
+            login_with_amazon: { value: true, required: false },
+            login_with_username: { value: true, required: false },
             event_endpoint: { value: "", requred: true },
             scope: { value: "smart_home", requred: true },
             emails: { value: [], required: false },
@@ -79,22 +80,29 @@
                 $("#node-input-alexa-adapter-emails-container").editableList('addItem', { name: email });
             }
 
-            // Login Type
-            var loginType = function () {
-                let login_type = $("#node-config-input-login_type").val();
-                if (login_type == 'U') {
-                    $("#login-with-amazon").hide();
-                    $("#local-login").show();
-                } else if (login_type == 'A') {
+            // Login with Amazon
+            var loginWithAmazon = function () {
+                var loginWithAmazon = $("#node-config-input-login_with_amazon").prop('checked');
+                if (loginWithAmazon) {
                     $("#login-with-amazon").show();
-                    $("#local-login").hide();
                 } else {
                     $("#login-with-amazon").hide();
+                }
+            }
+            loginWithAmazon();
+            $("#node-config-input-login_with_amazon").change(loginWithAmazon);
+
+            // Login with Username
+            var loginWithUsername = function () {
+                var loginWithUsername = $("#node-config-input-login_with_username").prop('checked');
+                if (loginWithUsername) {
+                    $("#local-login").show();
+                } else {
                     $("#local-login").hide();
                 }
             }
-            loginType();
-            $("#node-config-input-login_type").change(loginType);
+            loginWithUsername();
+            $("#node-config-input-login_with_username").change(loginWithUsername);
 
             // Use same NODE-Red port
             let useNODERedPort = function () {
@@ -168,54 +176,54 @@
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]alexa-adapter.placeholder.name">
     </div>
 
-    <div class="form-row">
-        <label for="node-config-input-login_type"><i class="fa fa-tag"></i> <span data-i18n="alexa-adapter.label.login_type"></span></label>
-        <select id="node-config-input-login_type" >
-            <option value='' data-i18n='alexa-adapter.label.disabled'></option>
-            <option value='A' data-i18n='alexa-adapter.label.login_amazon'></option>
-            <option value='U' data-i18n='alexa-adapter.label.login_username'></option>
-        </select>
-    </div>
-
-    <div class="form-row red-ui-editableList-border" id="local-login" style="background: #fbfbfb; padding: 5px;">
-
+    <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
-            <span data-i18n="alexa-adapter.label.local_credentials"></span>
+            <input type="checkbox" id="node-config-input-login_with_username" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-adapter.label.login_with_username"></span>
         </div>
 
-        <div class="form-row">
-            <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="alexa-adapter.label.username"></span></label>
-            <input type="text" id="node-config-input-username" data-i18n="[placeholder]alexa-adapter.placeholder.username">
-        </div>
+        <div id="local-login">
+            <div class="form-row">
+                <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="alexa-adapter.label.username"></span></label>
+                <input type="text" id="node-config-input-username" data-i18n="[placeholder]alexa-adapter.placeholder.username">
+            </div>
 
-        <div class="form-row">
-            <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.password"></span></label>
-            <input type="password" id="node-config-input-password" data-i18n="[placeholder]alexa-adapter.placeholder.password">
+            <div class="form-row">
+                <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.password"></span></label>
+                <input type="password" id="node-config-input-password" data-i18n="[placeholder]alexa-adapter.placeholder.password">
+            </div>
         </div>
     </div>
     
-    <div class="form-row red-ui-editableList-border" id="login-with-amazon" style="background: #fbfbfb; padding: 5px;">
+    <div class="form-row red-ui-editableList-border" style="background: #fbfbfb; padding: 5px;">
         <div class="form-row">
-            <span data-i18n="alexa-adapter.label.secirity_profile_web_settings"></span>
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/docs/login-with-amazon/register-web.html"><i class="fa fa-external-link"></i></a>
-            <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html"><i class="fa fa-external-link"></i></a>
+            <input type="checkbox" id="node-config-input-login_with_amazon" style="display:inline-block; width:20px; vertical-align:baseline;">
+            <span data-i18n="alexa-adapter.label.login_with_amazon"></span>
         </div>
 
-        <div class="form-row">
-            <label for="node-config-input-oa2_client_id"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.oa2_client_id"></span></label>
-            <input type="text" id="node-config-input-oa2_client_id" data-i18n="[placeholder]alexa-adapter.placeholder.oa2_client_id">
-        </div>
+        <div id="login-with-amazon">
+            <div class="form-row">
+                <span data-i18n="alexa-adapter.label.secirity_profile_web_settings"></span>
+                <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/docs/login-with-amazon/register-web.html"><i class="fa fa-external-link"></i></a>
+                <a target="_blank" class="red-ui-palette-module-link" href="https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html"><i class="fa fa-external-link"></i></a>
+            </div>
 
-        <div class="form-row">
-            <label for="node-config-input-oa2_secret"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.oa2_secret"></span></label>
-            <input type="password" id="node-config-input-oa2_secret" data-i18n="[placeholder]alexa-adapter.placeholder.oa2_secret">
-        </div>
+            <div class="form-row">
+                <label for="node-config-input-oa2_client_id"><i class="fa fa-bookmark"></i> <span data-i18n="alexa-adapter.label.oa2_client_id"></span></label>
+                <input type="text" id="node-config-input-oa2_client_id" data-i18n="[placeholder]alexa-adapter.placeholder.oa2_client_id">
+            </div>
 
-        <div class="form-row" style="margin-bottom:0;">
-            <i class="fa fa-list"></i> <span data-i18n="alexa-adapter.label.emails"></span>
-        </div>
-        <div class="form-row node-input-alexa-adapter-emails-container-row">
-            <ol id="node-input-alexa-adapter-emails-container"></ol>
+            <div class="form-row">
+                <label for="node-config-input-oa2_secret"><i class="fa fa-lock"></i> <span data-i18n="alexa-adapter.label.oa2_secret"></span></label>
+                <input type="password" id="node-config-input-oa2_secret" data-i18n="[placeholder]alexa-adapter.placeholder.oa2_secret">
+            </div>
+
+            <div class="form-row" style="margin-bottom:0;">
+                <i class="fa fa-list"></i> <span data-i18n="alexa-adapter.label.emails"></span>
+            </div>
+            <div class="form-row node-input-alexa-adapter-emails-container-row">
+                <ol id="node-input-alexa-adapter-emails-container"></ol>
+            </div>
         </div>
     </div>
 
