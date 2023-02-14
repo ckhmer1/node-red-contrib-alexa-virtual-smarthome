@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+// Account Linking
 // https://developer.amazon.com/en-US/docs/alexa/account-linking/account-linking-concepts.html
+// https://developer.amazon.com/en-US/docs/alexa/account-linking/requirements-account-linking.html
 // https://developer.amazon.com/en-US/docs/alexa/device-apis/alexa-errorresponse.html
 // https://developer.amazon.com/en-US/docs/alexa/smarthome/state-reporting-for-a-smart-home-skill.html
 // https://developer.amazon.com/en-US/docs/alexa/account-linking/account-linking-for-sh-and-other.html
