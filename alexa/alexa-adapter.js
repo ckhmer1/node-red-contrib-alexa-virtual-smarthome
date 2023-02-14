@@ -646,7 +646,7 @@ module.exports = function (RED) {
             else {
                 sep = '?';
             }
-            if (node.verbose) node._debug("oauth_post: redirect to " + util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), 'XXXXX'));
+            if (node.verbose) node._debug("oauth_post: redirect to " + util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), encodeURIComponent(node.auth_code.code)));
             return res.redirect(util.format('%s%sstate=%s&code=%s', redirect_uri, sep, encodeURIComponent(state), encodeURIComponent(node.auth_code.code)));
         }
 
