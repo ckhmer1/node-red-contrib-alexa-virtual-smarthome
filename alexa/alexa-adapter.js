@@ -480,12 +480,31 @@ module.exports = function (RED) {
         //
         oauth_get(req, res) {
             const node = this;
+            if (true !== node.config.login_with_username && true !== node.config.login_with_amazon) {
+                // return res.status(500).send('Login not allowed');
+                // return res.status(500).sendFile(path.join(__dirname, 'html/no_login.html'));
+                return node.show_no_login_page(res);
+            }
+
             if (node.verbose) node._debug('oauth_get');
             if (node.verbose) node._debug('oauth_get CCHI ' + JSON.stringify(req.query));
 
             if (typeof req.query.policy !== 'undefined') {
                 return node.show_policy_page(res);
             }
+
+            if (typeof req.query.js !== 'undefined') {
+                return node.send_js_page(res);
+            }
+
+            if (typeof req.query.aal !== 'undefined') {
+                return node.show_file_in_html(res, "Amazon_Alexa.png");
+            }
+
+            if (typeof req.query.nrl !== 'undefined') {
+                return node.show_file_in_html(res, "node-red.svg");
+            }
+
             if (typeof req.query.error !== 'undefined' && typeof req.query.client_id === 'undefined') {
                 return res.status(500).send(req.query.error);
             }
@@ -512,7 +531,7 @@ module.exports = function (RED) {
                         })
                         .catch(err => {
                             node.error("get_user_profile err " + err);
-                            node.show_login_page(res, true);
+                            node.show_login_page(res);
                         });
                     return;
                 }
@@ -520,10 +539,6 @@ module.exports = function (RED) {
                     if (node.verbose) node.error('oauth_get profile');
                     return node.manage_login_with_amazon_access_token(req, res);
                 }
-            }
-            if (true !== node.config.login_with_username) {
-                // return res.status(500).send('Login not allowed');
-                return res.status(500).sendFile(path.join(__dirname, 'html/no_login.html'),);
             }
 
             if (node.verbose) node.error('oauth_get login');
@@ -1001,14 +1016,58 @@ module.exports = function (RED) {
             }
             return error_msg;
         }
+
         //
         //
         //
         //
-        show_login_page(res, error) {
+        show_no_login_page(res) {
+            const node = this;
+            res
+                .set("Content-Security-Policy",
+                    "style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline' ; " +
+                    "img-src 'self' ; "
+                )
+                .sendFile(path.join(__dirname, 'html', "no_login.html"));
+        }
+
+        //
+        //
+        //
+        //
+        show_login_page(res) {
+            const node = this;
+            res
+                .set("Content-Security-Policy",
+                    "default-src 'self' 'unsafe-inline' https://*.alexa.com https://*.media-amazon.com https://*.loginwithamazon.com ; " +
+                    "style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline' ; " +
+                    "img-src 'self' https://images-na.ssl-images-amazon.com https://nodered.org/favicon.ico 'unsafe-inline' ; " +
+                    "script-src 'self' https://assets.loginwithamazon.com 'unsafe-inline' ; " +
+                    "script-src-elem 'self' https://assets.loginwithamazon.com 'unsafe-inline' ; " +
+                    "frame-src 'self' https://*.amazon.com ;" +
+                    "frame-ancestors 'self' https://*.amazon.com https://assets.loginwithamazon.com ;"
+                )
+                .sendFile(path.join(__dirname, 'html', "login.html"));
+        }
+
+        //
+        //
+        //
+        //
+        show_file_in_html(res, filename) {
+            const node = this;
+            if (node.verbose) node._debug("show_file_in_html " + filename);
+            res.sendFile(path.join(__dirname, 'html', filename));
+        }
+
+        //
+        //
+        //
+        //
+        send_js_page(res) {
             const node = this;
             // Show login page
-            fs.readFile(path.join(__dirname, 'html/login.html'), 'utf8', function (err, data) {
+            fs.readFile(path.join(__dirname, 'html', 'login.js'), 'utf8', function (err, data) {
                 if (err) {
                     res.status(500).send('No data');
                     node.error("Load error " + err);
@@ -1017,13 +1076,7 @@ module.exports = function (RED) {
                     //.set("Content-Security-Policy", "default-src 'self'; style-src https://stackpath.bootstrapcdn.com; img-src *; 'unsafe-inline' *.alexa.com")
                     // .set("Content-Security-Policy", "default-src 'self'; style-src https://stackpath.bootstrapcdn.com 'unsafe-inline'; img-src *; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval' *.alexa.com")
                     res
-                        /*.set("Content-Security-Policy",
-                            "default-src 'self' 'unsafe-inline' *.alexa.com https://*.media-amazon.com ; " +
-                            "style-src https://cdn.jsdelivr.net 'unsafe-inline' ; " +
-                            "img-src 'self' https://images-na.ssl-images-amazon.com 'unsafe-inline' ; " +
-                            "script-src 'self' http://* https://assets.loginwithamazon.com 'unsafe-inline' ; " +
-                            "frame-src https://*.amazon.com"
-                        )*/
+                        .setHeader('content-type', 'text/javascript')
                         .send(data.replace(/CLIENT_ID/g, node.credentials.oa2_client_id)
                             .replace(/VERBOSE/g, node.verbose)
                             .replace(/LOGIN_WITH_AMAZON/g, '' + (true === node.config.login_with_amazon))
