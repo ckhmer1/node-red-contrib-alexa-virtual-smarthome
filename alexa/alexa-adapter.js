@@ -477,9 +477,9 @@ module.exports = function (RED) {
         }
 
         //
-        //
-        //
-        //
+        // GET /oauth, return the login page, a no login message page, icons and javascript
+        //  Manage the access_token for login with amazon
+        //  Manage get user profile
         oauth_get(req, res) {
             const node = this;
             if (true !== node.config.login_with_username && true !== node.config.login_with_amazon) {
@@ -488,7 +488,7 @@ module.exports = function (RED) {
                 return node.show_no_login_page(res);
             }
 
-            if (node.verbose) node._debug('oauth_get');
+            if (node.verbose) node.error('oauth_get');
             if (node.verbose) node._debug('oauth_get CCHI ' + JSON.stringify(req.query));
 
             if (typeof req.query.policy !== 'undefined') {
@@ -582,7 +582,7 @@ module.exports = function (RED) {
         }
 
         //
-        //
+        // POST /oauth, enabled only for login with username and password
         //
         //
         oauth_post(req, res) {
@@ -653,7 +653,7 @@ module.exports = function (RED) {
         }
 
         //
-        //
+        // GET /token, return the token path
         //
         //
         token_get(req, res) {
@@ -664,7 +664,7 @@ module.exports = function (RED) {
         }
 
         //
-        //
+        // POST /token
         //
         //
         token_post(req, res) {
