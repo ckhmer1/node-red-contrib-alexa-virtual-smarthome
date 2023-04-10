@@ -48,7 +48,7 @@
     "ask-sdk-model": "^1.63.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "helmet": "^6.0.1",
+    "helmet": "^6.1.2",
     "morgan": "^1.10.0",
     "stoppable": "^1.1.0",
     "superagent": "^8.0.9",
