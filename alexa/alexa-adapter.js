@@ -60,7 +60,7 @@ module.exports = function (RED) {
     const util = require('util');
     const TokenGenerator = require('uuid-token-generator');
     const express = require('express');
-    const expressRateLimit = require("express-rate-limit");
+    // const expressRateLimit = require("express-rate-limit");
     const helmet = require('helmet');
     const morgan = require('morgan');
     const cors = require('cors');
@@ -261,13 +261,13 @@ module.exports = function (RED) {
             const node = this;
             if (node.verbose) node._debug("startServer port " + node.http_port);
             const app = express();
-            const rate_limit = 30;
+            /*const rate_limit = 30;
             const rateLimitMiddleware = expressRateLimit({
                 windowMs: 60 * 1000,
                 max: rate_limit,
                 message: `You have exceeded your ${rate_limit} requests per minute limit.`,
                 headers: true,
-              });
+              });*/
             app.disable('x-powered-by');
             app.use(rateLimitMiddleware);
             app.use(helmet());
