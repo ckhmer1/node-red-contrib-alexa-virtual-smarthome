@@ -269,7 +269,7 @@ module.exports = function (RED) {
                 headers: true,
               });*/
             app.disable('x-powered-by');
-            app.use(rateLimitMiddleware);
+            //app.use(rateLimitMiddleware);
             app.use(helmet());
             app.use(cors());
             app.use(morgan('dev'));
