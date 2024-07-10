@@ -21,7 +21,7 @@
             "login_username": "Login with Username/Password",
             "secirity_profile_web_settings": "Security Profile Web Settings",
             "local_credentials": "Local credentials",
-            "rate_limit": "Requests rate limit (requests for second)",
+            "rate_limit": "Rate limit",
             "http_server": "HTTP(s) Server",
             "usehttpnoderoot": "Use HTTP Node-RED root path",
             "https_server": "HTTPS server",
