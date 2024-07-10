@@ -21,6 +21,14 @@
                     return v.trim().length == 0 || (!isNaN(v) && Number.isInteger(f) && n > 0);
                 }
             },
+            rate_limit: {
+                value: 60, required: false, validate: function (v) {
+                    if (v === undefined || v.trim().length === 0) return true;
+                    const n = parseInt(v);
+                    const f = parseFloat(v);
+                    return v.trim().length == 0 || (!isNaN(v) && Number.isInteger(f) && n > 0);
+                }
+            },
             set_state_delay: {
                 value: '', required: false, validate: function (v) {
                     const n = parseInt(v);
@@ -287,6 +295,11 @@
                 <input type="checkbox" id="node-config-input-usehttpnoderoot" style="display:inline-block; width:auto; vertical-align:top;">
             </div>
         
+            <div class="form-row">
+                <label for="node-config-input-rate_limit"><i class="fa fa-globe"></i> <span data-i18n="alexa-adapter.label.rate_limit"></span></label>
+                <input type="text" id="node-config-input-rate_limit" data-i18n="[placeholder]alexa-adapter.placeholder.rate_limit">
+            </div>    
+
             <div class="form-row">
                 <label style="width:auto" for="node-config-input-https_server"><i class="fa fa-arrow-right"></i> <span data-i18n="alexa-adapter.label.https_server"></span></label>
                 <input type="checkbox" id="node-config-input-https_server" style="display:inline-block; width:auto; vertical-align:top;">

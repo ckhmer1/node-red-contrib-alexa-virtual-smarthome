@@ -143,6 +143,7 @@ module.exports = function (RED) {
             node.http_path = node.usehttpnoderoot ? node.Path_join(node.httpNodeRoot, config.http_path || '') : config.http_path || '';
             node.http_port = config.port || '';
             node.https_server = config.https_server || false;
+            node.rate_limit = parseInt(config.rate_limit || 60);
             node.http_root = node.Path_join('/', node.http_path.trim());
             node.http_server = null;
             node.user_dir = RED.settings.userDir || '.';
@@ -259,14 +260,13 @@ module.exports = function (RED) {
         //
         startServer() {
             const node = this;
-            if (node.verbose) node._debug("startServer port " + node.http_port);
+            if (node.verbose) node._debug("startServer port " + node.http_port + " rate limit " + node.rate_limit);
             const app = express();
             app.disable('x-powered-by');
-            const rate_limit = 30;
             const rateLimitMiddleware = expressRateLimit({
                 windowMs: 60 * 1000,
-                max: rate_limit,
-                message: `You have exceeded your ${rate_limit} requests per minute limit.`,
+                max: node.rate_limit,
+                message: `You have exceeded your ${node.rate_limit} requests per minute limit.`,
                 headers: true,
               });
             app.use(rateLimitMiddleware);
