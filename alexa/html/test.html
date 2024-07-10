@@ -44,7 +44,7 @@
             if (typeof data !== "string") {
                 data = JSON.stringify(data);
             }
-            document.getElementById(elmId).innerHTML = data;
+            document.getElementById(elmId).textContent = data;
         }
         function test_oauth_get(url, go_on) {
             // GET OAUTH

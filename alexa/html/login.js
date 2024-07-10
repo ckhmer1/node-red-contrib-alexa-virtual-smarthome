@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
   if (params['error']) {
     document.getElementById('error-message').style.display = 'block';
-    document.getElementById('error-message').innerHTML = params['error'];
+    document.getElementById('error-message').textContent = params['error'];
   }
 });
 
