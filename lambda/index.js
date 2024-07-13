@@ -57,11 +57,14 @@ function getError(err) {
 
 exports.handler = async (event) => {
   if (d) {
-    console.log("event: " + JSON.stringify(event))
+    console.log("event: " + JSON.stringify(event));
   }
 
   if (not_verify_ssl) {
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+    // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'; // Uncomment this if you don't want to check the ssl certificate validity
+    if (d) {
+      console.log("NO SSL Certificate check");
+    }
   }
 
   return new Promise((resolve, reject) => {
