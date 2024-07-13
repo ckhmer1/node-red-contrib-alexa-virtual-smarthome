@@ -11,7 +11,7 @@
   "dependencies": {
     "ask-sdk-core": "^2.12.1",
     "ask-sdk-model": "^1.38.3",
-    "axios": "^0.27.2",
+    "axios": "^1.7.2",
     "i18next": "^21.8.16"
   }
 }
