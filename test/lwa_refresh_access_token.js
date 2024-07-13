@@ -3,9 +3,9 @@ const fs = require('fs');
 
 console.log("Starting ");
 
-const cid = 'amzn1.application-oa2-client.d359ed2095be4231bab9ce6eaf802129';
-const sec = '20ff310bf0f59508c7edc38bc349c55f1a17f0b6732ba3ab1a7daeb2a51fbff5';
-const uri = 'https://smart-home.chimera.dynu.com/alexa/oauth';
+const cid = 'CID';
+const sec = 'SEC';
+const uri = 'https://smart-home.XXXXXXX.dynu.com/alexa/oauth';
 
 fs.readFile('alexa-token.json', 'utf8', function (err, data) {
   if (err) {
