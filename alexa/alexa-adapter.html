@@ -22,7 +22,7 @@
                 }
             },
             rate_limit: {
-                value: 60, required: false, validate: function (v) {
+                value: '', required: false, validate: function (v) {
                     if (v === undefined || v.trim().length === 0) return true;
                     const n = parseInt(v);
                     const f = parseFloat(v);
