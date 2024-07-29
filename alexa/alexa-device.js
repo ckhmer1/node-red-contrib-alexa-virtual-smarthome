@@ -2458,6 +2458,9 @@ module.exports = function (RED) {
                         fill = 'green';
                     }
                 }
+                if (text.length == 0 && node.cameraStreams && node.cameraStreams.cameraStreams && node.cameraStreams.cameraStreams.length > 0) {
+                    text = node.cameraStreams.cameraStreams.length + " stream profile(s)";
+                }
             }
 
             if (!text) {
