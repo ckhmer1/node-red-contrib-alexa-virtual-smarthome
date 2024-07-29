@@ -49,7 +49,7 @@
             "oa2_client_id": "Oauth client id",
             "oa2_secret": "Oauth Secret",
             "port": "HTTP(s) Port, empty or zero for the Node-RED port",
-            "rate_limit": "Requests rate limit (requests for second)",
+            "rate_limit": "Requests rate limit (requests for second, empty or 0 for disable)",
             "http_path": "HTTP(s) Path",
             "publickey": "Certificate public key filename",
             "privatekey": "Certificate private key filename",

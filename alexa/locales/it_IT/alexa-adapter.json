@@ -49,7 +49,7 @@
             "oa2_client_id": "ID Cliente",
             "oa2_secret": "Segreto",
             "port": "Porta del server HTTP, zero o vuoto per usare la porta di Node-RED",
-            "rate_limit": "Limite richieste (richieste al secondo)",
+            "rate_limit": "Limite richieste (richieste al secondo, vuoto o 0 per disabilitare)",
             "http_path": "Percorso del server HTTP",
             "publickey": "File con la chiave pubblica del certificato",
             "privatekey": "File con la chiave privata del certificato",
