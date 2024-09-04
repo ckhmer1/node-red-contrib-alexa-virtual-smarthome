@@ -175,6 +175,7 @@
             "ranges": "Intervalli",
             "ordered": "Ordinati",
             "allow_remote_resume": "Consenti ripresa remota",
+            "camera_streams": "Flussi della videocamera",
             "inventory_level_sensor": "Sensore di livello",
             "inventory_usage_sensor": "Sensore di utilizzo"
         },
@@ -207,6 +208,7 @@
             "precision": "Precisione",
             "presets": "Preimpostazioni",
             "supported_modes": "Modalità supportate",
+            "camera_streams": "Flussi della videocamera",
             "replenishment": "Rifornimento",
             "measurement": "Misurazione"
         },

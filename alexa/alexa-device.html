@@ -160,6 +160,10 @@
                         return true;
                     }
                 },
+                camera_streams: {
+                  value: "", required: false, validate: RED.validators.typedInput('camera_streams_type')
+                },
+                camera_streams_type: { value: "json", required: false },
                 bands: { value: [], required: false },
                 modes: { value: [], required: false },
                 band_range_min: { value: -6, required: false, validate: isIngeterNumber },
@@ -680,6 +684,11 @@
                     var c = this.camera_stream_configurations[i];
                     $("#node-input-camera_stream_configuration-container").editableList('addItem', c);
                 }
+                $("#node-input-camera_streams").typedInput({
+                    default: "json",
+                    types: ['json'],
+                    typeField: $("#node-input-camera_streams_type"),
+                });
 
                 // MAC Address
                 $('#node-input-mac_address-container').css('min-height', '150px').css('min-width', '450px').editableList({
@@ -1340,6 +1349,12 @@
 
         <div class="form-row node-input-camera_stream_configuration-container-row">
             <ol id="node-input-camera_stream_configuration-container"></ol>
+        </div>
+
+        <div class="form-row">
+            <label style="width:auto" for="node-input-camera_streams"><i class="fa fa-tag"></i> <span data-i18n="device.label.camera_streams"></span></label>
+            <input type="text" id="node-input-camera_streams" data-i18n="[placeholder]device.placeholder.camera_streams">
+            <input type="hidden" id="node-input-camera_streams_type">
         </div>
     </div>
     

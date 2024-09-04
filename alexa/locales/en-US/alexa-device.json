@@ -174,6 +174,7 @@
             "toggles": "Toggles",
             "ranges": "Ranges",
             "ordered": "Ordered",
+            "camera_streams": "Camera streams",
             "allow_remote_resume": "Allow remote resume",
             "inventory_level_sensor": "Inventory Level Sensor",
             "inventory_usage_sensor": "Inventory Usage Sensor"
@@ -207,6 +208,7 @@
             "precision": "Precision",
             "presets": "Presets",
             "supported_modes": "Supported modes",
+            "camera_streams": "Camera streams",
             "replenishment": "Replenishment",
             "measurement": "Measurement"
         },

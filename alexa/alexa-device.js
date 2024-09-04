@@ -459,6 +459,10 @@ module.exports = function (RED) {
                         {
                             cameraStreamConfigurations: camera_stream_configurations
                         });
+                    if (node.config.camera_streams) {
+                        node.updateState(JSON.parse(node.config.camera_streams) || {}, node.cameraStreams, CAMERASTREAMS_STATE_TYPE);
+                        if (node.isVerbose()) node._debug("CCHI cameraStreams " + node.id + " " + JSON.stringify(node.cameraStreams));
+                    }
                 } else {
                     node.error(RED._("alexa-device.error.no_camera_stream_controller"))
                     node.config.i_camera_stream_controller = false;
