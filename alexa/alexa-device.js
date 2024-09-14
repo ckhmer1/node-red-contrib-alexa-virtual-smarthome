@@ -171,6 +171,10 @@ module.exports = function (RED) {
             }
 
             if (node.isVerbose()) node._debug("config " + JSON.stringify(config.name));
+            if (node.config.display_categories.includes("CAMERA") && node.config.display_categories[0] != "CAMERA") {
+                node.config.display_categories = node.config.display_categories.filter(dt => dt != 'CAMERA');
+                node.config.display_categories.push("CAMERA");
+            }
             if (node.isVerbose()) node._debug("display_categories " + JSON.stringify(node.config.display_categories));
             let names = node.config.display_categories.map(dt => RED._("alexa-device.display_category." + dt));
             node.device_desc = names.join();
