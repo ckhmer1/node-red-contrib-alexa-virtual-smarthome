@@ -39,7 +39,7 @@
   "devDependencies": {
     "http-proxy": "^1.18.1",
     "mocha": "^10.7.3",
-    "node-red": "^4.0.2",
+    "node-red": "^4.0.3",
     "node-red-node-test-helper": "^0.3.4"
   },
   "dependencies": {
