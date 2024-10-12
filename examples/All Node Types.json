@@ -4885,5 +4885,170 @@
         "x": 1475,
         "y": 560,
         "wires": []
+    },
+    {
+        "id": "47a299a8b1280edd",
+        "type": "group",
+        "z": "5cc6ca02.0e2a64",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "85eb30cce82396bf",
+            "826abf9e625ba4b0",
+            "3e8f97dac861e2ce",
+            "2c6cc33b3b8acc45",
+            "5571e0a2b23948f3",
+            "54841b0c891ed680"
+        ],
+        "x": 1534,
+        "y": 519,
+        "w": 532,
+        "h": 202
+    },
+    {
+        "id": "85eb30cce82396bf",
+        "type": "alexa-management",
+        "z": "5cc6ca02.0e2a64",
+        "g": "47a299a8b1280edd",
+        "name": "Alexa",
+        "alexa": "Alexa",
+        "set_state_type": "filtered_by_id",
+        "x": 1810,
+        "y": 620,
+        "wires": [
+            [
+                "5571e0a2b23948f3"
+            ]
+        ]
+    },
+    {
+        "id": "826abf9e625ba4b0",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "47a299a8b1280edd",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "restartServer",
+        "x": 1650,
+        "y": 560,
+        "wires": [
+            [
+                "85eb30cce82396bf"
+            ]
+        ]
+    },
+    {
+        "id": "3e8f97dac861e2ce",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "47a299a8b1280edd",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "reportState",
+        "x": 1650,
+        "y": 600,
+        "wires": [
+            [
+                "85eb30cce82396bf"
+            ]
+        ]
+    },
+    {
+        "id": "2c6cc33b3b8acc45",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "47a299a8b1280edd",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "getState",
+        "x": 1640,
+        "y": 640,
+        "wires": [
+            [
+                "85eb30cce82396bf"
+            ]
+        ]
+    },
+    {
+        "id": "5571e0a2b23948f3",
+        "type": "debug",
+        "z": "5cc6ca02.0e2a64",
+        "g": "47a299a8b1280edd",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1960,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "54841b0c891ed680",
+        "type": "inject",
+        "z": "5cc6ca02.0e2a64",
+        "g": "47a299a8b1280edd",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "setState",
+        "payload": "{}",
+        "payloadType": "json",
+        "x": 1640,
+        "y": 680,
+        "wires": [
+            [
+                "85eb30cce82396bf"
+            ]
+        ]
     }
 ]
