@@ -52,7 +52,7 @@
     "helmet": "^8.0.0",
     "morgan": "^1.10.0",
     "stoppable": "^1.1.0",
-    "superagent": "^10.1.0",
+    "superagent": "^10.1.1",
     "superagent-throttle": "^1.0.1",
     "uuid-token-generator": "^1.0.0"
   },
