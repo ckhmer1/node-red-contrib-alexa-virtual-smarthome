@@ -38,7 +38,7 @@
   "homepage": "https://github.com/ckhmer1/node-red-contrib-alexa-virtual-smarthome#readme",
   "devDependencies": {
     "http-proxy": "^1.18.1",
-    "mocha": "^10.8.1",
+    "mocha": "^10.8.2",
     "node-red": "^4.0.5",
     "node-red-node-test-helper": "^0.3.4"
   },
