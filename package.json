@@ -48,7 +48,7 @@
     "ask-sdk-model": "^1.86.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "express-rate-limit": "^7.4.1",
+    "express-rate-limit": "^7.5.0",
     "helmet": "^8.0.0",
     "morgan": "^1.10.0",
     "stoppable": "^1.1.0",
