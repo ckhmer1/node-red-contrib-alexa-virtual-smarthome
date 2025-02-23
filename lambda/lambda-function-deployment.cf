@@ -1,0 +1,146 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Deploys an Alexa Smart Home Lambda function with environment variables."
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: "SmartHome"
+    Description: "Name of the Lambda function"
+
+  LambdaRoleName:
+    Type: String
+    Default: "LambdaAlexaRole"
+    Description: "Name of the IAM Role for Lambda"
+
+  Runtime:
+    Type: String
+    Default: "python3.13"
+    Description: "Runtime version for Lambda"
+
+  MemorySize:
+    Type: Number
+    Default: 128
+    Description: "Memory size for Lambda function"
+
+  Timeout:
+    Type: Number
+    Default: 10
+    Description: "Timeout for Lambda function (seconds)"
+
+  SkillID:
+    Type: String
+    Description: "Alexa Smart Home Skill ID"
+
+  BaseURL:
+    Type: String
+    Description: "Base URL for Node-RED SmartHome"
+
+  Debug:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+    Description: "Enable debug logging"
+
+  NotVerifySSL:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+    Description: "Disable SSL verification"
+
+Resources:
+  LambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Ref LambdaRoleName
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
+  SmartHomeLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Runtime: !Ref Runtime
+      Handler: "index.lambda_handler"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          BASE_URL: !Ref BaseURL
+          DEBUG: !Ref Debug
+          NOT_VERIFY_SSL: !Ref NotVerifySSL
+      Code:
+        ZipFile: |
+          import os
+          import json
+          import logging
+          import urllib3
+
+          _debug = os.environ.get('DEBUG') == 'true'
+          _logger = logging.getLogger('NODE-Red-SmartHome')
+          _logger.setLevel(logging.DEBUG if _debug else logging.INFO)
+
+          def lambda_handler(event, context):
+              _logger.debug('Event: %s', event)
+
+              base_url = os.environ.get('BASE_URL')
+              assert base_url, 'Please set BASE_URL environment variable'
+
+              directive = event.get('directive')
+              assert directive, 'Malformatted request - missing directive'
+              assert directive.get('header', {}).get('payloadVersion') == '3', \
+                  'Only support payloadVersion == 3'
+
+              scope = directive.get('endpoint', {}).get('scope')
+              if not scope:
+                  scope = directive.get('payload', {}).get('grantee') or directive.get('payload', {}).get('scope')
+              assert scope, 'Malformatted request - missing endpoint.scope'
+              assert scope.get('type') == 'BearerToken', 'Only support BearerToken'
+
+              token = scope.get('token')
+              verify_ssl = os.environ.get('NOT_VERIFY_SSL') != 'true'
+
+              http = urllib3.PoolManager(
+                  cert_reqs='CERT_REQUIRED' if verify_ssl else 'CERT_NONE',
+                  timeout=urllib3.Timeout(connect=2.0, read=10.0)
+              )
+
+              response = http.request(
+                  'POST',
+                  base_url,
+                  headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'},
+                  body=json.dumps(event).encode('utf-8'),
+              )
+              if response.status >= 400:
+                  return {
+                      'event': {
+                          'payload': {
+                              'type': 'INVALID_AUTHORIZATION_CREDENTIAL'
+                              if response.status in (401, 403) else 'INTERNAL_ERROR',
+                              'message': response.data.decode("utf-8"),
+                          }
+                      }
+                  }
+              return json.loads(response.data.decode('utf-8'))
+
+      MemorySize: !Ref MemorySize
+      Timeout: !Ref Timeout
+
+  SmartHomeLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref SmartHomeLambdaFunction
+      Principal: "alexa-connectedhome.amazon.com"
+      EventSourceToken: !Ref SkillID
+
+Outputs:
+  LambdaFunctionArn:
+    Description: "ARN of the created Lambda function"
+    Value: !GetAtt SmartHomeLambdaFunction.Arn
+

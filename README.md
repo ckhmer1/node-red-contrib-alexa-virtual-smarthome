@@ -69,11 +69,11 @@ To create a smart home skill, use the following steps ([Steps to Build a Smart H
 * Under Payload Version, select "v3".
 * Copy Your Skill ID (3) to the clipboard, clicking the "Copy to clipboard" button.
 
-#### Create a Lambda Function
+#### Create a Lambda Function (Option 1)
 
 To create a lambda function for the skill, use the following steps ([Host a Custom Skill as an AWS Lambda Function](https://developer.amazon.com/en-US/docs/alexa/custom-skills/host-a-custom-skill-as-an-aws-lambda-function.html) and [Steps to Build a Smart Home Skill: Add a Lambda Function](https://developer.amazon.com/en-US/docs/alexa/smarthome/steps-to-build-a-smart-home-skill.html#add-a-lambda-function) for more info):
 
-##### Create an IAM Role for Lambda
+##### Create an IAM Role for Lambda (Option 1)
 
 * Sign in to your [IAM console](https://console.aws.amazon.com/iam/home?#/home)
 * From the upper-right menù, select the correct region for your region and skill language. For discovery of smart home devices to succeed, you must choose the region where the devices are located. Select only a region for the lambda server that supports the Alexa Smart Home trigger. See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
@@ -86,7 +86,7 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 * Enter a name that identifies this role and click Create role, e.g.: "lambda_basic_execution".
 * Click on the "Create Role" button.
 
-##### Create a Lambda function and add code
+##### Create a Lambda function and add code (Option 1)
 
 * On the [AWS Console](https://console.aws.amazon.com/console/home)
 * From the upper-right menù, select the correct region for your region and skill language. Select the same region selected previously for the "IAM Role". See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
@@ -206,6 +206,65 @@ def lambda_handler(event, context):
 * Enter "True" as the Value.
 * Click on the "Save" button.
 * Click on the "Copy ARN" (4) button.
+
+---
+#### Alternatively create a Lambda Function using cloudformation template (Option 2)
+
+
+##### **Step 1: Open AWS CloudFormation Console**
+1. Go to the **AWS CloudFormation** service:  
+   👉 [AWS CloudFormation Console](https://console.aws.amazon.com/cloudformation)
+2. Click **"Create stack"** → **"With new resources (standard)"**.
+
+##### **Step 2: Upload the CloudFormation Template**
+1. Under **Specify template**, select **"Upload a template file"**.
+2. Click **"Choose file"**, select the `lambda/lambda-function-deployment.cf` file from your computer.
+3. Click **"Next"**.
+
+
+##### **Step 3: Specify Stack Details**
+1. Enter a **Stack name** (e.g., `SmartHomeLambdaStack`).
+2. Fill in the required **parameters**:
+   - **LambdaFunctionName** → `SmartHome`
+   - **BaseURL** → Enter the **URL of your Node-RED instance**
+   - **Debug** → Choose `"true"` or `"false"`
+   - **NotVerifySSL** → Choose `"true"` or `"false"`
+   - **SkillID** → Enter your **Alexa Smart Home Skill ID**
+3. Click **"Next"**.
+
+
+##### **Step 4: Configure Stack Options**
+1. Leave options as default (unless you need tags or permissions).
+2. Click **"Next"**.
+
+
+
+##### **Step 5: Review & Deploy**
+1. Review your settings.
+2. Check **"I acknowledge that AWS CloudFormation might create IAM resources"**.
+3. Click **"Create stack"**.
+
+
+##### **Step 6: Wait for Deployment**
+- CloudFormation will create the Lambda function and IAM role.
+- Wait until the stack status becomes **CREATE_COMPLETE**.
+
+
+##### **Step 7: Verify Deployment**
+1. Go to **AWS Lambda**.
+2. Find your function (e.g., `SmartHome`).
+3. Click **Configuration** → **Environment variables** to confirm values.
+
+
+##### **Step 8: Copy the Lambda Function ARN**
+1. Go to **AWS Lambda**:  
+   👉 [AWS Lambda Console](https://console.aws.amazon.com/lambda)
+2. Find your function (e.g., `SmartHome`).
+3. Click on the function name to open its details.
+4. Copy the **Function ARN** from the top-right corner.
+5. Paste this ARN into the **Alexa Developer Console** (Step 8).
+
+---
 
 ##### Configure the service endpoint
 
