@@ -58,7 +58,7 @@ module.exports = function (RED) {
     const path = require('path');
     const fs = require('fs');
     const util = require('util');
-    const TokenGenerator = require('uuid-token-generator');
+    const UIDGenerator = require('uid-generator');
     const express = require('express');
     const expressRateLimit = require("express-rate-limit");
     const helmet = require('helmet');
@@ -148,7 +148,7 @@ module.exports = function (RED) {
             node.http_server = null;
             node.user_dir = RED.settings.userDir || '.';
             node.handler = null;
-            node.tokgen = new TokenGenerator(256, TokenGenerator.BASE58);
+            node.tokgen = new UIDGenerator(256, UIDGenerator.BASE58);
             node.auth_code = undefined;
             node.devices = {};
             node.managements = {};
@@ -535,7 +535,7 @@ module.exports = function (RED) {
                                 // TODO check Host, get port
                                 const oauth_redirect_uri = 'https://' + node.Path_join(req.get('Host'), node.http_root, OAUTH_PATH);
                                 if (node.verbose) node._debug('oauth_get CCHI oauth_redirect_uri ' + JSON.stringify(oauth_redirect_uri));
-                                const state = node.tokgen.generate();
+                                const state = node.tokgen.generateSync();
                                 node.login_with_amazon = { // TODO REMOVE
                                     state: state
                                 };
@@ -648,7 +648,7 @@ module.exports = function (RED) {
                     node.Path_join(node.http_root, OAUTH_PATH), client_id, encodeURIComponent(redirect_uri), state, scope));*/
             }
             node.auth_code = {
-                code: node.tokgen.generate(),
+                code: node.tokgen.generateSync(),
                 expire_at: Date.now() + 3600 * 1000,
                 redirect_uri: redirect_uri,
             }
@@ -691,7 +691,7 @@ module.exports = function (RED) {
                 if (refresh_token === node.tokens.own.refresh_token &&
                     client_id === node.credentials.your_client_id &&
                     client_secret === node.credentials.your_secret) {
-                    node.tokens.own.access_token = "Atza|" + node.tokgen.generate();
+                    node.tokens.own.access_token = "Atza|" + node.tokgen.generateSync();
                     node.tokens.own.expire_at = Date.now() + 3600 * 1000
                     node.save_tokens()
                         .then(() => {
@@ -728,9 +728,9 @@ module.exports = function (RED) {
                     Date.now() < expire_at) {
                     node.auth_code = {};
                     node.tokens['own'] = {
-                        access_token: "Atza|" + node.tokgen.generate(),
+                        access_token: "Atza|" + node.tokgen.generateSync(),
                         expire_at: Date.now() + 3600 * 1000,
-                        refresh_token: "Atzr|" + node.tokgen.generate()
+                        refresh_token: "Atzr|" + node.tokgen.generateSync()
                     };
                     node.save_tokens()
                         .then(() => {
@@ -859,7 +859,7 @@ module.exports = function (RED) {
                 // https://developer.amazon.com/en-US/docs/alexa/smarthome/authenticate-a-customer-permissions.html
                 return node.accept_grant(req, res);
             }
-            const messageId = node.tokgen.generate();
+            const messageId = node.tokgen.generateSync();
             let error = false;
             let error_message = '';
             if (endpointId) {
@@ -1013,7 +1013,7 @@ module.exports = function (RED) {
                     header: {
                         namespace: "Alexa",
                         name: "ErrorResponse",
-                        messageId: messageId || node.tokgen.generate(),
+                        messageId: messageId || node.tokgen.generateSync(),
                         payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION
                     },
                     payload: {
@@ -1206,7 +1206,7 @@ module.exports = function (RED) {
                                 header: {
                                     namespace: "Alexa.Authorization",
                                     name: "AcceptGrant.Response",
-                                    messageId: node.tokgen.generate(),
+                                    messageId: node.tokgen.generateSync(),
                                     payloadVersion: PAYLOADS_VERSION['Alexa.Authorization'] || DEFAULT_PAYLOAD_VERSION
                                 },
                                 payload: {}
@@ -1235,7 +1235,7 @@ module.exports = function (RED) {
             const error_response = {
                 event: {
                     header: {
-                        messageId: node.tokgen.generate(),
+                        messageId: node.tokgen.generateSync(),
                         namespace: "Alexa.Authorization",
                         name: "ErrorResponse",
                         payloadVersion: PAYLOADS_VERSION["Alexa.Authorization"] || DEFAULT_PAYLOAD_VERSION
@@ -1278,7 +1278,7 @@ module.exports = function (RED) {
                                         node.error("Username " + pres.email + " authorized");
                                     }
                                     node.auth_code = {
-                                        code: node.tokgen.generate(),
+                                        code: node.tokgen.generateSync(),
                                         expire_at: Date.now() + 60 * 2 * 1000
                                     };
                                     if (node.verbose) node._debug("manage_login_with_amazon_access_token CCHI auth_code " + JSON.stringify(node.auth_code));
@@ -1525,7 +1525,7 @@ module.exports = function (RED) {
                         namespace: "Alexa",
                         name: "DeleteReport",
                         correlationToken: correlationToken,
-                        messageId: node.tokgen.generate(),
+                        messageId: node.tokgen.generateSync(),
                         payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION,
                     },
                     endpoint: {
@@ -1564,7 +1564,7 @@ module.exports = function (RED) {
                             header: {
                                 namespace: "Alexa.DoorbellEventSource",
                                 name: "DoorbellPress",
-                                messageId: node.tokgen.generate(),
+                                messageId: node.tokgen.generateSync(),
                                 payloadVersion: PAYLOADS_VERSION['Alexa.DoorbellEventSource'] || DEFAULT_PAYLOAD_VERSION
                             },
                             endpoint: {
@@ -1655,7 +1655,7 @@ module.exports = function (RED) {
                                 header: {
                                     namespace: namespace,
                                     name: name,
-                                    messageId: node.tokgen.generate(),
+                                    messageId: node.tokgen.generateSync(),
                                     payloadVersion: PAYLOADS_VERSION[namespace] || DEFAULT_PAYLOAD_VERSION
                                 },
                                 endpoint: {
@@ -1782,7 +1782,7 @@ module.exports = function (RED) {
                     header: {
                         namespace: namespace || "Alexa",
                         name: name || "Response",
-                        messageId: node.tokgen.generate(),
+                        messageId: node.tokgen.generateSync(),
                         correlationToken: correlationToken,
                         payloadVersion: PAYLOADS_VERSION[namespace || "Alexa"] || DEFAULT_PAYLOAD_VERSION
                     },
@@ -1816,7 +1816,7 @@ module.exports = function (RED) {
                     header: {
                         namespace: "Alexa.Discovery",
                         name: "AddOrUpdateReport",
-                        messageId: node.tokgen.generate(),
+                        messageId: node.tokgen.generateSync(),
                         payloadVersion: PAYLOADS_VERSION['Alexa.Discovery'] || DEFAULT_PAYLOAD_VERSION
                     },
                     payload: {
@@ -2039,7 +2039,7 @@ module.exports = function (RED) {
                     header: {
                         namespace: namespace || "Alexa",
                         name: name || "ChangeReport",
-                        messageId: messageId || node.tokgen.generate(),
+                        messageId: messageId || node.tokgen.generateSync(),
                         payloadVersion: PAYLOADS_VERSION['Alexa'] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
@@ -2071,7 +2071,7 @@ module.exports = function (RED) {
                     header: {
                         namespace: namespace || "Alexa.MediaMetadata",
                         name: name || "MediaCreatedOrUpdated",
-                        messageId: messageId || node.tokgen.generate(),
+                        messageId: messageId || node.tokgen.generateSync(),
                         payloadVersion: PAYLOADS_VERSION[namespace || "Alexa.MediaMetadata"] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
@@ -2106,7 +2106,7 @@ module.exports = function (RED) {
                     header: {
                         namespace: namespace || "Alexa.MediaMetadata",
                         name: name || "MediaDeleted",
-                        messageId: messageId || node.tokgen.generate(),
+                        messageId: messageId || node.tokgen.generateSync(),
                         payloadVersion: PAYLOADS_VERSION['Alexa.MediaMetadata'] || DEFAULT_PAYLOAD_VERSION
                     },
                     endpoint: {
