@@ -1,23 +1,43 @@
-name: Publish Package to npmjs
+---
+name: NPM Publish
+
 on:
   release:
     types: [created]
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Required for OIDC trusted publishing to NPM
+  contents: write  # Required for adding the tarball to the GitHub release
+
 jobs:
-  build:
+  publish-npm:
+    name: Publish Node-RED package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      # Setup .npmrc file to publish to npm
-      - uses: actions/setup-node@v6
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npm publish
+          node-version: latest
+          cache: npm
+      - name: npm Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Create npm package tarball
+        run: |
+          TGZ="$(npm pack)"
+          echo "TGZ=$TGZ" >> $GITHUB_ENV
+      - name: Upload tgz to GitHub Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "$TAG" "$TGZ" --clobber
+      - name: npm Publish
+        run: npm publish
       - name: Publish to Node-RED Library
         uses: Hacksore/node-red-flow@v2
         with:
