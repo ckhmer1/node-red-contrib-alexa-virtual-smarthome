@@ -1,3 +1,10 @@
-#query-filters:
-#  - exclude:
-#      id: js/missing-rate-limiting
+name: "Custom CodeQL Configuration"
+
+# Explicitly tell CodeQL to include the default security suite so the filter has something to apply to
+queries:
+  - uses: security-extended
+
+query-filters:
+  - exclude:
+      id: js/missing-rate-limiting
+
