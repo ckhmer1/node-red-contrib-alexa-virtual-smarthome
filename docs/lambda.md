@@ -1,6 +1,6 @@
 ## The python lambda function "lambda_function.py".
 
-Use the following [lambda function](https://gist.githubusercontent.com/matt2005/744b5ef548cc13d88d0569eea65f5e5b/raw/97b018bb12f574e780927c7b8dc85beae3fce6cc/lambda_function.py), modified for the Node-RED server.
+Use the following [lambda function](https://gist.githubusercontent.com/matt2005/744b5ef548cc13d88d0569eea65f5e5b/raw/97b018bb12f574e780927c7b8dc85beae3fce6cc/lambda_function.py), modified for the Node-RED server [lambda.py](lambda.py).
 
 
 ```

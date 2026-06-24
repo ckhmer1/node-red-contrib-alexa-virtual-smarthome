@@ -56,6 +56,8 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 
 ##### Create a Lambda function and add code (Option 1)
 
+[Lambda](lambda.md)
+
 * On the [AWS Console](https://console.aws.amazon.com/console/home)
 * From the upper-right menù, select the correct region for your region and skill language. Select the same region selected previously for the "IAM Role". See [see Deploy Your Lambda Function to Multiple Regions](https://developer.amazon.com/en-US/docs/alexa/smarthome/develop-smart-home-skills-in-multiple-languages.html#deploy) for more info.
 * Expand "Services", under "Compute", select "Lambda"
@@ -74,7 +76,7 @@ To create a lambda function for the skill, use the following steps ([Host a Cust
 * Click the "Add" button.
 * Select the "Code" tab.
 * Double-Click on the "lambda_function.py".
-* Paste the lambda function, completely replacing the existing code. Use the following [lambda function](https://gist.githubusercontent.com/matt2005/744b5ef548cc13d88d0569eea65f5e5b/raw/97b018bb12f574e780927c7b8dc85beae3fce6cc/lambda_function.py), modified for the Node-RED server.
+* Paste the lambda function, completely replacing the existing code. Use the following [lambda function](https://gist.githubusercontent.com/matt2005/744b5ef548cc13d88d0569eea65f5e5b/raw/97b018bb12f574e780927c7b8dc85beae3fce6cc/lambda_function.py), modified for the Node-RED server [lambda.py](lambda.py).
 
 
 ```
