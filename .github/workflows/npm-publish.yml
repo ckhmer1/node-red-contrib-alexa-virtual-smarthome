@@ -49,8 +49,15 @@ jobs:
             echo "Not a release or tagged ref, skipping asset upload."
           fi
 
+      - name: Setup npm for OIDC
+        run: |
+          npm config set provenance true
+          npm config set access public
+
       - name: npm Publish
         run: npm publish --provenance
+        env:
+          NPM_CONFIG_PROVENANCE: true
 
       - name: Publish to Node-RED Library
         uses: Hacksore/node-red-flow@v2
