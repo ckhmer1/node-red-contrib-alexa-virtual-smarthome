@@ -35,10 +35,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          gh release upload "$TAG" "$TGZ" --clobber
+          # If it's a release event, or if the current git ref is a tag (e.g. v1.2.3)
+          if [ -n "$TAG" ]; then
+            gh release upload "$TAG" "$TGZ" --clobber
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            gh release upload "${{ github.ref_name }}" "$TGZ" --clobber
+          else
+            echo "Not a release or tagged ref, skipping asset upload."
+          fi
       - name: npm Publish
-        run: npm publish
+        run: npm publish --provenance
       - name: Publish to Node-RED Library
         uses: Hacksore/node-red-flow@v2
         with:
-          repo: node-red-contrib-alexa-virtual-smarthome
+          repo: ${{ github.repository }}
