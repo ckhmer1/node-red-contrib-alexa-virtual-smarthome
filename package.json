@@ -4,7 +4,8 @@
   "description": "Node Red Alexa Smarthome node",
   "main": "index.js",
   "scripts": {
-    "test": "mocha \"test/**/*_spec.js\""
+    "build": "node ./scripts/build.mjs",
+    "test": "mocha \"dist/test/**/*_spec.js\""
   },
   "repository": {
     "type": "git",
