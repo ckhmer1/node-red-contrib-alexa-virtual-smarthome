@@ -11,12 +11,12 @@
     "noEmitOnError": false,
   },
   "include": [
-    "alexa//*",
-    "lambda-mcs//",
-    "scripts/**/",
-    "src//*",
-    "/.ts",
-    "**/.js",
+    "alexa/**",
+    "lambda-mcs/**",
+    "scripts/**",
+    "src/**",
+    "*.ts",
+    "**/*.js",
   ],
   "exclude": ["node_modules", "dist"],
 }
