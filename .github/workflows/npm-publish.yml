@@ -17,20 +17,25 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x # Change from 16.x to 22.x
+          node-version: 22.x
           registry-url: https://registry.npmjs.org
-          package-manager-cache: true
+          cache: "npm" # Corrected property name for setup-node caching
+
       - name: npm Install
         run: npm ci
+
       - name: Build
         run: npm run build
+
       - name: Create npm package tarball
         run: |
           TGZ="$(npm pack)"
           echo "TGZ=$TGZ" >> $GITHUB_ENV
+
       - name: Upload tgz to GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,8 +49,12 @@ jobs:
           else
             echo "Not a release or tagged ref, skipping asset upload."
           fi
+
       - name: npm Publish
         run: npm publish --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish to Node-RED Library
         uses: Hacksore/node-red-flow@v2
         with:
