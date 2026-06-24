@@ -1,38 +1,4 @@
-# Alexa Smart Home Node Red module
-# WARNING: beta code, use at your own risk
-
-## Table of Contents
-- [Introduction](#introduction)
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-- [The Config node](#the-config-node)
-- [The Device node](#the-device-node)
-- [Troubleshooting](#troubleshooting)
-- [Credits](#credits)
-- [Copyright and license](#copyright-and-license)
-
----
-## Introduction
-
-A collection of Node-RED nodes to control your smart home devices via Amazon Alexa or the Alexa App.
-
-This module does NOT directly interface with devices made by Amazon.
-
----
-## Prerequisites
-
-1. A host reachable from Amazon Alexa with a fixed IP address or a domain name with a fixed IP address or a domain name with the dynamic DNS server (refers to this in instructions as YOUR_DOMAIN) e.g. your_domain.it.
-2. A 'real' SSL certificate for the host e.g. from [Let’s Encrypt](https://letsencrypt.org).
-3. A reverse proxy, like nginx, forwarding the Amazon request to the Node-RED server.
-4. Forward TCP traffic coming in from the Internet to your reverse proxy server.
-5. Node-RED installed using an updated NodeJS version.
-6. An [Amazon Developer](https://developer.amazon.com) account (use the same username used in the Amazon Alexa App or Alexa devices).
-7. An [Amazon Web Service (AWS)](https://console.aws.amazon.com) account (use the same username used in the Amazon Alexa App or Alexa devices).
-
----
 ## Setup Instructions
-
-Follow the [setup instructions](docs/setup_instructions.md).
 
 You are going to create a Smart Home Skill, a Lambda Function linked to the Node-RED server. See [Understand the Smart Home Skill API](
 https://developer.amazon.com/en-US/docs/alexa/smarthome/understand-the-smart-home-skill-api.html) for mode info.
@@ -464,10 +430,3 @@ Following is a sample forwarding config for Nginx
             proxy_pass http://192.168.0.3:3001;
         }
 ```
-
-
-## Credits
-Parts of this README and large parts of the code comes from Amazon guide.
-
-## Copyright and license
-Copyright 2021 Claudio Chimera under [the GNU General Public License version 3](LICENSE).
