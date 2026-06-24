@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write  # Required for OIDC trusted publishing to NPM
-  contents: write  # Required for adding the tarball to the GitHub release
+  id-token: write # Required for OIDC trusted publishing to NPM
+  contents: write # Required for adding the tarball to the GitHub release
 
 jobs:
   publish-npm:
@@ -20,8 +20,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22' # latest
-          cache: npm
+          node-version: 22.x # Change from 16.x to 22.x
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: true
       - name: npm Install
         run: npm ci
       - name: Build
