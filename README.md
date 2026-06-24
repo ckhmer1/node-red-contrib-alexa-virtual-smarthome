@@ -1,5 +1,4 @@
 # Alexa Smart Home Node Red module
-# WARNING: beta code, use at your own risk
 
 ## Table of Contents
 - [Introduction](#introduction)
