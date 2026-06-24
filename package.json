@@ -41,7 +41,8 @@
     "http-proxy": "^1.18.1",
     "mocha": "^11.7.6",
     "node-red": "^5.0.0",
-    "node-red-node-test-helper": "^0.3.6"
+    "node-red-node-test-helper": "^0.3.6",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "ask-sdk-core": "^2.14.0",
