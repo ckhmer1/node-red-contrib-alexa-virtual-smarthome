@@ -9,14 +9,7 @@ const __dirname = path.dirname(__filename);
 
 /** List of static assets to copy to the dist directory */
 const assetsToCopy = [
-    'google-smarthome.html',
-    'google-mgmt.html',
-    'devices/*.html',
-    'icons/',
-    'locales/',
-    'devices/locales/',
-    'lib/frontend/',
-    'test/*.json',
+    'alexa/*',
 ];
 
 const projectRoot = path.resolve(__dirname, '..');
