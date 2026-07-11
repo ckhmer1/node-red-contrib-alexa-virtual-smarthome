@@ -42,7 +42,7 @@
     "mocha": "^11.7.6",
     "node-red": "^5.0.1",
     "node-red-node-test-helper": "^0.3.6",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "ask-sdk-core": "^2.14.0",
